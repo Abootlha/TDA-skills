@@ -69,7 +69,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-8 h-full">
+        <nav className="hidden xl:flex items-center gap-4 2xl:gap-8 h-full">
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href))
             return (
@@ -77,13 +77,13 @@ export function Navbar() {
                 key={link.name}
                 href={link.href}
                 className={cn(
-                  "text-[14px] font-semibold transition-all h-full flex items-center gap-1.5",
+                  "text-[13px] 2xl:text-[14px] font-semibold transition-all h-full flex items-center gap-1.5",
                   isActive
                     ? "text-[#FFB800]"
                     : "text-white hover:text-[#FFB800]"
                 )}
               >
-                <span>{link.name}</span>
+                <span className="whitespace-nowrap">{link.name}</span>
                 {link.hasDropdown && <ChevronDown size={16} className="shrink-0 opacity-80" />}
               </Link>
             )
@@ -91,7 +91,7 @@ export function Navbar() {
         </nav>
 
         {/* Actions */}
-        <div className="hidden lg:flex items-center gap-6 shrink-0">
+        <div className="hidden xl:flex items-center gap-4 2xl:gap-6 shrink-0">
           <button className="text-white hover:text-[#FFB800] transition-colors p-2 cursor-pointer">
             <Search size={22} />
           </button>
@@ -150,7 +150,7 @@ export function Navbar() {
         </div>
 
         {/* Mobile Toggle */}
-        <div className="flex items-center gap-4 lg:hidden">
+        <div className="flex items-center gap-4 xl:hidden">
           <Link href="/checkout" className="relative text-white p-2">
             <ShoppingCart size={22} />
             {cartItems.length > 0 && (
@@ -172,7 +172,7 @@ export function Navbar() {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className={cn(
-          "lg:hidden absolute left-0 w-full bg-white border-b border-[var(--border)] shadow-lg animate-in slide-in-from-top-2",
+          "xl:hidden absolute left-0 w-full bg-white border-b border-[var(--border)] shadow-lg animate-in slide-in-from-top-2",
           isScrolled ? "top-20 rounded-b-[2rem]" : "top-24"
         )}>
           <nav className="flex flex-col p-4 gap-1">
@@ -184,7 +184,7 @@ export function Navbar() {
                   href={link.href}
                   className={cn(
                     "py-3 px-4 rounded-md text-base font-bold tracking-wider transition-colors flex items-center gap-2",
-                    isActive ? "bg-[#FFF9E6] text-[#FFB800]" : "text-[#002855] hover:bg-[var(--surface)]"
+                    isActive ? "bg-[#FFF9E6] text-[#FFB800]" : "text-[#002855] hover:bg-gray-50"
                   )}
                 >
                   <span>{link.name}</span>
@@ -192,13 +192,13 @@ export function Navbar() {
                 </Link>
               )
             })}
-            <div className="h-px bg-[var(--border)] my-3 mx-4" />
+            <div className="h-px bg-gray-100 my-3 mx-4" />
             <button
               onClick={() => {
                 setIsMobileMenuOpen(false)
                 setIsAuthModalOpen(true)
               }}
-              className="w-full text-left py-3 px-4 rounded-md text-base font-bold tracking-wider text-[#002855] hover:bg-[var(--surface)] flex items-center gap-2"
+              className="w-full text-left py-3 px-4 rounded-md text-base font-bold tracking-wider text-[#002855] hover:bg-gray-50 flex items-center gap-2"
             >
               <User size={20} />
               Login / Sign Up
