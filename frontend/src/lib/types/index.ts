@@ -13,3 +13,20 @@ export interface Course {
   features: string[];
   level?: string;
 }
+
+export interface NVQCategory {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  image: string;
+  tag: string;
+}
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  image: string;
+}
+

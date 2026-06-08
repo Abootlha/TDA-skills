@@ -17,10 +17,10 @@ export default function QualificationCategories() {
 
         <div className="grid grid-cols-2 gap-6">
           {nvqCategories.map((category) => (
-            <Card key={category.id} hover className="overflow-hidden">
+            <Card key={category.id} className="overflow-hidden hover:shadow-md transition-shadow">
               <div className="relative h-64 bg-gradient-to-br from-primary to-primary-dark">
                 <div className="absolute top-6 left-6">
-                  <Badge variant="secondary">{category.tag}</Badge>
+                  <Badge variant="default">{category.tag}</Badge>
                 </div>
               </div>
               <div className="p-8 flex flex-col gap-4">
