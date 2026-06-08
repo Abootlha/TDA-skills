@@ -1,0 +1,14 @@
+<h2>Admin Alert</h2>
+<div class="highlight" style="border-left: 4px solid #dc2626;">
+  <strong>{{.AlertTitle}}</strong><br>
+  {{.AlertMessage}}
+</div>
+<p><strong>Details:</strong></p>
+<ul>
+  {{.AlertDetails}}
+</ul>
+<p><strong>Time:</strong> {{.AlertTime}}</p>
+<p><strong>IP:</strong> {{.IPAddress}}</p>
+<div style="text-align: center;">
+  <a href="{{.AdminURL}}" class="button">View in Admin Panel</a>
+</div>

@@ -1,0 +1,20 @@
+<h2>Course Reminder</h2>
+<p>Hi {{.FirstName}},</p>
+<p>This is a reminder that your course is starting tomorrow!</p>
+<div class="highlight">
+  <strong>Course:</strong> {{.CourseName}}<br>
+  <strong>Date:</strong> {{.CourseDate}}<br>
+  <strong>Time:</strong> {{.CourseTime}}<br>
+  <strong>Location:</strong> {{.Location}}<br>
+  <strong>Address:</strong> {{.Address}}
+</div>
+<p><strong>What to bring:</strong></p>
+<ul>
+  <li>Valid photo ID (passport or driving licence)</li>
+  <li>Your booking confirmation (printed or on phone)</li>
+  <li>CITB HS&E Test certificate (if applicable)</li>
+</ul>
+<p>If you need to reschedule, please contact us as soon as possible.</p>
+<div style="text-align: center;">
+  <a href="{{.BookingURL}}" class="button">View Booking Details</a>
+</div>

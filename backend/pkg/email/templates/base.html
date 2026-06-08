@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{.Subject}}</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
+    .header { background: #1a56db; color: white; padding: 24px; text-align: center; }
+    .header h1 { margin: 0; font-size: 24px; }
+    .content { padding: 32px 24px; color: #333333; line-height: 1.6; }
+    .content h2 { color: #1a56db; margin-top: 0; }
+    .content .highlight { background: #f0f4ff; padding: 16px; border-radius: 8px; margin: 16px 0; }
+    .content .button { display: inline-block; background: #1a56db; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 16px 0; }
+    .content .code { font-family: monospace; font-size: 18px; background: #f4f4f4; padding: 8px 16px; border-radius: 4px; letter-spacing: 2px; }
+    .footer { background: #f4f4f4; padding: 16px 24px; text-align: center; font-size: 12px; color: #666666; }
+    .footer a { color: #1a56db; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>{{.SiteName}}</h1>
+    </div>
+    <div class="content">
+      {{.Body}}
+    </div>
+    <div class="footer">
+      <p>{{.SiteName}} &mdash; Get Qualified. Get Certified. Get On Site.</p>
+      <p>123 Training Centre, London SW1A 1AA | +44 800 123 4567</p>
+      <p><a href="{{.SiteURL}}">Visit Website</a> | <a href="{{.UnsubscribeURL}}">Unsubscribe</a></p>
+    </div>
+  </div>
+</body>
+</html>

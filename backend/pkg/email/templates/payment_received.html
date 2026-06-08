@@ -1,0 +1,13 @@
+<h2>Payment Confirmation</h2>
+<p>Hi {{.FirstName}},</p>
+<p>We've received your payment of <strong>{{.Amount}}</strong>.</p>
+<div class="highlight">
+  <strong>Payment Reference:</strong> {{.PaymentNumber}}<br>
+  <strong>Booking Reference:</strong> {{.BookingNumber}}<br>
+  <strong>Date:</strong> {{.PaymentDate}}<br>
+  <strong>Payment Method:</strong> {{.CardBrand}} ending {{.CardLast4}}
+</div>
+<p>Your receipt is available to download:</p>
+<div style="text-align: center;">
+  <a href="{{.ReceiptURL}}" class="button">Download Receipt</a>
+</div>
