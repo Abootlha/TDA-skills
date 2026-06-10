@@ -1,54 +1,66 @@
-import { CheckCircle2, ArrowRight, Clock, ShieldCheck, HeadphonesIcon, Star } from "lucide-react";
-const workerImg = "/d53a8bff042262f043645e8bb9cfb764b56d17dd.png";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+import { CheckCircle2, ArrowRight, Clock, ShieldCheck, HeadphonesIcon, Users, Star } from "lucide-react";
+import Image from "next/image";
 
 export default function HeroSection() {
   return (
-    <section className="bg-[#0c213d] text-white relative overflow-hidden">
-      <div className="max-w-[1440px] mx-auto px-6 py-20 lg:py-32 grid lg:grid-cols-2 gap-12 items-center">
+    <section className="relative w-full bg-[#001430] text-white overflow-hidden min-h-[650px] lg:min-h-[calc(100vh-80px)] flex items-center pt-8 pb-16 lg:pb-24">
+      {/* Background Image - Crane / Site */}
+      <div
+        className="absolute inset-0 z-0 opacity-40 lg:opacity-80"
+        style={{
+          backgroundImage: "url('/home-section-bg.png')",
+          backgroundPosition: "right center",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat"
+        }}
+      >
+        {/* Gradient overlay to blend left side to solid color */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#001430] via-[#001430]/90 to-transparent"></div>
+        {/* Gradient fade from bottom to blend harsh lines if any */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#001430] via-[#001430]/20 to-transparent opacity-90"></div>
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid lg:grid-cols-2 items-center min-h-[600px]">
         {/* Left Content */}
-        <div className="flex flex-col items-start z-10">
-          <div className="bg-[#1e3656] text-white text-xs font-bold px-4 py-2 rounded-full flex items-center gap-2 mb-8">
-            <CheckCircle2 className="w-4 h-4 text-yellow-400 fill-yellow-400 text-[#1e3656]" />
-            ACCREDITED TRAINING PROVIDER
-          </div>
-          
-          <h1 className="text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight mb-6">
+        <div className="flex flex-col items-start z-20 py-12 lg:py-24 max-w-[650px] w-full">
+
+          <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-extrabold leading-[1.2] lg:leading-[1.15] mb-4 lg:mb-6">
             Construction Training<br />
-            That Gets You <span className="text-yellow-400">Site Ready</span>
+            That Gets You<br />
+            <span className="text-[#FFB800]">Site Ready</span>
           </h1>
-          
-          <p className="text-gray-300 text-lg mb-10 max-w-xl leading-relaxed">
+
+          <p className="text-gray-300 text-sm sm:text-base mb-8 lg:mb-10 max-w-lg leading-relaxed pr-4 sm:pr-0">
             Industry-recognised training and qualifications to help you build a successful career in the UK construction industry. From CITB tests to NVQ Level 2-7.
           </p>
-          
-          <div className="flex flex-wrap items-center gap-4 mb-12">
-            <button className="bg-yellow-400 text-[#0c213d] font-bold px-8 py-4 rounded flex items-center gap-2 hover:bg-yellow-500 transition-colors">
+
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-12 lg:mb-16 w-full sm:w-auto pr-4 sm:pr-0">
+            <button className="w-full sm:w-auto bg-[#FFB800] text-[#001430] font-bold px-6 sm:px-8 py-3.5 rounded-lg flex justify-center items-center gap-2 hover:bg-[#e5a600] transition-colors text-sm">
               Find Your Course
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4" />
             </button>
-            <button className="bg-transparent border border-gray-500 text-white font-bold px-8 py-4 rounded hover:bg-white/10 transition-colors">
+            <button className="w-full sm:w-auto bg-transparent border border-white/20 text-white font-bold px-6 sm:px-8 py-3.5 rounded-lg flex justify-center items-center hover:bg-white/5 transition-colors text-sm">
               Contact Us
             </button>
           </div>
-          
-          <div className="flex items-center gap-8 text-sm text-gray-300">
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-10 text-xs text-gray-300 w-full sm:w-auto">
             <div className="flex items-center gap-3">
-              <Clock className="w-6 h-6 text-yellow-400" />
+              <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-[#FFB800]" />
               <div className="leading-tight">
                 <span className="font-bold text-white block">Fast Track</span>
                 Certification
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <ShieldCheck className="w-6 h-6 text-yellow-400" />
+              <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 text-[#FFB800]" />
               <div className="leading-tight">
                 <span className="font-bold text-white block">Industry</span>
                 Recognised
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <HeadphonesIcon className="w-6 h-6 text-yellow-400" />
+              <HeadphonesIcon className="w-5 h-5 sm:w-6 sm:h-6 text-[#FFB800]" />
               <div className="leading-tight">
                 <span className="font-bold text-white block">Expert Support</span>
                 Every Step
@@ -57,49 +69,37 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Right Content - Image */}
-        <div className="relative z-10 w-full flex justify-end">
-          {/* Decorative glow effects */}
-          <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
-            <div className="absolute bg-yellow-400 blur-[80px] rounded-full w-[300px] h-[300px] top-0 right-0 mix-blend-screen translate-x-1/4 -translate-y-1/4"></div>
-            <div className="absolute bg-blue-400 blur-[80px] rounded-full w-[300px] h-[300px] bottom-0 left-0 mix-blend-screen -translate-x-1/4 translate-y-1/4"></div>
+        {/* Right Content - Hero Person Image */}
+        <div className="hidden lg:block absolute top-[2%] xl:top-[-5%] right-[-25%] xl:right-[-5%] z-10 w-[120%] xl:w-[95%] 2xl:w-[85%] pointer-events-none">
+          <Image
+            src="/Hero-section-person-image.png"
+            alt="Construction Worker"
+            width={1400}
+            height={1400}
+            className="w-full h-auto object-contain object-top object-right"
+            priority
+          />
+        </div>
+        
+        {/* Floating Trust Badge */}
+        <div className="hidden lg:flex absolute top-[50%] xl:top-[55%] right-[-2%] xl:right-[0%] z-30 bg-[#001430] border border-white/10 rounded-2xl p-6 flex-col items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.5)] w-[250px]">
+          <Users className="w-12 h-12 text-[#FFB800] mb-4" strokeWidth={1.5} />
+          <h4 className="text-white font-bold text-[15px] leading-relaxed mb-4">
+            Helping Thousands<br />
+            Get Qualified &<br />
+            Site Ready
+          </h4>
+          <div className="flex gap-1 mb-3">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <Star key={i} className="w-5 h-5 fill-[#FFB800] text-[#FFB800]" />
+            ))}
           </div>
-          
-          <div className="relative z-10 w-full max-w-[600px]">
-            {/* Main Image */}
-            <div className="w-full aspect-square rounded-2xl overflow-hidden relative border-4 border-[#1e3656]">
-              <ImageWithFallback 
-                src={workerImg} 
-                alt="Construction worker wearing a hard hat and safety vest" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            {/* Review Card */}
-            <div className="absolute -bottom-10 left-[-20px] bg-[#122b4a] border border-[#1e3656] rounded-xl p-5 shadow-2xl max-w-[300px]">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="flex -space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-gray-300 border-2 border-[#122b4a]"></div>
-                  <div className="w-8 h-8 rounded-full bg-gray-400 border-2 border-[#122b4a]"></div>
-                  <div className="w-8 h-8 rounded-full bg-gray-500 border-2 border-[#122b4a]"></div>
-                </div>
-                <div className="text-sm font-bold text-white">Join 50k+ Workers</div>
-              </div>
-              <div className="flex gap-1 mb-2">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                ))}
-              </div>
-              <p className="text-xs text-gray-300 leading-relaxed italic">
-                "Got my NVQ Level 2 in record time. Highly professional team!"
-              </p>
-            </div>
-          </div>
+          <p className="text-gray-300 text-xs leading-relaxed">
+            Trusted by learners<br />
+            across the UK
+          </p>
         </div>
       </div>
-      
-      {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-[#0a182b] -z-10 skew-x-12 translate-x-32 opacity-50"></div>
     </section>
   );
 }
