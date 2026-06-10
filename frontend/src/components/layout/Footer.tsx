@@ -101,7 +101,7 @@ export function Footer() {
               <div className="flex gap-3 items-start">
                 <MapPin className="text-[#FFB800] shrink-0 mt-0.5" size={18} />
                 <span className="text-gray-300 leading-relaxed">
-                  Unit 7, Greenway Business Centre, Hounslow, TW4 6DH, UK
+                  128 City Road, London, United Kingdom, EC1V 2NX
                 </span>
               </div>
             </div>
