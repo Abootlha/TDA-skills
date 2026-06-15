@@ -2,6 +2,7 @@ package admin
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -62,6 +63,7 @@ func (h *AdminAuthHandler) Login(c *gin.Context) {
 				"error":   gin.H{"code": "ACCOUNT_LOCKED", "message": "Account locked. Try again after 30 minutes"},
 			})
 		default:
+			log.Printf("AdminLogin error: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"success": false,
 				"error":   gin.H{"code": "INTERNAL_ERROR", "message": "Login failed"},
@@ -89,6 +91,15 @@ func (h *AdminAuthHandler) Login(c *gin.Context) {
 		"IPAddress":  c.ClientIP(),
 		"DeviceInfo": c.GetHeader("User-Agent"),
 	})
+
+	// Set session cookies
+	c.SetCookie("tda_session", "true", int(7*24*time.Hour.Seconds()), "/", "", false, false)
+	c.SetCookie("admin_access_token", resp.AccessToken, int(7*24*time.Hour.Seconds()), "/", "", false, true)
+
+	if resp.RefreshToken != "" {
+		// Set HttpOnly cookie for refresh token
+		c.SetCookie("admin_refresh_token", resp.RefreshToken, int(7*24*time.Hour.Seconds()), "/", "", false, true)
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
@@ -199,7 +210,10 @@ func (h *AdminAuthHandler) Logout(c *gin.Context) {
 		h.authService.Logout(c.Request.Context(), adminIDStr, token)
 	}
 
-	c.SetCookie("admin_refresh_token", "", -1, "/", "", true, true)
+	c.SetCookie("admin_access_token", "", -1, "/", "", false, true)
+	c.SetCookie("admin_refresh_token", "", -1, "/", "", false, true)
+	c.SetCookie("tda_session", "", -1, "/", "", false, false)
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data":    gin.H{"message": "Logged out"},

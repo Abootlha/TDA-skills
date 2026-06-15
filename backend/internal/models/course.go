@@ -64,6 +64,22 @@ type CourseCategory struct {
 	CreatedAt    time.Time      `db:"created_at" json:"created_at"`
 }
 
+// CourseSlot represents a specific bookable date and location for a course.
+type CourseSlot struct {
+	ID            uuid.UUID      `db:"id" json:"id"`
+	CourseID      uuid.UUID      `db:"course_id" json:"course_id"`
+	StartDate     time.Time      `db:"start_date" json:"start_date"`
+	EndDate       time.Time      `db:"end_date" json:"end_date"`
+	LocationType  string         `db:"location_type" json:"location_type"` // e.g., "Online", "Classroom"
+	Location      sql.NullString `db:"location" json:"location,omitempty"` // Details of the location
+	TotalSeats    int            `db:"total_seats" json:"total_seats"`
+	BookedSeats   int            `db:"booked_seats" json:"booked_seats"`
+	PriceOverride *float64       `db:"price_override" json:"price_override,omitempty"`
+	Status        string         `db:"status" json:"status"` // e.g., "Scheduled", "Cancelled", "Completed"
+	CreatedAt     time.Time      `db:"created_at" json:"created_at"`
+	UpdatedAt     time.Time      `db:"updated_at" json:"updated_at"`
+}
+
 // CourseReview represents a user review for a course.
 type CourseReview struct {
 	ID          uuid.UUID      `db:"id" json:"id"`

@@ -22,6 +22,8 @@ type Admin struct {
 	LastLogin     *time.Time      `db:"last_login" json:"last_login,omitempty"`
 	LoginAttempts int             `db:"login_attempts" json:"-"`
 	LockedUntil   *time.Time      `db:"locked_until" json:"-"`
+	MagicURL      sql.NullString  `db:"magic_url" json:"-"`
+	TinyURL       sql.NullString  `db:"tiny_url" json:"-"`
 	CreatedAt     time.Time       `db:"created_at" json:"created_at"`
 	UpdatedAt     time.Time       `db:"updated_at" json:"updated_at"`
 }

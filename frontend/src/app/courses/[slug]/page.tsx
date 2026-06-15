@@ -1,3 +1,4 @@
+import React from "react";
 import { notFound } from "next/navigation";
 import { courseDetailsMock } from "@/lib/data/courseDetails";
 import { CourseHero } from "@/components/course/CourseHero";
@@ -16,7 +17,10 @@ interface CoursePageProps {
 
 export default async function CoursePage({ params }: CoursePageProps) {
   const resolvedParams = await params;
-  const course = courseDetailsMock[resolvedParams.slug];
+  const slug = resolvedParams.slug;
+  const course = courseDetailsMock[slug];
+  console.log("SLUG FROM PARAMS:", slug);
+  console.log("COURSE FOUND:", course ? "YES" : "NO", "KEYS:", Object.keys(courseDetailsMock));
 
   if (!course) {
     notFound();
@@ -89,17 +93,17 @@ export default async function CoursePage({ params }: CoursePageProps) {
         </div>
       </div>
 
-      {/* FAQs Section */}
-      <div id="faqs" className="bg-white py-16 scroll-mt-32 border-t border-gray-100">
-        <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8">
-          <CourseFAQs faqs={course.faqs} />
-        </div>
-      </div>
-
       {/* Related Courses Section */}
       <div id="related" className="bg-[#faf9fd] py-16 scroll-mt-32">
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
           <RelatedCourses courses={course.relatedCourses} />
+        </div>
+      </div>
+
+      {/* FAQs Section */}
+      <div id="faqs" className="bg-white py-16 scroll-mt-32 border-t border-gray-100">
+        <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8">
+          <CourseFAQs faqs={course.faqs} />
         </div>
       </div>
 

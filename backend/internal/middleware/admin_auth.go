@@ -26,24 +26,30 @@ type AdminClaims struct {
 func AdminAuthMiddleware(cfg *config.Config, rdb *database.RedisClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"success": false,
-				"error":   gin.H{"code": "UNAUTHORIZED", "message": "Authorization header required"},
-			})
-			return
-		}
+		var tokenString string
 
-		parts := strings.SplitN(authHeader, " ", 2)
-		if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"success": false,
-				"error":   gin.H{"code": "UNAUTHORIZED", "message": "Invalid authorization header format"},
-			})
-			return
+		if authHeader != "" {
+			parts := strings.SplitN(authHeader, " ", 2)
+			if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+					"success": false,
+					"error":   gin.H{"code": "UNAUTHORIZED", "message": "Invalid authorization header format"},
+				})
+				return
+			}
+			tokenString = parts[1]
+		} else {
+			// Try to get token from cookie
+			cookie, err := c.Cookie("admin_access_token")
+			if err != nil || cookie == "" {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+					"success": false,
+					"error":   gin.H{"code": "UNAUTHORIZED", "message": "Authorization required"},
+				})
+				return
+			}
+			tokenString = cookie
 		}
-
-		tokenString := parts[1]
 
 		// Check token blacklist
 		if exists, _ := rdb.Exists(c.Request.Context(), "blacklist:"+tokenString); exists {

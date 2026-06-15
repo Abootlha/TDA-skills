@@ -41,6 +41,7 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 	bookingRepo := repository.NewBookingRepository(pg.DB)
 	paymentRepo := repository.NewPaymentRepository(pg.DB)
 	notifRepo := repository.NewNotificationRepository(pg.DB)
+	enquiryRepo := repository.NewEnquiryRepository(pg.DB)
 
 	// --- Services ---
 	cryptoService := services.NewCryptoService(pg.DB)
@@ -50,6 +51,7 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 	bookingService := services.NewBookingService(bookingRepo, courseRepo)
 	paymentService := services.NewPaymentService(paymentRepo, bookingRepo, cfg)
 	notifService := services.NewNotificationService(notifRepo)
+	enquiryService := services.NewEnquiryService(enquiryRepo)
 
 	// --- Handlers ---
 	authHandler := handlers.NewAuthHandler(authService, cryptoService, emailService)
@@ -64,6 +66,7 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 	uploadHandler := handlers.NewUploadHandler()
 	wsHandler := handlers.NewWebSocketHandler(hub, cfg)
 	checkoutHandler := handlers.NewCheckoutHandler(rdb)
+	enquiryHandler := handlers.NewEnquiryHandler(enquiryService)
 
 	// Admin handlers
 	adminAuthHandler := adminHandlers.NewAdminAuthHandler(adminRepo, authService, cryptoService, emailService)
@@ -74,6 +77,7 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 	adminPaymentHandler := adminHandlers.NewAdminPaymentHandler(paymentService)
 	settingsHandler := adminHandlers.NewSettingsHandler(adminRepo)
 	auditHandler := adminHandlers.NewAuditHandler(pg.DB)
+	adminEnquiryHandler := adminHandlers.NewAdminEnquiryHandler(enquiryService)
 
 	// --- Health check ---
 	r.GET("/health", func(c *gin.Context) {
@@ -162,6 +166,13 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 	{
 		nvqs.GET("", nvqHandler.List)
 		nvqs.GET("/:level", nvqHandler.ListByLevel)
+	}
+
+	// --- Enquiries (public) ---
+	enquiries := v1.Group("/enquiries")
+	enquiries.Use(middleware.RateLimiter(rdb.Client, rateLimits["enquiries"])) // 120 req/min
+	{
+		enquiries.POST("", enquiryHandler.Create)
 	}
 
 	// --- CSCS Cards (public) ---
@@ -284,6 +295,12 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 		adminProtected.GET("/settings", settingsHandler.List)
 		adminProtected.GET("/settings/:key", settingsHandler.GetByKey)
 		adminProtected.PUT("/settings/:key", settingsHandler.Update)
+
+		// Enquiries
+		adminProtected.GET("/enquiries", adminEnquiryHandler.List)
+		adminProtected.GET("/enquiries/:id", adminEnquiryHandler.GetByID)
+		adminProtected.PUT("/enquiries/:id/status", adminEnquiryHandler.UpdateStatus)
+		adminProtected.DELETE("/enquiries/:id", adminEnquiryHandler.Delete)
 	}
 
 	return r

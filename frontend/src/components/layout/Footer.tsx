@@ -27,7 +27,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="bg-[#003366] text-white pt-16 pb-8 border-t border-white/10">
+    <footer className="bg-white text-[#001430] pt-16 pb-8 border-t border-gray-100">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
 
@@ -36,19 +36,19 @@ export function Footer() {
             <Link href="/" className="inline-block">
               <img src="/TDA-logo.webp" alt="TDA Skills" className="h-[80px] w-auto object-contain scale-125 md:scale-[1.6] origin-left" />
             </Link>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <p className="text-gray-600 text-sm leading-relaxed">
               TDA Skills provides high-quality construction training and workforce
               qualifications to help individuals build successful careers in the UK
               construction industry.
             </p>
             <div className="flex items-center gap-3">
-              <a href="#" className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#FFB800] hover:border-[#FFB800] hover:text-[#001430] text-gray-300 transition-colors shadow-sm">
+              <a href="#" className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center hover:bg-[#FFB800] hover:border-[#FFB800] hover:text-[#001430] text-gray-500 transition-colors shadow-sm">
                 <Globe size={18} />
               </a>
-              <a href="#" className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#FFB800] hover:border-[#FFB800] hover:text-[#001430] text-gray-300 transition-colors shadow-sm">
+              <a href="#" className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center hover:bg-[#FFB800] hover:border-[#FFB800] hover:text-[#001430] text-gray-500 transition-colors shadow-sm">
                 <MessageSquare size={18} />
               </a>
-              <a href="#" className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#FFB800] hover:border-[#FFB800] hover:text-[#001430] text-gray-300 transition-colors shadow-sm">
+              <a href="#" className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center hover:bg-[#FFB800] hover:border-[#FFB800] hover:text-[#001430] text-gray-500 transition-colors shadow-sm">
                 <Users size={18} />
               </a>
             </div>
@@ -56,10 +56,10 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-bold text-xs tracking-wider text-gray-300 uppercase pb-2 border-b border-white/10 mb-6">
+            <h4 className="font-bold text-xs tracking-wider text-gray-900 uppercase pb-2 border-b border-gray-100 mb-6">
               QUICK LINKS
             </h4>
-            <ul className="flex flex-col gap-3 text-sm text-gray-300">
+            <ul className="flex flex-col gap-3 text-sm text-gray-600">
               {[
                 { name: "Courses", href: "/courses" },
                 { name: "NVQ & Qualifications", href: "/nvqs" },
@@ -79,28 +79,28 @@ export function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="font-bold text-xs tracking-wider text-gray-300 uppercase pb-2 border-b border-white/10 mb-6">
+            <h4 className="font-bold text-xs tracking-wider text-gray-900 uppercase pb-2 border-b border-gray-100 mb-6">
               CONTACT INFO
             </h4>
-            <div className="flex flex-col gap-6 text-sm text-gray-300">
+            <div className="flex flex-col gap-6 text-sm text-gray-600">
               <div className="flex gap-3 items-start">
                 <Phone className="text-[#FFB800] shrink-0 mt-0.5" size={18} />
                 <div>
-                  <a href="tel:02045710045" className="font-bold text-base text-white hover:text-[#FFB800] block transition-colors">
+                  <a href="tel:02045710045" className="font-bold text-base text-[#001430] hover:text-[#FFB800] block transition-colors">
                     020 4571 0045
                   </a>
-                  <span className="block text-xs text-gray-400 mt-0.5">Mon-Fri 8am - 6pm</span>
+                  <span className="block text-xs text-gray-500 mt-0.5">Mon-Fri 8am - 6pm</span>
                 </div>
               </div>
               <div className="flex gap-3 items-center">
                 <Mail className="text-[#FFB800] shrink-0" size={18} />
-                <a href="mailto:info@tdaskills.co.uk" className="text-white font-medium hover:text-[#FFB800] transition-colors">
+                <a href="mailto:info@tdaskills.co.uk" className="text-[#001430] font-medium hover:text-[#FFB800] transition-colors">
                   info@tdaskills.co.uk
                 </a>
               </div>
               <div className="flex gap-3 items-start">
                 <MapPin className="text-[#FFB800] shrink-0 mt-0.5" size={18} />
-                <span className="text-gray-300 leading-relaxed">
+                <span className="text-gray-600 leading-relaxed">
                   128 City Road, London, United Kingdom, EC1V 2NX
                 </span>
               </div>
@@ -109,35 +109,35 @@ export function Footer() {
 
           {/* Business Hours */}
           <div>
-            <h4 className="font-bold text-xs tracking-wider text-gray-300 uppercase pb-2 border-b border-white/10 mb-6">
+            <h4 className="font-bold text-xs tracking-wider text-gray-900 uppercase pb-2 border-b border-gray-100 mb-6">
               BUSINESS HOURS
             </h4>
-            <div className="border border-white/10 rounded-2xl p-6 bg-white/5 flex flex-col gap-4 text-sm shadow-sm">
-              <div className="flex justify-between items-center text-gray-300">
+            <div className="border border-gray-100 rounded-2xl p-6 bg-gray-50 flex flex-col gap-4 text-sm shadow-sm">
+              <div className="flex justify-between items-center text-gray-600">
                 <span>Mon - Fri</span>
-                <span className="font-bold text-white">08:00 - 18:00</span>
+                <span className="font-bold text-[#001430]">08:00 - 18:00</span>
               </div>
-              <div className="flex justify-between items-center text-gray-300">
+              <div className="flex justify-between items-center text-gray-600">
                 <span>Saturday</span>
-                <span className="font-bold text-white">09:00 - 14:00</span>
+                <span className="font-bold text-[#001430]">09:00 - 14:00</span>
               </div>
-              <div className="h-px bg-white/10 my-1" />
+              <div className="h-px bg-gray-200 my-1" />
               <div className="flex justify-between items-center">
-                <span className="text-gray-300">Sunday</span>
+                <span className="text-gray-600">Sunday</span>
                 <span className="font-bold text-[#FFB800]">CLOSED</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-gray-400 text-sm">
+        <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-gray-500 text-sm">
             &copy; 2025 TDA Skills Limited. All Rights Reserved.
           </p>
-          <div className="flex items-center gap-6 text-sm text-gray-400">
-            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">Terms & Conditions</Link>
-            <Link href="/cookies" className="hover:text-white transition-colors">Cookie Policy</Link>
+          <div className="flex items-center gap-6 text-sm text-gray-500">
+            <Link href="/privacy" className="hover:text-[#001430] transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-[#001430] transition-colors">Terms & Conditions</Link>
+            <Link href="/cookies" className="hover:text-[#001430] transition-colors">Cookie Policy</Link>
           </div>
         </div>
       </div>

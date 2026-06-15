@@ -11,6 +11,8 @@ export interface CartItem {
 
 interface CartStore {
   items: CartItem[];
+  isSidebarOpen: boolean;
+  setSidebarOpen: (isOpen: boolean) => void;
   addItem: (item: CartItem) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
@@ -39,9 +41,12 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      isSidebarOpen: false,
+      setSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
       addItem: (item) => {
         const state = get();
         if (state.items.find(i => i.id === item.id)) {
+          set({ isSidebarOpen: true });
           return;
         }
         if (state.items.length >= 4) {
@@ -49,7 +54,7 @@ export const useCartStore = create<CartStore>()(
           return;
         }
         const newItems = [...state.items, item];
-        set({ items: newItems });
+        set({ items: newItems, isSidebarOpen: true });
         syncWithRedis(newItems);
       },
       removeItem: (id) => {

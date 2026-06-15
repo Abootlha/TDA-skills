@@ -25,7 +25,6 @@ export function CourseDates({ course }: { course: CourseDetail }) {
                 price: course.price,
                 type: "course"
             });
-            router.push("/checkout");
         } catch (error) {
             addToast({
                 type: "error",

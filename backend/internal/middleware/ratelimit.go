@@ -239,5 +239,10 @@ func DefaultRateLimits() map[string]RateLimitConfig {
 			Window:      1 * time.Minute,
 			KeyPrefix:   "general",
 		},
+		"enquiries": {
+			MaxRequests: 120,
+			Window:      1 * time.Minute,
+			KeyPrefix:   "enquiries",
+		},
 	}
 }

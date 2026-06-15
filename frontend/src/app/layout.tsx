@@ -4,6 +4,8 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ToastContainer } from "@/components/ui/Toast";
+import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
+import { EnquireNowButton } from "@/components/ui/EnquireNowButton";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,6 +31,8 @@ export default function RootLayout({
         <main className="flex-grow">
           {children}
         </main>
+        <EnquireNowButton />
+        <WhatsAppButton />
         <Footer />
         <ToastContainer />
       </body>

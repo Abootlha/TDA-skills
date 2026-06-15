@@ -1,0 +1,3 @@
+ALTER TABLE admins 
+DROP COLUMN IF EXISTS magic_url,
+DROP COLUMN IF EXISTS tiny_url;

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation"
 import { Menu, X, ShoppingCart, Search, User, Home, ChevronDown, ChevronRight, LogIn, GraduationCap } from "lucide-react"
 import { cn } from "@/lib/utils/cn"
 import { useCartStore } from "@/lib/store/cartStore"
+import { CartSidebar } from "@/components/cart/CartSidebar"
 
 const NAV_LINKS = [
   { 
@@ -109,11 +110,7 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
   const [isScrolled, setIsScrolled] = React.useState(false)
   const pathname = usePathname()
-  const cartItems = useCartStore((state) => state.items)
-
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) {
-    return null;
-  }
+  const { items: cartItems, setSidebarOpen } = useCartStore()
 
   // Close mobile menu on route change
   React.useEffect(() => {
@@ -133,12 +130,16 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <header className={cn(
-      "sticky top-0 z-40 w-full transition-all duration-300 ease-in-out bg-[#003366] shadow-sm",
+      "sticky top-0 z-40 w-full transition-all duration-300 ease-in-out bg-white shadow-sm",
       isScrolled
         ? "h-20 rounded-b-[2rem] shadow-md border-b-0"
-        : "h-24 border-b border-white/10"
+        : "h-24 border-b border-gray-100"
     )}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
         {/* Logo */}
@@ -165,7 +166,7 @@ export function Navbar() {
                     "text-[12px] lg:text-[13px] 2xl:text-[14px] font-semibold transition-all flex items-center gap-1 py-2",
                     isActive
                       ? "text-[#FFB800]"
-                      : "text-white hover:text-[#FFB800]"
+                      : "text-[#001430] hover:text-[#FFB800]"
                   )}
                 >
                   <span className="whitespace-nowrap">{link.name}</span>
@@ -216,11 +217,11 @@ export function Navbar() {
 
         {/* Actions */}
         <div className="hidden lg:flex items-center gap-3 lg:gap-4 2xl:gap-6 shrink-0">
-          <button className="text-white hover:text-[#FFB800] transition-colors p-2 cursor-pointer">
+          <button className="text-[#001430] hover:text-[#FFB800] transition-colors p-2 cursor-pointer">
             <Search size={20} className="lg:w-[22px] lg:h-[22px]" />
           </button>
 
-          <Link href="/checkout" className="relative text-white hover:text-[#FFB800] transition-colors p-2">
+          <Link href="/checkout" className="relative text-[#001430] hover:text-[#FFB800] transition-colors p-2">
             <ShoppingCart size={20} className="lg:w-[22px] lg:h-[22px]" />
             {cartItems.length > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#FFB800] text-black font-bold text-xs rounded-full flex items-center justify-center">
@@ -234,7 +235,7 @@ export function Navbar() {
 
         {/* Mobile Toggle */}
         <div className="flex items-center gap-4 lg:hidden">
-          <Link href="/checkout" className="relative text-white p-2">
+          <Link href="/checkout" className="relative text-[#001430] p-2">
             <ShoppingCart size={22} />
             {cartItems.length > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#FFB800] text-black font-bold text-xs rounded-full flex items-center justify-center">
@@ -245,7 +246,7 @@ export function Navbar() {
 
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="text-white hover:text-[#FFB800] transition-colors p-2 cursor-pointer"
+            className="text-[#001430] hover:text-[#FFB800] transition-colors p-2 cursor-pointer"
           >
             {isMobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
           </button>
@@ -255,7 +256,7 @@ export function Navbar() {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className={cn(
-          "lg:hidden absolute left-0 w-full bg-white border-b border-[var(--border)] shadow-lg animate-in slide-in-from-top-2",
+          "lg:hidden absolute left-0 w-full bg-white border-b border-gray-100 shadow-lg animate-in slide-in-from-top-2",
           isScrolled ? "top-20 rounded-b-[2rem]" : "top-24"
         )}>
           <nav className="flex flex-col p-4 gap-1">
@@ -279,6 +280,7 @@ export function Navbar() {
           </nav>
         </div>
       )}
+      <CartSidebar />
     </header>
   )
 }
