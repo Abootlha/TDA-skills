@@ -7,20 +7,22 @@ export interface CartItem {
   title: string;
   price: number;
   type?: 'test' | 'course' | 'nvq';
+  quantity?: number;
 }
 
 interface CartStore {
   items: CartItem[];
   isSidebarOpen: boolean;
+  checkoutFormData: any;
   setSidebarOpen: (isOpen: boolean) => void;
   addItem: (item: CartItem) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
   setItems: (items: CartItem[]) => void;
+  setCheckoutFormData: (data: any) => void;
 }
 
-const syncWithRedis = (items: CartItem[]) => {
-  // Safe check for browser environment
+const syncWithRedis = (items: CartItem[], formData?: any) => {
   if (typeof window === 'undefined') return;
 
   let sessionId = localStorage.getItem("tda_checkout_session");
@@ -29,7 +31,12 @@ const syncWithRedis = (items: CartItem[]) => {
     localStorage.setItem("tda_checkout_session", sessionId);
   }
 
-  axios.post("http://localhost:8080/api/v1/checkout/draft", { cartItems: items }, {
+  const payload: any = { cartItems: items };
+  if (formData) {
+    payload.formData = formData;
+  }
+
+  axios.post("http://localhost:8080/api/v1/checkout/draft", payload, {
     headers: {
       "Content-Type": "application/json",
       "X-Session-ID": sessionId
@@ -42,6 +49,7 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
       isSidebarOpen: false,
+      checkoutFormData: null,
       setSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
       addItem: (item) => {
         const state = get();
@@ -55,20 +63,26 @@ export const useCartStore = create<CartStore>()(
         }
         const newItems = [...state.items, item];
         set({ items: newItems, isSidebarOpen: true });
-        syncWithRedis(newItems);
+        syncWithRedis(newItems, state.checkoutFormData);
       },
       removeItem: (id) => {
         const state = get();
         const newItems = state.items.filter(i => i.id !== id);
         set({ items: newItems });
-        syncWithRedis(newItems);
+        syncWithRedis(newItems, state.checkoutFormData);
       },
       clearCart: () => {
+        const state = get();
         set({ items: [] });
-        syncWithRedis([]);
+        syncWithRedis([], state.checkoutFormData);
       },
       setItems: (items) => {
         set({ items });
+      },
+      setCheckoutFormData: (data) => {
+        const state = get();
+        set({ checkoutFormData: data });
+        syncWithRedis(state.items, data);
       }
     }),
     {

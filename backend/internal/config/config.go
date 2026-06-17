@@ -14,6 +14,7 @@ type Config struct {
 	Redis      RedisConfig
 	JWT        JWTConfig
 	Stripe     StripeConfig
+	PayPal     PayPalConfig
 	Cloudflare CloudflareConfig
 	SMTP       SMTPConfig
 	Admin      AdminConfig
@@ -71,6 +72,12 @@ type StripeConfig struct {
 	SecretKey      string
 	WebhookSecret  string
 	PublishableKey string
+}
+
+type PayPalConfig struct {
+	ClientID string
+	Secret   string
+	Env      string // sandbox or live
 }
 
 type CloudflareConfig struct {
@@ -164,6 +171,11 @@ func Load() *Config {
 			SecretKey:      getEnv("STRIPE_SECRET_KEY", ""),
 			WebhookSecret:  getEnv("STRIPE_WEBHOOK_SECRET", ""),
 			PublishableKey: getEnv("STRIPE_PUBLISHABLE_KEY", ""),
+		},
+		PayPal: PayPalConfig{
+			ClientID: getEnv("PAYPAL_CLIENT_ID", ""),
+			Secret:   getEnv("PAYPAL_SECRET", ""),
+			Env:      getEnv("PAYPAL_ENV", "sandbox"),
 		},
 		Cloudflare: CloudflareConfig{
 			AccountID:   getEnv("CLOUDFLARE_ACCOUNT_ID", ""),

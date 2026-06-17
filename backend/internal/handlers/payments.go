@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,6 +25,16 @@ func NewPaymentHandler(paymentService *services.PaymentService, cfg *config.Conf
 	return &PaymentHandler{paymentService: paymentService, cfg: cfg}
 }
 
+// GET /api/v1/payments/paypal/status
+func (h *PaymentHandler) PayPalStatus(c *gin.Context) {
+	available := h.paymentService.IsPayPalConfigured()
+	c.JSON(http.StatusOK, gin.H{
+		"available": available,
+		"message":   map[bool]string{true: "PayPal is available", false: "PayPal is not configured"}[available],
+	})
+}
+
+
 // POST /api/v1/payments/create-intent
 func (h *PaymentHandler) CreateIntent(c *gin.Context) {
 	var req models.CreatePaymentIntentRequest
@@ -33,15 +44,78 @@ func (h *PaymentHandler) CreateIntent(c *gin.Context) {
 	}
 
 	userID := middleware.GetUserID(c)
-	uid, _ := uuid.Parse(userID)
+	var uidPtr *uuid.UUID
+	if userID != "" {
+		uid, err := uuid.Parse(userID)
+		if err == nil {
+			uidPtr = &uid
+		}
+	}
 
-	resp, err := h.paymentService.CreatePaymentIntent(c.Request.Context(), uid, &req)
+	resp, err := h.paymentService.CreatePaymentIntent(c.Request.Context(), uidPtr, &req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, resp)
+}
+
+// POST /api/v1/payments/paypal/create-order
+func (h *PaymentHandler) CreatePayPalOrder(c *gin.Context) {
+	var req struct {
+		BookingID string `json:"booking_id"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	userID := middleware.GetUserID(c)
+	var uidPtr *uuid.UUID
+	if userID != "" {
+		uid, err := uuid.Parse(userID)
+		if err == nil {
+			uidPtr = &uid
+		}
+	}
+
+	resp, err := h.paymentService.CreatePayPalOrder(c.Request.Context(), uidPtr, req.BookingID)
+	if err != nil {
+		log.Printf("[ERROR] PaymentHandler.CreatePayPalOrder (booking=%s): %v", req.BookingID, err)
+		code := http.StatusInternalServerError
+		msg := "Failed to initialize PayPal order. Please try again."
+		if err.Error() == "booking not found" || err.Error() == "invalid booking ID" {
+			code = http.StatusBadRequest
+			msg = "Booking not found. Please refresh and try again."
+		} else if err.Error() == "paypal not configured" {
+			code = http.StatusServiceUnavailable
+			msg = "PayPal is currently unavailable. Please try another payment method."
+		}
+		c.JSON(code, gin.H{"error": msg})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+// POST /api/v1/payments/paypal/capture-order
+func (h *PaymentHandler) CapturePayPalOrder(c *gin.Context) {
+	var req struct {
+		OrderID string `json:"order_id"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	if err := h.paymentService.CapturePayPalOrder(c.Request.Context(), req.OrderID); err != nil {
+		log.Printf("[ERROR] PaymentHandler.CapturePayPalOrder (order=%s): %v", req.OrderID, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Payment capture failed. Please contact support."})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Payment captured successfully"})
 }
 
 // POST /api/v1/payments/confirm

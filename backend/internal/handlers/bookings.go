@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -29,6 +30,7 @@ func (h *BookingHandler) List(c *gin.Context) {
 
 	resp, err := h.bookingService.ListByUser(c.Request.Context(), uid, page, limit)
 	if err != nil {
+		log.Printf("[ERROR] BookingHandler.List: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch bookings"})
 		return
 	}
@@ -40,12 +42,13 @@ func (h *BookingHandler) List(c *gin.Context) {
 func (h *BookingHandler) GetByID(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid booking ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid booking ID format"})
 		return
 	}
 
 	booking, err := h.bookingService.GetByID(c.Request.Context(), id)
 	if err != nil {
+		log.Printf("[ERROR] BookingHandler.GetByID (%s): %v", id, err)
 		c.JSON(http.StatusNotFound, gin.H{"error": "Booking not found"})
 		return
 	}
@@ -65,16 +68,34 @@ func (h *BookingHandler) GetByID(c *gin.Context) {
 func (h *BookingHandler) Create(c *gin.Context) {
 	var req models.CreateBookingRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		log.Printf("[WARN] BookingHandler.Create - bad request: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})
+		return
+	}
+
+	// Basic validation
+	if len(req.Items) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "At least one item is required"})
+		return
+	}
+	if req.PersonalDetails == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Personal details are required"})
 		return
 	}
 
 	userID := middleware.GetUserID(c)
-	uid, _ := uuid.Parse(userID)
+	var uidPtr *uuid.UUID
+	if userID != "" {
+		uid, err := uuid.Parse(userID)
+		if err == nil {
+			uidPtr = &uid
+		}
+	}
 
-	booking, err := h.bookingService.Create(c.Request.Context(), uid, &req)
+	booking, err := h.bookingService.Create(c.Request.Context(), uidPtr, &req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create booking"})
+		log.Printf("[ERROR] BookingHandler.Create: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create booking. Please try again."})
 		return
 	}
 
@@ -85,7 +106,7 @@ func (h *BookingHandler) Create(c *gin.Context) {
 func (h *BookingHandler) Update(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid booking ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid booking ID format"})
 		return
 	}
 
@@ -96,6 +117,7 @@ func (h *BookingHandler) Update(c *gin.Context) {
 	}
 
 	if err := h.bookingService.UpdateStatus(c.Request.Context(), id, &req); err != nil {
+		log.Printf("[ERROR] BookingHandler.Update (%s): %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update booking"})
 		return
 	}
@@ -107,11 +129,12 @@ func (h *BookingHandler) Update(c *gin.Context) {
 func (h *BookingHandler) Cancel(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid booking ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid booking ID format"})
 		return
 	}
 
 	if err := h.bookingService.Cancel(c.Request.Context(), id, "User cancelled"); err != nil {
+		log.Printf("[ERROR] BookingHandler.Cancel (%s): %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to cancel booking"})
 		return
 	}

@@ -16,6 +16,8 @@ type Payment struct {
 	StripePaymentIntentID sql.NullString  `db:"stripe_payment_intent_id" json:"stripe_payment_intent_id,omitempty"`
 	StripeChargeID        sql.NullString  `db:"stripe_charge_id" json:"stripe_charge_id,omitempty"`
 	StripeCustomerID      sql.NullString  `db:"stripe_customer_id" json:"stripe_customer_id,omitempty"`
+	PayPalOrderID         sql.NullString  `db:"paypal_order_id" json:"paypal_order_id,omitempty"`
+	PayPalCaptureID       sql.NullString  `db:"paypal_capture_id" json:"paypal_capture_id,omitempty"`
 	Amount                float64         `db:"amount" json:"amount"`
 	Currency              string          `db:"currency" json:"currency"`
 	Status                string          `db:"status" json:"status"`
@@ -46,6 +48,11 @@ type CreatePaymentIntentResponse struct {
 	ClientSecret    string `json:"client_secret"`
 	PaymentIntentID string `json:"payment_intent_id"`
 	PaymentID       string `json:"payment_id"`
+}
+
+type CreatePayPalOrderResponse struct {
+	OrderID   string `json:"order_id"`
+	PaymentID string `json:"payment_id"`
 }
 
 type RefundRequest struct {

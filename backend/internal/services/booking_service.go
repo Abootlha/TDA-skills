@@ -19,7 +19,7 @@ func NewBookingService(repo *repository.BookingRepository, courseRepo *repositor
 	return &BookingService{repo: repo, courseRepo: courseRepo}
 }
 
-func (s *BookingService) Create(ctx context.Context, userID uuid.UUID, req *models.CreateBookingRequest) (*models.Booking, error) {
+func (s *BookingService) Create(ctx context.Context, userID *uuid.UUID, req *models.CreateBookingRequest) (*models.Booking, error) {
 	bookingNumber, err := s.repo.GetNextBookingNumber(ctx)
 	if err != nil {
 		return nil, err
@@ -33,11 +33,12 @@ func (s *BookingService) Create(ctx context.Context, userID uuid.UUID, req *mode
 	}
 
 	booking := &models.Booking{
-		UserID:          &userID,
+		UserID:          userID,
 		BookingNumber:   bookingNumber,
 		Status:          "pending",
 		BookingType:     req.BookingType,
 		PersonalDetails: req.PersonalDetails,
+		CompanyDetails:  req.CompanyDetails,
 		TestDetails:     req.TestDetails,
 		CardDetails:     req.CardDetails,
 		NVQDetails:      req.NVQDetails,
@@ -65,14 +66,16 @@ func (s *BookingService) Create(ctx context.Context, userID uuid.UUID, req *mode
 
 	// Create booking items
 	for _, itemReq := range req.Items {
-		courseID, _ := uuid.Parse(itemReq.CourseID)
 		item := &models.BookingItem{
 			BookingID:   booking.ID,
-			CourseID:    &courseID,
 			Description: itemReq.Description,
 			UnitPrice:   itemReq.UnitPrice,
 			Quantity:    itemReq.Quantity,
 			Discount:    itemReq.Discount,
+		}
+		// Only set CourseID if it's a valid UUID (course bookings); CITB tests use slugs
+		if courseID, err := uuid.Parse(itemReq.CourseID); err == nil {
+			item.CourseID = &courseID
 		}
 		if err := s.repo.CreateItem(ctx, item); err != nil {
 			return nil, err
@@ -147,7 +150,7 @@ func (s *BookingService) CreateTestBooking(ctx context.Context, personalDetails,
 		Status:          "pending",
 		BookingType:     "citb-test",
 		PersonalDetails: personalDetails,
-		TestDetails:     testDetails,
+		TestDetails:     &testDetails,
 		TotalAmount:     0,
 		Currency:        "GBP",
 	}

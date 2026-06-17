@@ -18,7 +18,8 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 	gin.SetMode(cfg.Server.GinMode)
 	r := gin.New()
 	r.Use(gin.Logger())
-	r.Use(gin.Recovery())
+	r.Use(middleware.Recovery())
+	r.Use(middleware.ErrorHandler())
 
 	// Global middleware
 	r.Use(middleware.CORSMiddleware(cfg))
@@ -200,30 +201,46 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 		checkout.DELETE("/draft", checkoutHandler.DeleteDraft)
 	}
 
-	// --- Bookings (protected) ---
+	// --- Bookings ---
 	bookings := v1.Group("/bookings")
-	bookings.Use(middleware.AuthMiddleware(cfg))
 	bookings.Use(middleware.RateLimiter(rdb.Client, rateLimits["bookings"]))
 	{
-		bookings.GET("", bookingHandler.List)
-		bookings.GET("/:id", bookingHandler.GetByID)
-		bookings.POST("", bookingHandler.Create)
-		bookings.PUT("/:id", bookingHandler.Update)
-		bookings.DELETE("/:id", bookingHandler.Cancel)
+		// Public/Optional Auth for Create
+		bookingsPublic := bookings.Group("")
+		bookingsPublic.Use(middleware.OptionalAuth(cfg))
+		bookingsPublic.POST("", bookingHandler.Create)
+
+		// Protected
+		bookingsProtected := bookings.Group("")
+		bookingsProtected.Use(middleware.AuthMiddleware(cfg))
+		bookingsProtected.GET("", bookingHandler.List)
+		bookingsProtected.GET("/:id", bookingHandler.GetByID)
+		bookingsProtected.PUT("/:id", bookingHandler.Update)
+		bookingsProtected.DELETE("/:id", bookingHandler.Cancel)
 	}
 
-	// --- Payments (protected) ---
+	// --- Payments ---
 	payments := v1.Group("/payments")
 	payments.Use(middleware.RateLimiter(rdb.Client, rateLimits["payments"]))
 	{
 		// Webhook is public (Stripe calls it)
 		payments.POST("/webhook", paymentHandler.Webhook)
+		// PayPal status check (public — used by frontend to conditionally render the button)
+		payments.GET("/paypal/status", paymentHandler.PayPalStatus)
 	}
+	
+	paymentsOptional := v1.Group("/payments")
+	paymentsOptional.Use(middleware.OptionalAuth(cfg))
+	{
+		paymentsOptional.POST("/create-intent", paymentHandler.CreateIntent)
+		paymentsOptional.POST("/paypal/create-order", paymentHandler.CreatePayPalOrder)
+		paymentsOptional.POST("/paypal/capture-order", paymentHandler.CapturePayPalOrder)
+		paymentsOptional.POST("/confirm", paymentHandler.Confirm)
+	}
+
 	paymentsProtected := v1.Group("/payments")
 	paymentsProtected.Use(middleware.AuthMiddleware(cfg))
 	{
-		paymentsProtected.POST("/create-intent", paymentHandler.CreateIntent)
-		paymentsProtected.POST("/confirm", paymentHandler.Confirm)
 		paymentsProtected.GET("/:id", paymentHandler.GetByID)
 	}
 

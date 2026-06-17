@@ -26,12 +26,8 @@ type CartItem struct {
 }
 
 type CheckoutDraft struct {
-	FirstName *string     `json:"firstName,omitempty"`
-	LastName  *string     `json:"lastName,omitempty"`
-	Email     *string     `json:"email,omitempty"`
-	Phone     *string     `json:"phone,omitempty"`
-	DOB       *string     `json:"dob,omitempty"`
-	CartItems *[]CartItem `json:"cartItems,omitempty"`
+	FormData  *json.RawMessage `json:"formData,omitempty"`
+	CartItems *[]CartItem      `json:"cartItems,omitempty"`
 }
 
 // POST /api/v1/checkout/draft
@@ -58,20 +54,8 @@ func (h *CheckoutHandler) SaveDraft(c *gin.Context) {
 	}
 
 	// Merge logic using pointers
-	if incomingDraft.FirstName != nil {
-		existingDraft.FirstName = incomingDraft.FirstName
-	}
-	if incomingDraft.LastName != nil {
-		existingDraft.LastName = incomingDraft.LastName
-	}
-	if incomingDraft.Email != nil {
-		existingDraft.Email = incomingDraft.Email
-	}
-	if incomingDraft.Phone != nil {
-		existingDraft.Phone = incomingDraft.Phone
-	}
-	if incomingDraft.DOB != nil {
-		existingDraft.DOB = incomingDraft.DOB
+	if incomingDraft.FormData != nil {
+		existingDraft.FormData = incomingDraft.FormData
 	}
 	if incomingDraft.CartItems != nil {
 		existingDraft.CartItems = incomingDraft.CartItems

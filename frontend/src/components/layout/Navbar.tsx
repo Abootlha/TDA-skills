@@ -9,9 +9,9 @@ import { useCartStore } from "@/lib/store/cartStore"
 import { CartSidebar } from "@/components/cart/CartSidebar"
 
 const NAV_LINKS = [
-  { 
-    name: "Courses", 
-    href: "/courses", 
+  {
+    name: "Courses",
+    href: "/courses",
     hasDropdown: true,
     dropdownItems: [
       {
@@ -37,14 +37,14 @@ const NAV_LINKS = [
       }
     ]
   },
-  { 
-    name: "NVQs & Qualifications", 
-    href: "/nvqs", 
+  {
+    name: "NVQs & Qualifications",
+    href: "/nvqs",
     hasDropdown: true,
     dropdownItems: [
       { name: "Business & Management", href: "/nvqs/business" },
-      { 
-        name: "Construction", 
+      {
+        name: "Construction",
         href: "/nvqs/construction",
         subItems: [
           { name: "Level 2", href: "/nvqs/construction/level-2" },
@@ -55,8 +55,8 @@ const NAV_LINKS = [
           { name: "Level 7", href: "/nvqs/construction/level-7" },
         ]
       },
-      { 
-        name: "Health & Safety", 
+      {
+        name: "Health & Safety",
         href: "/nvqs/health-safety",
         subItems: [
           { name: "Level 3", href: "/nvqs/health-safety/level-3" },
@@ -65,8 +65,8 @@ const NAV_LINKS = [
         ]
       },
       { name: "Health & Social Care", href: "/nvqs/health-social-care" },
-      { 
-        name: "Plant, Machinery & Crane", 
+      {
+        name: "Plant, Machinery & Crane",
         href: "/nvqs/plant-machinery",
         subItems: [
           { name: "Level 2", href: "/nvqs/plant-machinery/level-2" },
@@ -74,9 +74,9 @@ const NAV_LINKS = [
       },
     ]
   },
-  { 
-    name: "CSCS & CPCS Card", 
-    href: "/cscs", 
+  {
+    name: "CSCS & CPCS Card",
+    href: "/cscs",
     hasDropdown: true,
     dropdownItems: [
       {
@@ -180,8 +180,8 @@ export function Navbar() {
                     <div className="w-64 bg-white rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-gray-100 py-2">
                       {link.dropdownItems.map(item => (
                         <div key={item.name} className="relative group/sub">
-                          <Link 
-                            href={item.href} 
+                          <Link
+                            href={item.href}
                             className="w-full flex items-center justify-between px-5 py-3 text-[13px] font-semibold text-[#001430] hover:text-[#FFB800] transition-colors"
                           >
                             <span>{item.name}</span>
@@ -194,9 +194,9 @@ export function Navbar() {
                               <div className="absolute top-0 left-0 w-2 h-full bg-transparent" /> {/* Invisible bridge */}
                               <div className="w-[280px] bg-white rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-gray-100 py-2">
                                 {item.subItems.map(subItem => (
-                                  <Link 
-                                    key={subItem.name} 
-                                    href={subItem.href} 
+                                  <Link
+                                    key={subItem.name}
+                                    href={subItem.href}
                                     className="block px-5 py-3 text-[13px] font-semibold text-[#001430] hover:text-[#FFB800] transition-colors leading-relaxed"
                                   >
                                     {subItem.name}
@@ -221,7 +221,7 @@ export function Navbar() {
             <Search size={20} className="lg:w-[22px] lg:h-[22px]" />
           </button>
 
-          <Link href="/checkout" className="relative text-[#001430] hover:text-[#FFB800] transition-colors p-2">
+          <Link href="/cart" className="relative text-[#001430] hover:text-[#FFB800] transition-colors p-2">
             <ShoppingCart size={20} className="lg:w-[22px] lg:h-[22px]" />
             {cartItems.length > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#FFB800] text-black font-bold text-xs rounded-full flex items-center justify-center">
@@ -235,7 +235,7 @@ export function Navbar() {
 
         {/* Mobile Toggle */}
         <div className="flex items-center gap-4 lg:hidden">
-          <Link href="/checkout" className="relative text-[#001430] p-2">
+          <Link href="/cart" className="relative text-[#001430] p-2">
             <ShoppingCart size={22} />
             {cartItems.length > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#FFB800] text-black font-bold text-xs rounded-full flex items-center justify-center">

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const hasAdminSession = request.cookies.has('tda_session') || request.cookies.has('admin_refresh_token');
 
   // If user is already authenticated and tries to access /admin/login, redirect to dashboard

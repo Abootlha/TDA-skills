@@ -21,13 +21,13 @@ func NewBookingRepository(db *sqlx.DB) *BookingRepository {
 
 func (r *BookingRepository) Create(ctx context.Context, b *models.Booking) error {
 	query := `INSERT INTO bookings (user_id, booking_number, status, booking_type, personal_details,
-		test_details, card_details, nvq_details, source, referral_code, notes, total_amount,
+		company_details, test_details, card_details, nvq_details, source, referral_code, notes, total_amount,
 		discount_amount, tax_amount, currency, created_by)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
 		RETURNING id, created_at, updated_at`
 	return r.db.QueryRowContext(ctx, query,
 		b.UserID, b.BookingNumber, b.Status, b.BookingType, b.PersonalDetails,
-		b.TestDetails, b.CardDetails, b.NVQDetails, b.Source, b.ReferralCode,
+		b.CompanyDetails, b.TestDetails, b.CardDetails, b.NVQDetails, b.Source, b.ReferralCode,
 		b.Notes, b.TotalAmount, b.DiscountAmount, b.TaxAmount, b.Currency, b.CreatedBy,
 	).Scan(&b.ID, &b.CreatedAt, &b.UpdatedAt)
 }

@@ -20,11 +20,11 @@ func NewPaymentRepository(db *sqlx.DB) *PaymentRepository {
 
 func (r *PaymentRepository) Create(ctx context.Context, p *models.Payment) error {
 	query := `INSERT INTO payments (booking_id, user_id, payment_number, stripe_payment_intent_id,
-		amount, currency, status, metadata)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id, created_at, updated_at`
+		paypal_order_id, paypal_capture_id, amount, currency, status, metadata)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id, created_at, updated_at`
 	return r.db.QueryRowContext(ctx, query,
 		p.BookingID, p.UserID, p.PaymentNumber, p.StripePaymentIntentID,
-		p.Amount, p.Currency, p.Status, p.Metadata,
+		p.PayPalOrderID, p.PayPalCaptureID, p.Amount, p.Currency, p.Status, p.Metadata,
 	).Scan(&p.ID, &p.CreatedAt, &p.UpdatedAt)
 }
 
@@ -46,6 +46,15 @@ func (r *PaymentRepository) GetByPaymentIntentID(ctx context.Context, piID strin
 	return p, nil
 }
 
+func (r *PaymentRepository) GetByPayPalOrderID(ctx context.Context, orderID string) (*models.Payment, error) {
+	p := &models.Payment{}
+	err := r.db.GetContext(ctx, p, "SELECT * FROM payments WHERE paypal_order_id=$1", orderID)
+	if err != nil {
+		return nil, err
+	}
+	return p, nil
+}
+
 func (r *PaymentRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status string) error {
 	_, err := r.db.ExecContext(ctx, "UPDATE payments SET status=$1, updated_at=NOW() WHERE id=$2", status, id)
 	return err
@@ -55,6 +64,11 @@ func (r *PaymentRepository) UpdateStripeDetails(ctx context.Context, id uuid.UUI
 	query := `UPDATE payments SET stripe_charge_id=$1, payment_method=$2, card_brand=$3, card_last4=$4,
 		receipt_url=$5, updated_at=NOW() WHERE id=$6`
 	_, err := r.db.ExecContext(ctx, query, chargeID, method, brand, last4, receiptURL, id)
+	return err
+}
+
+func (r *PaymentRepository) UpdatePayPalCapture(ctx context.Context, id uuid.UUID, captureID string) error {
+	_, err := r.db.ExecContext(ctx, "UPDATE payments SET paypal_capture_id=$1, status='succeeded', updated_at=NOW() WHERE id=$2", captureID, id)
 	return err
 }
 

@@ -7,6 +7,8 @@ import { ToastContainer } from "@/components/ui/Toast";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { EnquireNowButton } from "@/components/ui/EnquireNowButton";
 
+import PayPalProvider from "@/components/providers/PayPalProvider";
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -27,14 +29,16 @@ export default function RootLayout({
       <body
         className={`${inter.variable} antialiased min-h-screen flex flex-col bg-[var(--background)]`}
       >
-        <Navbar />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <EnquireNowButton />
-        <WhatsAppButton />
-        <Footer />
-        <ToastContainer />
+        <PayPalProvider>
+          <Navbar />
+          <main className="flex-grow">
+            {children}
+          </main>
+          <EnquireNowButton />
+          <WhatsAppButton />
+          <Footer />
+          <ToastContainer />
+        </PayPalProvider>
       </body>
     </html>
   );

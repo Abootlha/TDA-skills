@@ -5,11 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
 import { BookingSummarySidebar } from "../../components/booking/BookingSummarySidebar";
-import { DelegateDetailsStep } from "../../components/booking/DelegateDetailsStep";
+import { CheckoutForm } from "../../components/booking/CheckoutForm";
 import { BookingConfirmation } from "../../components/booking/BookingConfirmation";
 import { AuthModal } from "../../components/auth/AuthModal";
+import { ErrorBoundary } from "../../components/ui/ErrorBoundary";
 import { useCartStore } from "../../lib/store/cartStore";
-import axios from "axios";
 
 export default function CheckoutPage() {
     const cartItems = useCartStore((state) => state.items);
@@ -29,28 +29,31 @@ export default function CheckoutPage() {
         setIsMounted(true);
         const sessionId = localStorage.getItem("tda_checkout_session");
         if (sessionId) {
-            axios.get("http://localhost:8080/api/v1/checkout/draft", {
+            fetch("http://localhost:8080/api/v1/checkout/draft", {
                 headers: { "X-Session-ID": sessionId }
-            }).then(res => {
-                if (res.data?.draft?.cartItems && res.data.draft.cartItems.length > 0) {
-                    useCartStore.getState().setItems(res.data.draft.cartItems);
-                }
-            }).catch(e => console.error("Failed to fetch Redis draft on init", e));
+            })
+                .then((res: Response) => res.json())
+                .then((data: any) => {
+                    if (data?.draft?.cartItems && data.draft.cartItems.length > 0) {
+                        useCartStore.getState().setItems(data.draft.cartItems);
+                    }
+                })
+                .catch((e: Error) => console.error("Failed to fetch Redis draft on init", e));
         }
     }, []);
 
     const handleRemoveItem = async (id: string) => {
         removeItem(id);
-        // If it was the last item, cart is now essentially empty, clear the draft
         if (cartItems.length === 1 && cartItems[0].id === id) {
             const sessionId = localStorage.getItem("tda_checkout_session");
             if (sessionId) {
                 try {
-                    await axios.delete("http://localhost:8080/api/v1/checkout/draft", {
+                    await fetch("http://localhost:8080/api/v1/checkout/draft", {
+                        method: "DELETE",
                         headers: { "X-Session-ID": sessionId }
                     });
-                    localStorage.removeItem("tda_checkout_draft"); // Also wipe the fallback
-                } catch (e) {
+                    localStorage.removeItem("tda_checkout_draft");
+                } catch (e: unknown) {
                     console.error("Failed to delete draft", e);
                 }
             }
@@ -87,22 +90,22 @@ export default function CheckoutPage() {
     // Handle Empty Cart state
     if (cartItems.length === 0 && step !== 3) {
         return (
-            <div className="h-[70vh] min-h-[400px] bg-[#faf9fd] flex flex-col items-center justify-center">
+            <div className="py-8 bg-[#faf9fd] flex flex-col items-center justify-center">
                 <div className="text-center max-w-md w-full flex flex-col items-center">
                     <div className="mb-6 mix-blend-multiply">
-                        <Image 
-                            src="/Empty Cart.png" 
-                            alt="Empty Cart" 
-                            width={200} 
-                            height={200} 
+                        <Image
+                            src="/Empty Cart.png"
+                            alt="Empty Cart"
+                            width={160}
+                            height={160}
                             className="object-contain"
                         />
                     </div>
-                    <h2 className="text-3xl font-bold text-[#001430] mb-3">Your Cart is Empty</h2>
-                    <p className="text-gray-500 mb-8 text-lg">Looks like you haven't added any tests or courses yet.</p>
-                    <Link 
-                        href="/citb-test" 
-                        className="bg-[#ffbb16] text-[#001430] px-8 py-4 rounded-lg font-bold hover:bg-[#e5a813] transition-colors"
+                    <h2 className="text-2xl font-bold text-[#001430] mb-2">Your Cart is Empty</h2>
+                    <p className="text-gray-500 mb-6 text-base">Looks like you haven't added any tests or courses yet.</p>
+                    <Link
+                        href="/citb-test"
+                        className="bg-[#ffbb16] text-[#001430] px-6 py-3 rounded-lg font-bold hover:bg-[#e5a813] transition-colors"
                     >
                         Browse CITB Tests
                     </Link>
@@ -114,7 +117,7 @@ export default function CheckoutPage() {
     return (
         <div className="min-h-screen bg-[#faf9fd] py-12">
             <div className="max-w-[1280px] mx-auto px-6">
-                
+
                 {/* Breadcrumbs */}
                 {step < 3 && (
                     <div className="flex items-center gap-4 mb-10 overflow-x-auto pb-4">
@@ -126,9 +129,9 @@ export default function CheckoutPage() {
                                 {cartItems[0]?.type === "course" ? "Course Selection" : "Test Selection"}
                             </span>
                         </Link>
-                        
+
                         <div className="w-12 h-px bg-gray-300"></div>
-                        
+
                         <div className="flex items-center gap-3">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm
                                 ${step >= 2 ? "bg-[#ffbb16] text-[#001430]" : "bg-gray-200 text-gray-500"}
@@ -157,17 +160,17 @@ export default function CheckoutPage() {
 
                 {/* Main Content Area */}
                 <div className="flex flex-col lg:flex-row gap-10">
-                    
+
                     {/* Left Column - Form/Steps */}
                     <div className="flex-1">
                         {step === 2 && (
-                            <DelegateDetailsStep 
-                                onNext={handleMockCheckout}
+                            <CheckoutForm
+                                onSuccess={() => setStep(3)}
                                 onBack={handlePrevStep}
                             />
                         )}
                         {step === 3 && (
-                            <BookingConfirmation 
+                            <BookingConfirmation
                                 status={bookingStatus}
                                 selectedTest={cartItems[0]} // For now, confirmation expects 1 test, we'll keep it simple
                                 onRetry={() => setStep(2)}
@@ -178,7 +181,7 @@ export default function CheckoutPage() {
                     {/* Right Column - Sidebar Summary */}
                     {step < 3 && (
                         <div className="w-full lg:w-[400px]">
-                            <BookingSummarySidebar 
+                            <BookingSummarySidebar
                                 step={2}
                                 cartItems={cartItems}
                                 onRemoveItem={handleRemoveItem}

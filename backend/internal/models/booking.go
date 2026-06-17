@@ -9,31 +9,32 @@ import (
 )
 
 type Booking struct {
-	ID                uuid.UUID       `db:"id" json:"id"`
-	UserID            *uuid.UUID      `db:"user_id" json:"user_id,omitempty"`
-	BookingNumber     string          `db:"booking_number" json:"booking_number"`
-	Status            string          `db:"status" json:"status"`
-	BookingType       string          `db:"booking_type" json:"booking_type"`
-	PersonalDetails   json.RawMessage `db:"personal_details" json:"personal_details"`
-	TestDetails       json.RawMessage `db:"test_details" json:"test_details,omitempty"`
-	CardDetails       json.RawMessage `db:"card_details" json:"card_details,omitempty"`
-	NVQDetails        json.RawMessage `db:"nvq_details" json:"nvq_details,omitempty"`
-	Source            sql.NullString  `db:"source" json:"source,omitempty"`
-	ReferralCode      sql.NullString  `db:"referral_code" json:"referral_code,omitempty"`
-	Notes             sql.NullString  `db:"notes" json:"notes,omitempty"`
-	AdminNotes        sql.NullString  `db:"admin_notes" json:"admin_notes,omitempty"`
-	TotalAmount       float64         `db:"total_amount" json:"total_amount"`
-	DiscountAmount    float64         `db:"discount_amount" json:"discount_amount"`
-	TaxAmount         float64         `db:"tax_amount" json:"tax_amount"`
-	Currency          string          `db:"currency" json:"currency"`
-	CreatedBy         *uuid.UUID      `db:"created_by" json:"created_by,omitempty"`
-	ConfirmedAt       *time.Time      `db:"confirmed_at" json:"confirmed_at,omitempty"`
-	CompletedAt       *time.Time      `db:"completed_at" json:"completed_at,omitempty"`
-	CancelledAt       *time.Time      `db:"cancelled_at" json:"cancelled_at,omitempty"`
-	CancellationReason sql.NullString `db:"cancellation_reason" json:"cancellation_reason,omitempty"`
-	CreatedAt         time.Time       `db:"created_at" json:"created_at"`
-	UpdatedAt         time.Time       `db:"updated_at" json:"updated_at"`
-	Items             []BookingItem   `db:"-" json:"items,omitempty"`
+	ID                uuid.UUID        `db:"id" json:"id"`
+	UserID            *uuid.UUID       `db:"user_id" json:"user_id,omitempty"`
+	BookingNumber     string           `db:"booking_number" json:"booking_number"`
+	Status            string           `db:"status" json:"status"`
+	BookingType       string           `db:"booking_type" json:"booking_type"`
+	PersonalDetails   json.RawMessage  `db:"personal_details" json:"personal_details"`
+	CompanyDetails    *json.RawMessage `db:"company_details" json:"company_details,omitempty"`
+	TestDetails       *json.RawMessage `db:"test_details" json:"test_details,omitempty"`
+	CardDetails       *json.RawMessage `db:"card_details" json:"card_details,omitempty"`
+	NVQDetails        *json.RawMessage `db:"nvq_details" json:"nvq_details,omitempty"`
+	Source            sql.NullString   `db:"source" json:"source,omitempty"`
+	ReferralCode      sql.NullString   `db:"referral_code" json:"referral_code,omitempty"`
+	Notes             sql.NullString   `db:"notes" json:"notes,omitempty"`
+	AdminNotes        sql.NullString   `db:"admin_notes" json:"admin_notes,omitempty"`
+	TotalAmount       float64          `db:"total_amount" json:"total_amount"`
+	DiscountAmount    float64          `db:"discount_amount" json:"discount_amount"`
+	TaxAmount         float64          `db:"tax_amount" json:"tax_amount"`
+	Currency          string           `db:"currency" json:"currency"`
+	CreatedBy         *uuid.UUID       `db:"created_by" json:"created_by,omitempty"`
+	ConfirmedAt       *time.Time       `db:"confirmed_at" json:"confirmed_at,omitempty"`
+	CompletedAt       *time.Time       `db:"completed_at" json:"completed_at,omitempty"`
+	CancelledAt       *time.Time       `db:"cancelled_at" json:"cancelled_at,omitempty"`
+	CancellationReason sql.NullString  `db:"cancellation_reason" json:"cancellation_reason,omitempty"`
+	CreatedAt         time.Time        `db:"created_at" json:"created_at"`
+	UpdatedAt         time.Time        `db:"updated_at" json:"updated_at"`
+	Items             []BookingItem    `db:"-" json:"items,omitempty"`
 }
 
 type BookingItem struct {
@@ -50,9 +51,10 @@ type BookingItem struct {
 type CreateBookingRequest struct {
 	BookingType     string                     `json:"booking_type" validate:"required,oneof=course nvq cscs-card citb-test package"`
 	PersonalDetails json.RawMessage            `json:"personal_details" validate:"required"`
-	TestDetails     json.RawMessage            `json:"test_details,omitempty"`
-	CardDetails     json.RawMessage            `json:"card_details,omitempty"`
-	NVQDetails      json.RawMessage            `json:"nvq_details,omitempty"`
+	CompanyDetails  *json.RawMessage           `json:"company_details,omitempty"`
+	TestDetails     *json.RawMessage           `json:"test_details,omitempty"`
+	CardDetails     *json.RawMessage           `json:"card_details,omitempty"`
+	NVQDetails      *json.RawMessage           `json:"nvq_details,omitempty"`
 	Notes           string                     `json:"notes,omitempty"`
 	Source          string                     `json:"source,omitempty"`
 	ReferralCode    string                     `json:"referral_code,omitempty"`
@@ -60,8 +62,8 @@ type CreateBookingRequest struct {
 }
 
 type CreateBookingItemRequest struct {
-	CourseID    string  `json:"course_id" validate:"required,uuid"`
-	Description string `json:"description" validate:"required"`
+	CourseID    string  `json:"course_id"`
+	Description string  `json:"description" validate:"required"`
 	UnitPrice   float64 `json:"unit_price" validate:"required,gte=0"`
 	Quantity    int     `json:"quantity" validate:"required,gte=1"`
 	Discount    float64 `json:"discount,omitempty"`
