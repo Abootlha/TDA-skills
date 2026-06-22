@@ -60,7 +60,7 @@ export function RelatedCourses({ courses }: { courses: CourseDetail["relatedCour
                             </ul>
 
                             {/* Pricing Section */}
-                            <div className="border-t border-gray-100 pt-6 mb-6">
+                            <div className="border-t border-gray-100 pt-6 mb-6 blur-sm opacity-60 pointer-events-none select-none">
                                 <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Available From</div>
                                 <div className="flex items-baseline gap-2 mb-2">
                                     <span className="text-gray-400 line-through font-medium text-lg">
@@ -81,7 +81,7 @@ export function RelatedCourses({ courses }: { courses: CourseDetail["relatedCour
                             </div>
 
                             {/* Payment Providers */}
-                            <div className="mb-6 space-y-3">
+                            <div className="mb-6 space-y-3 blur-sm opacity-60 pointer-events-none select-none">
                                 <div className="text-[10px] font-bold text-gray-400 uppercase">Available at checkout</div>
                                 <div className="flex flex-col gap-2">
                                     <div className="px-3 py-1.5 bg-[#FFB3C7] inline-block rounded-md w-fit">
@@ -95,19 +95,13 @@ export function RelatedCourses({ courses }: { courses: CourseDetail["relatedCour
 
                             {/* Actions */}
                             <div className="flex flex-col gap-3 mt-auto">
-                                <Link 
-                                    href={`/courses/${course.slug}`}
-                                    className="w-full py-3 bg-white border border-gray-200 text-[#001430] rounded-xl font-bold text-center hover:bg-gray-50 transition-colors text-sm"
-                                >
+                                <div className="w-full py-3 bg-white border border-gray-200 text-gray-400 rounded-xl font-bold text-center text-sm cursor-not-allowed">
                                     View Details
-                                </Link>
-                                <Link 
-                                    href={`/courses/${course.slug}/slots`}
-                                    className="w-full py-3 bg-[#001430] text-white rounded-xl font-bold text-center hover:bg-[#002855] transition-colors text-sm flex items-center justify-center gap-1 shadow-md shadow-blue-900/10"
-                                >
+                                </div>
+                                <div className="w-full py-3 bg-gray-100 border border-gray-200 text-gray-400 rounded-xl font-bold text-center text-sm flex items-center justify-center gap-2 cursor-not-allowed uppercase">
                                     <Calendar size={16} />
-                                    View Dates
-                                </Link>
+                                    Coming Soon
+                                </div>
                             </div>
                         </div>
                     );

@@ -1,6 +1,6 @@
 'use client';
 
-import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
+import { PayPalButtons, usePayPalScriptReducer, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/Toast";
 import { api } from '../../lib/api';
@@ -14,7 +14,7 @@ interface PayPalCheckoutButtonProps {
 
 type PayPalAvailability = 'checking' | 'available' | 'unavailable';
 
-export const PayPalCheckoutButton = ({ bookingID, amount, onSuccess, onError }: PayPalCheckoutButtonProps) => {
+const InnerPayPalButton = ({ bookingID, amount, onSuccess, onError }: PayPalCheckoutButtonProps) => {
     const [{ isPending }] = usePayPalScriptReducer();
     const [isProcessing, setIsProcessing] = useState(false);
     const [availability, setAvailability] = useState<PayPalAvailability>('checking');
@@ -119,10 +119,32 @@ export const PayPalCheckoutButton = ({ bookingID, amount, onSuccess, onError }: 
                 onError={(err) => {
                     console.error('[PayPal SDK Error]', err);
                 }}
-                onCancel={() => {
-                    toast({ message: 'Payment cancelled. You can try again when ready.', type: 'info' });
+                onCancel={async () => {
+                    try {
+                        await api.post('/payments/paypal/cancel-order', { booking_id: bookingID });
+                    } catch (err) {
+                        console.error('Failed to update booking status to cancelled', err);
+                    }
+                    toast({ message: 'Payment cancelled. Redirecting to checkout...', type: 'info' });
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
                 }}
             />
         </div>
+    );
+};
+
+export const PayPalCheckoutButton = (props: PayPalCheckoutButtonProps) => {
+    const initialOptions = {
+        "clientId": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "test",
+        currency: "GBP",
+        intent: "capture",
+    };
+
+    return (
+        <PayPalScriptProvider options={initialOptions}>
+            <InnerPayPalButton {...props} />
+        </PayPalScriptProvider>
     );
 };

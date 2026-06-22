@@ -64,7 +64,24 @@ const COURSES = [
   }
 ];
 
-export function CoursesList() {
+export function CoursesList({ courses = [] }: { courses?: any[] }) {
+  const getStr = (val: any) => (val && typeof val === 'object' ? val.String : val) || "";
+
+  const dynamicCourses = courses.length > 0 ? courses.map(c => ({
+    title: getStr(c.name),
+    slug: getStr(c.slug),
+    price: `£${c.price}`,
+    description: getStr(c.short_description) || getStr(c.description) || "",
+    duration: getStr(c.duration) || c.quick_stats?.duration || "",
+    location: c.quick_stats?.delivery || "Multiple Locations",
+    imageSrc: (c.images && c.images.length > 0) ? c.images[0] : imgSmstsCourse,
+    badges: (c.badges || []).map((b: any) => ({
+      label: b.text || b.label,
+      type: "accredited"
+    })),
+    buttonText: "Book Course",
+  })) : COURSES;
+
   return (
     <div className="flex-1 flex flex-col gap-[32px] w-full">
       {/* Header Bar */}
@@ -72,7 +89,7 @@ export function CoursesList() {
         <div className="flex items-center justify-between px-[33px] py-[21px]">
           <div className="font-['Liberation_Sans',sans-serif] text-[14px]">
             <span className="text-[#43474f] font-bold">Showing </span>
-            <span className="text-[#001430] font-bold">12 Results</span>
+            <span className="text-[#001430] font-bold">{dynamicCourses.length} Results</span>
           </div>
           
           <div className="flex items-center gap-[16px]">
@@ -91,7 +108,7 @@ export function CoursesList() {
 
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-[32px] w-full">
-        {COURSES.map((course, idx) => (
+        {dynamicCourses.map((course, idx) => (
           <CourseCard key={idx} {...course} />
         ))}
       </div>

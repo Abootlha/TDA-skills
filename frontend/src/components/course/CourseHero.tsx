@@ -1,7 +1,8 @@
 "use client";
 
-import { Star, Clock, MapPin, Calendar, Monitor, CheckCircle2 } from "lucide-react";
+import { Star, Clock, MapPin, Calendar, Monitor, CheckCircle2, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useCartStore } from "../../lib/store/cartStore";
 import { useToastStore } from "../../components/ui/Toast";
 import { CourseDetail } from "../../lib/data/courseDetails";
@@ -43,6 +44,15 @@ export function CourseHero({ course }: { course: CourseDetail }) {
                     
                     {/* Left Content */}
                     <div className="flex-1 pt-4">
+                        {/* Breadcrumbs */}
+                        <div className="flex items-center gap-2 text-sm text-gray-500 font-medium mb-8">
+                            <Link href="/courses" className="hover:text-[#ffbb16] transition-colors">Courses</Link>
+                            <ChevronRight size={14} />
+                            <Link href="/courses/citb" className="hover:text-[#ffbb16] transition-colors">CITB Courses</Link>
+                            <ChevronRight size={14} />
+                            <span className="text-[#001430] font-bold line-clamp-1 max-w-[250px] sm:max-w-none">{course.title}</span>
+                        </div>
+
                         <div className="flex items-center gap-4 mb-6">
                             {course.badges.map((badge, idx) => (
                                 <span key={idx} className={`px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase ${badge.color}`}>

@@ -14,10 +14,12 @@ async function request<T>(
     options: RequestInit = {}
 ): Promise<ApiResult<T>> {
     try {
+        const isServer = typeof window === 'undefined';
         const res = await fetch(`${API_BASE}${path}`, {
             ...options,
             headers: {
                 'Content-Type': 'application/json',
+                ...(isServer ? { 'User-Agent': 'NextJS-SSR-Client/1.0' } : {}),
                 ...(options.headers || {}),
             },
         });
@@ -35,11 +37,12 @@ async function request<T>(
         }
 
         return { data: body as T, error: null };
-    } catch (err: any) {
+    } catch (err: unknown) {
+        const error = err as Error;
         const msg =
-            err?.message === 'Failed to fetch'
+            error?.message === 'Failed to fetch'
                 ? 'Cannot reach the server. Please check your connection.'
-                : err?.message || 'An unexpected error occurred.';
+                : error?.message || 'An unexpected error occurred.';
         console.error(`[API] Network error on ${path}:`, err);
         return { data: null, error: msg };
     }

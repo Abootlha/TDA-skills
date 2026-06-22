@@ -11,7 +11,7 @@ export function CourseSidebar() {
                     {/* Placeholder for real image, using a solid color for now */}
                     <div className="absolute inset-0 bg-blue-900/50"></div>
                     <Image 
-                        src="/images/course-3.png" 
+                        src="/img3.png" 
                         alt="CITB Grant" 
                         fill 
                         className="object-cover opacity-60 mix-blend-overlay"

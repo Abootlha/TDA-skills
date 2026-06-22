@@ -60,7 +60,38 @@ export function CourseDates({ course }: { course: CourseDetail }) {
             </div>
 
             <div className="flex flex-col gap-4">
-                {course.upcomingDates.map((item) => (
+                {[
+                    {
+                        id: "1",
+                        date: "Mon 12th Oct 2026",
+                        durationText: "5 DAYS (1 WEEK)",
+                        location: "London (Stratford)",
+                        venue: "TDA Training Centre",
+                        seatsStatus: "Limited",
+                        seatsText: "3 Seats Left",
+                        seatsColor: "text-orange-500"
+                    },
+                    {
+                        id: "2",
+                        date: "Wed 21st Oct 2026",
+                        durationText: "5 DAYS (1 WEEK)",
+                        location: "Online (Remote)",
+                        venue: "Live Virtual Classroom",
+                        seatsStatus: "Available",
+                        seatsText: "Available",
+                        seatsColor: "text-green-500"
+                    },
+                    {
+                        id: "3",
+                        date: "Mon 02nd Nov 2026",
+                        durationText: "5 DAYS (1 WEEK)",
+                        location: "Birmingham",
+                        venue: "City Centre Venue",
+                        seatsStatus: "Available",
+                        seatsText: "Available",
+                        seatsColor: "text-green-500"
+                    }
+                ].map((item) => (
                     <div key={item.id} className="bg-white border border-gray-100 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex-1 w-full flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-12">
                             <div className="min-w-[150px]">
@@ -79,12 +110,9 @@ export function CourseDates({ course }: { course: CourseDetail }) {
                             </div>
                         </div>
 
-                        <button 
-                            onClick={handleBook}
-                            className="w-full md:w-auto bg-[#ffbb16] text-[#001430] px-8 py-3 rounded-full font-bold hover:bg-[#e5a813] transition-colors shrink-0 text-center block"
-                        >
-                            BOOK SEAT
-                        </button>
+                        <div className="w-full md:w-auto bg-gray-100 text-gray-400 border border-gray-200 px-8 py-3 rounded-full font-bold shrink-0 text-center block cursor-not-allowed">
+                            COMING SOON
+                        </div>
                     </div>
                 ))}
             </div>

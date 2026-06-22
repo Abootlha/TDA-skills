@@ -1,16 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
-import { Plus, Trash2, Save, ArrowLeft, Calendar, DollarSign, Image as ImageIcon } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Plus, Trash2, Save, ArrowLeft, DollarSign } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import apiClient from "@/lib/apiClient";
 
-export default function CreateCoursePage() {
+export default function EditCoursePage() {
     const router = useRouter();
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const params = useParams();
+    const courseId = params.id as string;
     
-    // Aligned exactly with backend JSON payload
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    
+    // Helper to extract string from Go's sql.NullString
+    const getStr = (val: any) => (val && typeof val === 'object' ? val.String : val) || "";
+
     const [formData, setFormData] = useState({
         name: "",
         slug: "",
@@ -22,7 +28,6 @@ export default function CreateCoursePage() {
         deposit: "",
         max_students: 20,
         
-        // New Dynamic Fields
         badges: [] as { text: string; color: string }[],
         quick_stats: {
             duration: "",
@@ -38,18 +43,61 @@ export default function CreateCoursePage() {
         },
         syllabus: [] as { title: string; content: string }[],
         faq: [] as { question: string; answer: string }[],
-        available_dates: [] as any[], // Maps to UpcomingDates in frontend
-        
-        // Kept for backward compatibility if needed
+        available_dates: [] as any[],
         prerequisites: [""],
     });
+
+    useEffect(() => {
+        const fetchCourse = async () => {
+            try {
+                const res = await apiClient.get(`/admin/courses/${courseId}`);
+                const data = res.data;
+                
+                setFormData({
+                    name: data.name || "",
+                    slug: data.slug || "",
+                    category: data.category || "citb",
+                    type: data.type || "course",
+                    description: getStr(data.short_description),
+                    price: data.price ? data.price.toString() : "",
+                    sale_price: data.sale_price ? data.sale_price.toString() : "",
+                    deposit: data.deposit ? data.deposit.toString() : "",
+                    max_students: data.max_students || 20,
+                    
+                    badges: data.badges || [],
+                    quick_stats: {
+                        duration: data.quick_stats?.duration || getStr(data.duration) || "",
+                        delivery: data.quick_stats?.delivery || "",
+                        nextDate: data.quick_stats?.nextDate || "",
+                        grant: data.quick_stats?.grant || ""
+                    },
+                    included: data.included || [],
+                    overview: {
+                        whatIsIt: data.overview?.whatIsIt || [""],
+                        whoShouldAttend: data.overview?.whoShouldAttend || "",
+                        certification: data.overview?.certification || ""
+                    },
+                    syllabus: data.syllabus || [],
+                    faq: data.faq || [],
+                    available_dates: data.available_dates || [],
+                    prerequisites: data.prerequisites || [""],
+                });
+            } catch (err) {
+                console.error("Failed to fetch course details", err);
+                alert("Failed to fetch course details.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (courseId) fetchCourse();
+    }, [courseId]);
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
         
         try {
-            // Clean up empty array items before sending
             const payload = {
                 ...formData,
                 price: parseFloat(formData.price as string) || 0,
@@ -67,21 +115,19 @@ export default function CreateCoursePage() {
                 is_active: true
             };
 
-            console.log("Submitting Payload to Backend:", payload);
-            
-            await apiClient.post(`/admin/courses`, payload);
+            await apiClient.put(`/admin/courses/${courseId}`, payload);
 
             setTimeout(() => {
                 router.push("/admin/courses");
             }, 1000);
             
         } catch (error: any) {
-            console.error("Error creating course:", error.response?.data || error);
+            console.error("Error updating course:", error.response?.data || error);
+            alert("Failed to update course.");
             setIsSubmitting(false);
         }
     };
 
-    // Generic array handlers
     const updateArrayItem = (field: string, index: number, key: string, value: string) => {
         const newArray = [...(formData as any)[field]];
         newArray[index][key] = value;
@@ -107,6 +153,10 @@ export default function CreateCoursePage() {
         setFormData({ ...formData, overview: { ...formData.overview, whatIsIt: [...formData.overview.whatIsIt, ""] } });
     };
 
+    if (isLoading) {
+        return <div className="text-center py-20 text-gray-500 font-medium">Loading course data...</div>;
+    }
+
     return (
         <div className="max-w-[1200px] mx-auto pb-20 animate-in fade-in zoom-in duration-300">
             {/* Header */}
@@ -115,12 +165,12 @@ export default function CreateCoursePage() {
                     <Link href="/admin/courses" className="flex items-center gap-2 text-gray-500 hover:text-[#001430] font-medium text-sm mb-2 transition-colors">
                         <ArrowLeft size={16} /> Back to Catalog
                     </Link>
-                    <h1 className="text-3xl font-black text-[#001430] tracking-tight">Create Dynamic Course</h1>
+                    <h1 className="text-3xl font-black text-[#001430] tracking-tight">Edit Course</h1>
                 </div>
                 <div className="flex gap-3">
                     <button onClick={handleSave} disabled={isSubmitting} className="flex items-center gap-2 px-6 py-2.5 bg-[#FFB800] text-[#001430] rounded-lg text-sm font-bold hover:bg-[#e6a600] transition-colors shadow-sm disabled:opacity-50">
                         <Save size={18} />
-                        {isSubmitting ? "Saving..." : "Publish Course"}
+                        {isSubmitting ? "Updating..." : "Update Course"}
                     </button>
                 </div>
             </div>

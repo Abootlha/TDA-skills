@@ -12,7 +12,7 @@ export default function AdminDashboardLayout({
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-[#faf9fd] flex">
+        <div className="h-screen overflow-hidden bg-[#faf9fd] flex">
             <AdminSidebar isOpen={isSidebarOpen} />
             
             {/* Overlay for mobile sidebar */}

@@ -8,7 +8,11 @@ import { cn } from "@/lib/utils/cn"
 import { useCartStore } from "@/lib/store/cartStore"
 import { CartSidebar } from "@/components/cart/CartSidebar"
 
-const NAV_LINKS = [
+interface NavbarProps {
+  initialCourses?: any[];
+}
+
+const DEFAULT_NAV_LINKS = [
   {
     name: "Courses",
     href: "/courses",
@@ -103,14 +107,46 @@ const NAV_LINKS = [
   },
   { name: "CITB Test", href: "/citb-test" },
   { name: "About Us", href: "/about" },
-  { name: "Contact Us", href: "/contact" },
+  { name: "Contact Us", href: "/contact" }
 ]
 
-export function Navbar() {
+export function Navbar({ initialCourses = [] }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
   const [isScrolled, setIsScrolled] = React.useState(false)
   const pathname = usePathname()
   const { items: cartItems, setSidebarOpen } = useCartStore()
+
+  // Dynamically build NAV_LINKS based on initialCourses
+  const navLinks = React.useMemo(() => {
+    const links = JSON.parse(JSON.stringify(DEFAULT_NAV_LINKS)); // Deep copy
+    const coursesLink = links.find((l: any) => l.name === "Courses");
+    
+    if (coursesLink && initialCourses.length > 0) {
+      // Group courses by category
+      const categories: Record<string, any[]> = {};
+      initialCourses.forEach(course => {
+        const cat = course.category || "Other";
+        if (!categories[cat]) categories[cat] = [];
+        categories[cat].push({ name: course.name, href: `/courses/${course.slug}` });
+      });
+
+      // Map dynamic categories to dropdown items
+      coursesLink.dropdownItems = Object.keys(categories).map(cat => {
+        const formattedCat = ['citb', 'iosh', 'nvq', 'cscs'].includes(cat.toLowerCase()) 
+          ? cat.toUpperCase() 
+          : cat.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+          
+        return {
+          name: `${formattedCat} Courses`,
+          // Default to a specific category page if it exists (e.g. /courses/citb), otherwise just /courses
+          href: cat.toLowerCase() === 'citb' ? '/courses/citb' : `/courses?category=${encodeURIComponent(cat)}`,
+          subItems: categories[cat]
+        };
+      });
+    }
+    
+    return links;
+  }, [initialCourses]);
 
   // Close mobile menu on route change
   React.useEffect(() => {
@@ -156,7 +192,7 @@ export function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-2 lg:gap-3 xl:gap-4 2xl:gap-8 h-full">
-          {NAV_LINKS.map((link) => {
+          {navLinks.map((link: any) => {
             const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href))
             return (
               <div key={link.name} className="relative group/nav">
@@ -178,7 +214,7 @@ export function Navbar() {
                   <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-200 z-50">
                     <div className="absolute top-0 left-0 w-full h-4 bg-transparent" /> {/* Invisible bridge */}
                     <div className="w-64 bg-white rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-gray-100 py-2">
-                      {link.dropdownItems.map(item => (
+                      {link.dropdownItems.map((item: any) => (
                         <div key={item.name} className="relative group/sub">
                           <Link
                             href={item.href}
@@ -193,7 +229,7 @@ export function Navbar() {
                             <div className="absolute top-0 left-full pl-2 opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all duration-200 z-50">
                               <div className="absolute top-0 left-0 w-2 h-full bg-transparent" /> {/* Invisible bridge */}
                               <div className="w-[280px] bg-white rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-gray-100 py-2">
-                                {item.subItems.map(subItem => (
+                                {item.subItems.map((subItem: any) => (
                                   <Link
                                     key={subItem.name}
                                     href={subItem.href}
@@ -221,28 +257,26 @@ export function Navbar() {
             <Search size={20} className="lg:w-[22px] lg:h-[22px]" />
           </button>
 
-          <Link href="/cart" className="relative text-[#001430] hover:text-[#FFB800] transition-colors p-2">
+          <button onClick={() => setSidebarOpen(true)} className="relative text-[#001430] hover:text-[#FFB800] transition-colors p-2">
             <ShoppingCart size={20} className="lg:w-[22px] lg:h-[22px]" />
             {cartItems.length > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#FFB800] text-black font-bold text-xs rounded-full flex items-center justify-center">
                 {cartItems.length}
               </span>
             )}
-          </Link>
-
-
+          </button>
         </div>
 
         {/* Mobile Toggle */}
         <div className="flex items-center gap-4 lg:hidden">
-          <Link href="/cart" className="relative text-[#001430] p-2">
+          <button onClick={() => setSidebarOpen(true)} className="relative text-[#001430] p-2">
             <ShoppingCart size={22} />
             {cartItems.length > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#FFB800] text-black font-bold text-xs rounded-full flex items-center justify-center">
                 {cartItems.length}
               </span>
             )}
-          </Link>
+          </button>
 
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -260,7 +294,7 @@ export function Navbar() {
           isScrolled ? "top-20 rounded-b-[2rem]" : "top-24"
         )}>
           <nav className="flex flex-col p-4 gap-1">
-            {NAV_LINKS.map((link) => {
+            {navLinks.map((link: any) => {
               const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href))
               return (
                 <Link

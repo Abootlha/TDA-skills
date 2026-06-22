@@ -1,6 +1,7 @@
 import React from "react";
 import { notFound } from "next/navigation";
-import { courseDetailsMock } from "@/lib/data/courseDetails";
+import { api } from "@/lib/api";
+import { mapBackendCourseToFrontend } from "@/lib/utils/courseMapper";
 import { CourseHero } from "@/components/course/CourseHero";
 import { CourseOverview } from "@/components/course/CourseOverview";
 import { CourseSyllabus } from "@/components/course/CourseSyllabus";
@@ -18,13 +19,16 @@ interface CoursePageProps {
 export default async function CoursePage({ params }: CoursePageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
-  const course = courseDetailsMock[slug];
-  console.log("SLUG FROM PARAMS:", slug);
-  console.log("COURSE FOUND:", course ? "YES" : "NO", "KEYS:", Object.keys(courseDetailsMock));
-
-  if (!course) {
+  
+  // Fetch course from backend
+  const { data, error } = await api.get<any>(`/courses/${slug}`);
+  
+  if (error || !data) {
+    console.error("Course fetch error:", error);
     notFound();
   }
+
+  const course = mapBackendCourseToFrontend(data);
 
   return (
     <main className="min-h-screen bg-[#faf9fd]">
