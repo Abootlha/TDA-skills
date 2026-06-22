@@ -235,6 +235,7 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 		paymentsOptional.POST("/create-intent", paymentHandler.CreateIntent)
 		paymentsOptional.POST("/paypal/create-order", paymentHandler.CreatePayPalOrder)
 		paymentsOptional.POST("/paypal/capture-order", paymentHandler.CapturePayPalOrder)
+		paymentsOptional.POST("/paypal/cancel-order", paymentHandler.CancelPayPalOrder)
 		paymentsOptional.POST("/confirm", paymentHandler.Confirm)
 	}
 
@@ -287,6 +288,7 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 
 		// Courses CRUD
 		adminProtected.GET("/courses", adminCourseHandler.List)
+		adminProtected.GET("/courses/:id", adminCourseHandler.Get)
 		adminProtected.POST("/courses", adminCourseHandler.Create)
 		adminProtected.PUT("/courses/:id", adminCourseHandler.Update)
 		adminProtected.DELETE("/courses/:id", adminCourseHandler.Delete)

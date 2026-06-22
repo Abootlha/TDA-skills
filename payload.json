@@ -1,0 +1,17 @@
+{
+  "name": "SMSTS - Site Management Safety Training Scheme",
+  "slug": "smsts-site-management-safety-training-schem",
+  "category": "citb",
+  "type": "course",
+  "description": "Gain the essential knowledge required to manage a construction site safely.",
+  "short_description": "Gain the essential knowledge required to manage a construction site safely.",
+  "price": 495,
+  "sale_price": 595,
+  "deposit": 100,
+  "included": [
+    "CITB Publication GE700 Included",
+    "5-Year Nationally Recognized Certificate",
+    "Full Lunch & Refreshments Provided"
+  ],
+  "is_active": true
+}

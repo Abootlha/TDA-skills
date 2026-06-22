@@ -24,8 +24,8 @@ func (r *CourseRepository) Create(ctx context.Context, c *models.Course) error {
 		who_should_attend, learning_outcomes, duration, price, sale_price, price_display, images, documents,
 		prerequisites, eligibility, certification, renewal_info, accreditation_body, accreditation_code,
 		faq, available_dates, locations, max_students, is_featured, is_active, seo_title, seo_description,
-		seo_keywords, created_by)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31)
+		seo_keywords, created_by, badges, quick_stats, included, overview, syllabus, related_courses, deposit, reviews_count, rating)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40)
 		RETURNING id, created_at, updated_at`
 	return r.db.QueryRowContext(ctx, query,
 		c.Slug, c.Name, c.Category, c.SubCategory, c.Type, c.ShortDescription, c.Description,
@@ -33,6 +33,7 @@ func (r *CourseRepository) Create(ctx context.Context, c *models.Course) error {
 		c.Images, c.Documents, c.Prerequisites, c.Eligibility, c.Certification, c.RenewalInfo,
 		c.AccreditationBody, c.AccreditationCode, c.FAQ, c.AvailableDates, c.Locations,
 		c.MaxStudents, c.IsFeatured, c.IsActive, c.SEOTitle, c.SEODescription, c.SEOKeywords, c.CreatedBy,
+		c.Badges, c.QuickStats, c.Included, c.Overview, c.Syllabus, c.RelatedCourses, c.Deposit, c.ReviewsCount, c.Rating,
 	).Scan(&c.ID, &c.CreatedAt, &c.UpdatedAt)
 }
 
@@ -125,15 +126,17 @@ func (r *CourseRepository) Update(ctx context.Context, c *models.Course) error {
 		is_featured=$12, is_active=$13, seo_title=$14, seo_description=$15, images=$16, documents=$17,
 		faq=$18, available_dates=$19, locations=$20, learning_outcomes=$21, who_should_attend=$22,
 		prerequisites=$23, eligibility=$24, certification=$25, renewal_info=$26, seo_keywords=$27,
-		accreditation_body=$28, accreditation_code=$29, updated_at=NOW()
-		WHERE id=$30`
+		accreditation_body=$28, accreditation_code=$29, badges=$30, quick_stats=$31, included=$32,
+		overview=$33, syllabus=$34, related_courses=$35, deposit=$36, reviews_count=$37, rating=$38, updated_at=NOW()
+		WHERE id=$39`
 	_, err := r.db.ExecContext(ctx, query,
 		c.Name, c.Category, c.SubCategory, c.Type, c.ShortDescription,
 		c.Description, c.Duration, c.Price, c.SalePrice, c.PriceDisplay, c.MaxStudents,
 		c.IsFeatured, c.IsActive, c.SEOTitle, c.SEODescription, c.Images, c.Documents,
 		c.FAQ, c.AvailableDates, c.Locations, c.LearningOutcomes, c.WhoShouldAttend,
 		c.Prerequisites, c.Eligibility, c.Certification, c.RenewalInfo, c.SEOKeywords,
-		c.AccreditationBody, c.AccreditationCode, c.ID)
+		c.AccreditationBody, c.AccreditationCode, c.Badges, c.QuickStats, c.Included,
+		c.Overview, c.Syllabus, c.RelatedCourses, c.Deposit, c.ReviewsCount, c.Rating, c.ID)
 	return err
 }
 

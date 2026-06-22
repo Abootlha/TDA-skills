@@ -118,6 +118,25 @@ func (h *PaymentHandler) CapturePayPalOrder(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Payment captured successfully"})
 }
 
+// POST /api/v1/payments/paypal/cancel-order
+func (h *PaymentHandler) CancelPayPalOrder(c *gin.Context) {
+	var req struct {
+		BookingID string `json:"booking_id"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	if err := h.paymentService.CancelPayPalOrder(c.Request.Context(), req.BookingID); err != nil {
+		log.Printf("[ERROR] PaymentHandler.CancelPayPalOrder (booking=%s): %v", req.BookingID, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to cancel payment"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Payment cancelled successfully"})
+}
+
 // POST /api/v1/payments/confirm
 func (h *PaymentHandler) Confirm(c *gin.Context) {
 	// Client-side confirmation via Stripe.js; this endpoint is for any server-side follow-up

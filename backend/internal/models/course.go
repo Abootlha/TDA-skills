@@ -2,10 +2,10 @@ package models
 
 import (
 	"database/sql"
-	"encoding/json"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jmoiron/sqlx/types"
 	"github.com/lib/pq"
 )
 
@@ -20,14 +20,14 @@ type Course struct {
 	ShortDescription            sql.NullString  `db:"short_description" json:"short_description,omitempty"`
 	Description                 sql.NullString  `db:"description" json:"description,omitempty"`
 	WhoShouldAttend             pq.StringArray  `db:"who_should_attend" json:"who_should_attend,omitempty"`
-	LearningOutcomes            json.RawMessage `db:"learning_outcomes" json:"learning_outcomes,omitempty"`
+	LearningOutcomes            types.JSONText `db:"learning_outcomes" json:"learning_outcomes,omitempty"`
 	Duration                    sql.NullString  `db:"duration" json:"duration,omitempty"`
 	Price                       float64         `db:"price" json:"price"`
 	SalePrice                   *float64        `db:"sale_price" json:"sale_price,omitempty"`
 	PriceDisplay                sql.NullString  `db:"price_display" json:"price_display,omitempty"`
 	Currency                    string          `db:"currency" json:"currency"`
-	Images                      json.RawMessage `db:"images" json:"images,omitempty"`
-	Documents                   json.RawMessage `db:"documents" json:"documents,omitempty"`
+	Images                      types.JSONText `db:"images" json:"images,omitempty"`
+	Documents                   types.JSONText `db:"documents" json:"documents,omitempty"`
 	Prerequisites               pq.StringArray  `db:"prerequisites" json:"prerequisites,omitempty"`
 	Eligibility                 pq.StringArray  `db:"eligibility" json:"eligibility,omitempty"`
 	Certification               pq.StringArray  `db:"certification" json:"certification,omitempty"`
@@ -36,12 +36,21 @@ type Course struct {
 	PrerequisitesMinAge         *int            `db:"prerequisites_min_age" json:"prerequisites_min_age,omitempty"`
 	AccreditationBody           sql.NullString  `db:"accreditation_body" json:"accreditation_body,omitempty"`
 	AccreditationCode           sql.NullString  `db:"accreditation_code" json:"accreditation_code,omitempty"`
-	FAQ                         json.RawMessage `db:"faq" json:"faq,omitempty"`
-	AvailableDates              json.RawMessage `db:"available_dates" json:"available_dates,omitempty"`
-	Locations                   json.RawMessage `db:"locations" json:"locations,omitempty"`
+	FAQ                         types.JSONText `db:"faq" json:"faq,omitempty"`
+	AvailableDates              types.JSONText `db:"available_dates" json:"available_dates,omitempty"`
+	Locations                   types.JSONText `db:"locations" json:"locations,omitempty"`
 	MaxStudents                 int             `db:"max_students" json:"max_students"`
 	IsFeatured                  bool            `db:"is_featured" json:"is_featured"`
 	IsActive                    bool            `db:"is_active" json:"is_active"`
+	Badges                      types.JSONText `db:"badges" json:"badges,omitempty"`
+	QuickStats                  types.JSONText `db:"quick_stats" json:"quick_stats,omitempty"`
+	Included                    pq.StringArray  `db:"included" json:"included,omitempty"`
+	Overview                    types.JSONText `db:"overview" json:"overview,omitempty"`
+	Syllabus                    types.JSONText `db:"syllabus" json:"syllabus,omitempty"`
+	RelatedCourses              pq.StringArray  `db:"related_courses" json:"related_courses,omitempty"`
+	Deposit                     *float64        `db:"deposit" json:"deposit,omitempty"`
+	ReviewsCount                int             `db:"reviews_count" json:"reviews_count"`
+	Rating                      float64         `db:"rating" json:"rating"`
 	SEOTitle                    sql.NullString  `db:"seo_title" json:"seo_title,omitempty"`
 	SEODescription              sql.NullString  `db:"seo_description" json:"seo_description,omitempty"`
 	SEOKeywords                 pq.StringArray  `db:"seo_keywords" json:"seo_keywords,omitempty"`
@@ -138,17 +147,24 @@ type CreateCourseRequest struct {
 	SEOTitle         string          `json:"seo_title,omitempty"`
 	SEODescription   string          `json:"seo_description,omitempty"`
 	WhoShouldAttend  []string        `json:"who_should_attend,omitempty"`
+	Badges           types.JSONText `json:"badges,omitempty"`
+	QuickStats       types.JSONText `json:"quick_stats,omitempty"`
+	Included         []string        `json:"included,omitempty"`
+	Overview         types.JSONText `json:"overview,omitempty"`
+	Syllabus         types.JSONText `json:"syllabus,omitempty"`
+	RelatedCourses   []string        `json:"related_courses,omitempty"`
+	Deposit          *float64        `json:"deposit,omitempty"`
 	Prerequisites    []string        `json:"prerequisites,omitempty"`
 	Eligibility      []string        `json:"eligibility,omitempty"`
 	Certification    []string        `json:"certification,omitempty"`
 	RenewalInfo      []string        `json:"renewal_info,omitempty"`
 	SEOKeywords      []string        `json:"seo_keywords,omitempty"`
-	LearningOutcomes json.RawMessage `json:"learning_outcomes,omitempty"`
-	FAQ              json.RawMessage `json:"faq,omitempty"`
-	AvailableDates   json.RawMessage `json:"available_dates,omitempty"`
-	Locations        json.RawMessage `json:"locations,omitempty"`
-	Images           json.RawMessage `json:"images,omitempty"`
-	Documents        json.RawMessage `json:"documents,omitempty"`
+	LearningOutcomes types.JSONText `json:"learning_outcomes,omitempty"`
+	FAQ              types.JSONText `json:"faq,omitempty"`
+	AvailableDates   types.JSONText `json:"available_dates,omitempty"`
+	Locations        types.JSONText `json:"locations,omitempty"`
+	Images           types.JSONText `json:"images,omitempty"`
+	Documents        types.JSONText `json:"documents,omitempty"`
 	AccreditationBody string        `json:"accreditation_body,omitempty"`
 	AccreditationCode string        `json:"accreditation_code,omitempty"`
 	CategoryIDs      []uuid.UUID     `json:"category_ids,omitempty"`

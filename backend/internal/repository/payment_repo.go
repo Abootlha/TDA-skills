@@ -60,6 +60,11 @@ func (r *PaymentRepository) UpdateStatus(ctx context.Context, id uuid.UUID, stat
 	return err
 }
 
+func (r *PaymentRepository) UpdateStatusByBookingID(ctx context.Context, bookingID uuid.UUID, status, code, message string) error {
+	_, err := r.db.ExecContext(ctx, "UPDATE payments SET status=$1, failure_code=$2, failure_message=$3, updated_at=NOW() WHERE booking_id=$4 AND status='pending'", status, code, message, bookingID)
+	return err
+}
+
 func (r *PaymentRepository) UpdateStripeDetails(ctx context.Context, id uuid.UUID, chargeID, method, brand, last4 string, receiptURL string) error {
 	query := `UPDATE payments SET stripe_charge_id=$1, payment_method=$2, card_brand=$3, card_last4=$4,
 		receipt_url=$5, updated_at=NOW() WHERE id=$6`

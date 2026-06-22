@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"time"
 
@@ -39,6 +40,10 @@ func (s *CourseService) List(ctx context.Context, params models.CourseListParams
 		Limit:      params.Limit,
 		TotalPages: totalPages,
 	}, nil
+}
+
+func (s *CourseService) GetByID(ctx context.Context, id uuid.UUID) (*models.Course, error) {
+	return s.repo.GetByID(ctx, id)
 }
 
 func (s *CourseService) GetBySlug(ctx context.Context, slug string) (*models.Course, error) {
@@ -92,6 +97,15 @@ func (s *CourseService) Create(ctx context.Context, req *models.CreateCourseRequ
 		RenewalInfo:       req.RenewalInfo,
 		SEOKeywords:       req.SEOKeywords,
 		CreatedBy:         &adminID,
+		Badges:            req.Badges,
+		QuickStats:        req.QuickStats,
+		Included:          req.Included,
+		Overview:          req.Overview,
+		Syllabus:          req.Syllabus,
+		RelatedCourses:    req.RelatedCourses,
+		Deposit:           req.Deposit,
+		Description:       sql.NullString{String: req.Description, Valid: req.Description != ""},
+		ShortDescription:  sql.NullString{String: req.ShortDescription, Valid: req.ShortDescription != ""},
 	}
 
 	if err := s.repo.Create(ctx, course); err != nil {
@@ -113,6 +127,7 @@ func (s *CourseService) Update(ctx context.Context, id uuid.UUID, req *models.Cr
 		return nil, err
 	}
 
+	course.Slug = req.Slug
 	course.Name = req.Name
 	course.Category = req.Category
 	course.Type = req.Type
@@ -127,6 +142,21 @@ func (s *CourseService) Update(ctx context.Context, id uuid.UUID, req *models.Cr
 	course.Locations = req.Locations
 	course.Images = req.Images
 	course.Documents = req.Documents
+	course.Badges = req.Badges
+	course.QuickStats = req.QuickStats
+	course.Included = req.Included
+	course.Overview = req.Overview
+	course.Syllabus = req.Syllabus
+	course.RelatedCourses = req.RelatedCourses
+	course.Deposit = req.Deposit
+	course.WhoShouldAttend = req.WhoShouldAttend
+	course.Prerequisites = req.Prerequisites
+	course.Eligibility = req.Eligibility
+	course.Certification = req.Certification
+	course.RenewalInfo = req.RenewalInfo
+	course.SEOKeywords = req.SEOKeywords
+	course.Description = sql.NullString{String: req.Description, Valid: req.Description != ""}
+	course.ShortDescription = sql.NullString{String: req.ShortDescription, Valid: req.ShortDescription != ""}
 
 	if err := s.repo.Update(ctx, course); err != nil {
 		return nil, err

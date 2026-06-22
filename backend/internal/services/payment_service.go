@@ -233,6 +233,25 @@ func (s *PaymentService) CapturePayPalOrder(ctx context.Context, orderID string)
 	return nil
 }
 
+func (s *PaymentService) CancelPayPalOrder(ctx context.Context, bookingID string) error {
+	bookingUUID, err := uuid.Parse(bookingID)
+	if err != nil {
+		return fmt.Errorf("invalid booking ID")
+	}
+
+	// Update booking status to cancelled
+	if err := s.bookingRepo.UpdateStatus(ctx, bookingUUID, "cancelled"); err != nil {
+		return err
+	}
+
+	// Also update the payment record status to cancelled
+	if err := s.repo.UpdateStatusByBookingID(ctx, bookingUUID, "cancelled", "USER_CANCELLED", "Payment was cancelled by the user"); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *PaymentService) HandleWebhookPaymentSucceeded(ctx context.Context, piID string) error {
 	payment, err := s.repo.GetByPaymentIntentID(ctx, piID)
 	if err != nil {
