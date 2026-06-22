@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+
 export function proxy(request: NextRequest) {
   const hasAdminSession = request.cookies.has('tda_session') || request.cookies.has('admin_refresh_token');
 

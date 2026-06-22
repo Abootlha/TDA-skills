@@ -5,11 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "pages:build": "npx @cloudflare/next-on-pages",
+    "deploy": "npx @opennextjs/cloudflare build && npx wrangler deploy",
+    "preview": "npx @opennextjs/cloudflare build && npx wrangler dev",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@opennextjs/cloudflare": "latest",
     "@paypal/react-paypal-js": "^10.0.0",
     "axios": "^1.17.0",
     "clsx": "^2.1.1",
@@ -22,7 +24,6 @@
     "zustand": "^5.0.13"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.13.16",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -30,6 +31,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "latest"
   }
 }

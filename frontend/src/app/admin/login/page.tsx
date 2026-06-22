@@ -1,30 +1,31 @@
 import { notFound } from "next/navigation";
 import { AdminLoginForm } from "@/components/admin/AdminLoginForm";
 
-import crypto from 'crypto';
-
 export const metadata = {
   title: "Admin Portal",
   robots: "noindex, nofollow", // Prevent search engines from indexing
 };
 
-function decryptSecret(encryptedHex: string, secret: string): string | null {
+async function decryptSecret(encryptedHex: string, secret: string): Promise<string | null> {
   try {
-    const key = crypto.createHash('sha256').update(secret).digest();
-    const encryptedBytes = Buffer.from(encryptedHex, 'hex');
+    const encoder = new TextEncoder();
+    const keyData = await crypto.subtle.digest('SHA-256', encoder.encode(secret));
+    const cryptoKey = await crypto.subtle.importKey('raw', keyData, { name: 'AES-GCM' }, false, ['decrypt']);
+
+    const encryptedBytes = new Uint8Array(encryptedHex.match(/.{1,2}/g)!.map(b => parseInt(b, 16)));
 
     if (encryptedBytes.length <= 28) return null;
 
-    const nonce = encryptedBytes.subarray(0, 12);
-    const authTag = encryptedBytes.subarray(encryptedBytes.length - 16);
-    const ciphertext = encryptedBytes.subarray(12, encryptedBytes.length - 16);
+    const nonce = encryptedBytes.slice(0, 12);
+    const ciphertext = encryptedBytes.slice(12);
 
-    const decipher = crypto.createDecipheriv('aes-256-gcm', key, nonce);
-    decipher.setAuthTag(authTag);
+    const decryptedBuffer = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: nonce },
+      cryptoKey,
+      ciphertext
+    );
 
-    let decrypted = decipher.update(ciphertext, undefined, 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
+    return new TextDecoder().decode(decryptedBuffer);
   } catch (e) {
     return null;
   }
@@ -39,7 +40,7 @@ export default async function AdminLoginPage({
   const params = await searchParams;
 
   // Strict validation: decrypt the hex string and see if it equals our secret
-  if (!params.key || decryptSecret(params.key, secretKey) !== secretKey) {
+  if (!params.key || (await decryptSecret(params.key, secretKey)) !== secretKey) {
     notFound();
   }
 
