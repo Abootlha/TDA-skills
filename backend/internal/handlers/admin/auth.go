@@ -92,13 +92,14 @@ func (h *AdminAuthHandler) Login(c *gin.Context) {
 		"DeviceInfo": c.GetHeader("User-Agent"),
 	})
 
-	// Set session cookies
-	c.SetCookie("tda_session", "true", int(7*24*time.Hour.Seconds()), "/", "", false, false)
-	c.SetCookie("admin_access_token", resp.AccessToken, int(7*24*time.Hour.Seconds()), "/", "", false, true)
+	// Set session cookies (1 hour expiry)
+	maxAge := 3600
+	c.SetCookie("tda_session", "true", maxAge, "/", "", false, false)
+	c.SetCookie("admin_access_token", resp.AccessToken, maxAge, "/", "", false, true)
 
 	if resp.RefreshToken != "" {
 		// Set HttpOnly cookie for refresh token
-		c.SetCookie("admin_refresh_token", resp.RefreshToken, int(7*24*time.Hour.Seconds()), "/", "", false, true)
+		c.SetCookie("admin_refresh_token", resp.RefreshToken, maxAge, "/", "", false, true)
 	}
 
 	c.JSON(http.StatusOK, gin.H{

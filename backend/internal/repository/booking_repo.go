@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"strings"
 
@@ -143,7 +144,13 @@ func (r *BookingRepository) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 func (r *BookingRepository) GetNextBookingNumber(ctx context.Context) (string, error) {
-	var count int64
-	r.db.GetContext(ctx, &count, "SELECT COUNT(*) FROM bookings")
+	var maxCount sql.NullInt64
+	query := `SELECT MAX(CAST(SUBSTRING(booking_number FROM 9) AS INTEGER)) FROM bookings WHERE booking_number LIKE 'BK-2024-%'`
+	r.db.GetContext(ctx, &maxCount, query)
+	
+	count := int64(0)
+	if maxCount.Valid {
+		count = maxCount.Int64
+	}
 	return fmt.Sprintf("BK-2024-%06d", count+1), nil
 }

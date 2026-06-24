@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { AdminSidebar } from "../../../components/dashboard/admin/AdminSidebar";
 import { DashboardHeader } from "../../../components/dashboard/shared/DashboardHeader";
 
@@ -10,6 +11,22 @@ export default function AdminDashboardLayout({
     children: React.ReactNode;
 }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const router = useRouter();
+
+    useEffect(() => {
+        const checkSession = () => {
+            if (!document.cookie.includes("tda_session=")) {
+                router.push("/admin/login?expired=true");
+            }
+        };
+
+        // Check immediately
+        checkSession();
+
+        // Check every 30 seconds
+        const intervalId = setInterval(checkSession, 30000);
+        return () => clearInterval(intervalId);
+    }, [router]);
 
     return (
         <div className="h-screen overflow-hidden bg-[#faf9fd] flex">

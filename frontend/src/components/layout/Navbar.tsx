@@ -114,7 +114,7 @@ export function Navbar({ initialCourses = [] }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
   const [isScrolled, setIsScrolled] = React.useState(false)
   const pathname = usePathname()
-  const { items: cartItems, setSidebarOpen } = useCartStore()
+  const { items: cartItems } = useCartStore()
 
   // Dynamically build NAV_LINKS based on initialCourses
   const navLinks = React.useMemo(() => {
@@ -257,26 +257,26 @@ export function Navbar({ initialCourses = [] }: NavbarProps) {
             <Search size={20} className="lg:w-[22px] lg:h-[22px]" />
           </button>
 
-          <button onClick={() => setSidebarOpen(true)} className="relative text-[#001430] hover:text-[#FFB800] transition-colors p-2">
+          <Link href="/cart" className="relative text-[#001430] hover:text-[#FFB800] transition-colors p-2">
             <ShoppingCart size={20} className="lg:w-[22px] lg:h-[22px]" />
             {cartItems.length > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#FFB800] text-black font-bold text-xs rounded-full flex items-center justify-center">
                 {cartItems.length}
               </span>
             )}
-          </button>
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
         <div className="flex items-center gap-4 lg:hidden">
-          <button onClick={() => setSidebarOpen(true)} className="relative text-[#001430] p-2">
+          <Link href="/cart" className="relative text-[#001430] p-2">
             <ShoppingCart size={22} />
             {cartItems.length > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#FFB800] text-black font-bold text-xs rounded-full flex items-center justify-center">
                 {cartItems.length}
               </span>
             )}
-          </button>
+          </Link>
 
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

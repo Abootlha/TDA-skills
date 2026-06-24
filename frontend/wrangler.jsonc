@@ -3,6 +3,16 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2024-12-30",
   "compatibility_flags": ["nodejs_compat"],
+  "routes": [
+    {
+      "pattern": "tdaskills.co.uk",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.tdaskills.co.uk",
+      "custom_domain": true
+    }
+  ],
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
