@@ -28,7 +28,7 @@ export function EnquiriesTable() {
   const fetchEnquiries = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8080/api/v1/admin/enquiries", {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/admin/enquiries`, {
         withCredentials: true,
       });
       if (res.data.success) {
@@ -44,7 +44,7 @@ export function EnquiriesTable() {
 
   const updateStatus = async (id: string, newStatus: string) => {
     try {
-      await axios.put(`http://localhost:8080/api/v1/admin/enquiries/${id}/status`, { status: newStatus }, {
+      await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/admin/enquiries/${id}/status`, { status: newStatus }, {
         withCredentials: true,
       });
       setEnquiries(enquiries.map(e => e.id === id ? { ...e, status: newStatus } : e));
@@ -56,7 +56,7 @@ export function EnquiriesTable() {
   const deleteEnquiry = async (id: string) => {
     if (!confirm("Are you sure you want to delete this enquiry?")) return;
     try {
-      await axios.delete(`http://localhost:8080/api/v1/admin/enquiries/${id}`, {
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/admin/enquiries/${id}`, {
         withCredentials: true,
       });
       setEnquiries(enquiries.filter(e => e.id !== id));

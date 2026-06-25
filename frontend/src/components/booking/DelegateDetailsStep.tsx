@@ -59,7 +59,7 @@ export function DelegateDetailsStep({ onNext, onBack }: DelegateDetailsStepProps
             }
         }
 
-        axios.get("http://localhost:8080/api/v1/checkout/draft", {
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/checkout/draft`, {
             headers: { "X-Session-ID": id }
         })
         .then(res => {
@@ -91,7 +91,7 @@ export function DelegateDetailsStep({ onNext, onBack }: DelegateDetailsStepProps
             // Save to local storage as fallback
             localStorage.setItem("tda_checkout_draft", JSON.stringify(formData));
 
-            axios.post("http://localhost:8080/api/v1/checkout/draft", formData, {
+            axios.post(`${process.env.NEXT_PUBLIC_API_URL}/checkout/draft`, formData, {
                 headers: {
                     "Content-Type": "application/json",
                     "X-Session-ID": sessionId

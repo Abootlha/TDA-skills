@@ -29,7 +29,7 @@ export default function CheckoutPage() {
         setIsMounted(true);
         const sessionId = localStorage.getItem("tda_checkout_session");
         if (sessionId) {
-            fetch("http://localhost:8080/api/v1/checkout/draft", {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/checkout/draft`, {
                 headers: { "X-Session-ID": sessionId }
             })
                 .then((res: Response) => res.json())
@@ -48,7 +48,7 @@ export default function CheckoutPage() {
             const sessionId = localStorage.getItem("tda_checkout_session");
             if (sessionId) {
                 try {
-                    await fetch("http://localhost:8080/api/v1/checkout/draft", {
+                    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/checkout/draft`, {
                         method: "DELETE",
                         headers: { "X-Session-ID": sessionId }
                     });

@@ -26,7 +26,7 @@ export default function CitbTestPage() {
         if (selectedTest) {
             try {
                 // Check backend connection first
-                await axios.get("http://localhost:8080/health");
+                await axios.get(`${process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '')}/health`);
 
                 addItemToCart({
                     id: selectedTest.id,

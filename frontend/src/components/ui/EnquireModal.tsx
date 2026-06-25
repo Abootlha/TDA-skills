@@ -43,7 +43,7 @@ export function EnquireModal({ isOpen, onClose }: EnquireModalProps) {
     setIsSubmitting(true);
     
     try {
-      await axios.post('http://localhost:8080/api/v1/enquiries', {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/enquiries`, {
         full_name: formData.fullName,
         email: formData.email,
         phone_number: formData.phone,

@@ -236,7 +236,7 @@ export function AdminSidebar({ isOpen }: AdminSidebarProps) {
                 <button 
                     onClick={async () => {
                         try {
-                            await axios.post('http://localhost:8080/api/v1/admin/auth/logout', {}, { withCredentials: true });
+                            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/admin/auth/logout`, {}, { withCredentials: true });
                         } catch (err) {
                             console.error("Logout API failed, forcing local logout", err);
                         } finally {

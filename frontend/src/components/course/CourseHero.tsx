@@ -16,7 +16,7 @@ export function CourseHero({ course }: { course: CourseDetail }) {
     const handleBook = async () => {
         try {
             // Check backend connection first
-            await axios.get("http://localhost:8080/health");
+            await axios.get(`${process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '')}/health`);
 
             addItem({
                 id: course.id,

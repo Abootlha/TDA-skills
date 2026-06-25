@@ -36,7 +36,7 @@ const syncWithRedis = (items: CartItem[], formData?: any) => {
     payload.formData = formData;
   }
 
-  axios.post("http://localhost:8080/api/v1/checkout/draft", payload, {
+  axios.post(`${process.env.NEXT_PUBLIC_API_URL}/checkout/draft`, payload, {
     headers: {
       "Content-Type": "application/json",
       "X-Session-ID": sessionId
