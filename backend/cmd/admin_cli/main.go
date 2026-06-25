@@ -28,13 +28,13 @@ import (
 	"github.com/tdaskills/backend/internal/database"
 )
 
-func encryptSecret(secret string) string {
-	key := sha256.Sum256([]byte(secret))
+func encryptSecret(payload, masterSecret string) string {
+	key := sha256.Sum256([]byte(masterSecret))
 	block, _ := aes.NewCipher(key[:])
 	gcm, _ := cipher.NewGCM(block)
 	nonce := make([]byte, gcm.NonceSize())
 	rand.Read(nonce)
-	ciphertext := gcm.Seal(nonce, nonce, []byte(secret), nil)
+	ciphertext := gcm.Seal(nonce, nonce, []byte(payload), nil)
 	return hex.EncodeToString(ciphertext)
 }
 
@@ -138,7 +138,7 @@ func main() {
 	}
 	
 	payload := fmt.Sprintf("%s|%s", adminSecret, email)
-	encryptedToken := encryptSecret(payload)
+	encryptedToken := encryptSecret(payload, adminSecret)
 	frontendURL := os.Getenv("FRONTEND_URL")
 	if frontendURL == "" {
 		if os.Getenv("ENV") == "development" {
