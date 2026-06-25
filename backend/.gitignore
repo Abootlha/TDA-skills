@@ -45,4 +45,4 @@ build/
 bin/
 coverage/
 logs/
-*.log
+*.loguploads/

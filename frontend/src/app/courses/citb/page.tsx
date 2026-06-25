@@ -3,9 +3,12 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, MonitorPlay, Calendar, ChevronRight } from "lucide-react";
 import { api } from "@/lib/api";
 
+export const revalidate = 0;
+
 export default async function CITBCoursesPage() {
     // Fetch dynamic CITB courses from backend
-    const { data } = await api.get<any>('/courses?category=CITB');
+    const { data, error } = await api.get<any>('/courses?category=citb');
+    
     // Fallback to empty array if no courses found
     const citbCourses = data?.courses || [];
 
@@ -73,7 +76,7 @@ export default async function CITBCoursesPage() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="flex flex-wrap justify-center gap-8">
                         {citbCourses.map((course: any, idx: number) => {
                             const originalPrice = course.price + 90;
                             const salePrice = course.price;
@@ -90,7 +93,7 @@ export default async function CITBCoursesPage() {
                             return (
                                 <div 
                                     key={course.id} 
-                                    className="relative bg-white rounded-2xl border border-gray-100 p-6 flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 animate-in fade-in zoom-in"
+                                    className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.33rem)] max-w-[420px] relative bg-white rounded-2xl border border-gray-100 p-6 flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 animate-in fade-in zoom-in"
                                     style={{ animationDelay: `${idx * 100}ms` }}
                                 >
                                     {/* Course Title & Delivery */}
@@ -119,7 +122,7 @@ export default async function CITBCoursesPage() {
                                         ))}
                                     </ul>
 
-                                    <div className="blur-sm opacity-60 pointer-events-none select-none">
+                                    <div>
                                         {/* Price Info */}
                                         <div className="mb-6 pt-6 border-t border-gray-100">
                                             <p className="text-xs font-bold tracking-wider text-gray-400 uppercase mb-1">Course Price</p>
@@ -134,21 +137,19 @@ export default async function CITBCoursesPage() {
                                                     </span>
                                                 </div>
                                             </div>
-                                            <div className="inline-block bg-red-50 text-red-600 px-2 py-1 rounded text-xs font-bold">
-                                                SAVE {formatCurrency(discount)}
-                                            </div>
+                                            {discount > 0 && (
+                                                <div className="inline-block bg-red-50 text-red-600 px-2 py-1 rounded text-xs font-bold">
+                                                    SAVE {formatCurrency(discount)}
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* Action Buttons */}
                                         <div className="flex flex-col gap-3">
-                                            <button disabled className="w-full bg-white border border-gray-200 text-[#001430] px-4 py-3.5 rounded-xl font-bold text-sm transition-all text-center">
-                                                View Details
-                                            </button>
-                                            
-                                            <div className="w-full bg-gray-100 text-gray-400 px-4 py-3.5 rounded-xl font-bold text-sm text-center flex items-center justify-center gap-2">
-                                                <Calendar size={16} />
-                                                COMING SOON
-                                            </div>
+                                            <Link href={`/courses/${course.slug}`} className="w-full bg-[#ffbb16] hover:bg-[#e6a600] text-[#001430] px-4 py-3.5 rounded-xl font-bold text-sm transition-all text-center flex items-center justify-center gap-2 relative z-20">
+                                                View Course Details
+                                                <ArrowRight size={16} />
+                                            </Link>
                                         </div>
                                     </div>
 

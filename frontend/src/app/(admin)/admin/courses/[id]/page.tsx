@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, Trash2, Save, ArrowLeft, DollarSign } from "lucide-react";
+import { Plus, Trash2, Save, ArrowLeft, DollarSign, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import apiClient from "@/lib/apiClient";
@@ -45,6 +45,7 @@ export default function EditCoursePage() {
         faq: [] as { question: string; answer: string }[],
         available_dates: [] as any[],
         prerequisites: [""],
+        images: [] as string[],
     });
 
     useEffect(() => {
@@ -81,6 +82,7 @@ export default function EditCoursePage() {
                     faq: data.faq || [],
                     available_dates: data.available_dates || [],
                     prerequisites: data.prerequisites || [""],
+                    images: data.images || [],
                 });
             } catch (err) {
                 console.error("Failed to fetch course details", err);
@@ -153,6 +155,30 @@ export default function EditCoursePage() {
         setFormData({ ...formData, overview: { ...formData.overview, whatIsIt: [...formData.overview.whatIsIt, ""] } });
     };
 
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+        const file = e.target.files[0];
+        
+        const data = new FormData();
+        data.append("image", file);
+        
+        try {
+            const res = await apiClient.post('/admin/upload/image', data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            if (res.status === 200 && res.data.image_url) {
+                setFormData({ ...formData, images: [res.data.image_url] });
+            } else {
+                alert("Upload failed.");
+            }
+        } catch (err: any) {
+            console.error("Image upload error:", err);
+            alert("Failed to upload image: " + (err.response?.data?.error || err.message));
+        }
+    };
+
     if (isLoading) {
         return <div className="text-center py-20 text-gray-500 font-medium">Loading course data...</div>;
     }
@@ -184,6 +210,24 @@ export default function EditCoursePage() {
                     <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
                         <h2 className="text-xl font-bold text-[#001430] mb-4">Basic Information</h2>
                         <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Course Image</label>
+                                <div className="flex items-center gap-4">
+                                    {formData.images.length > 0 && formData.images[0] ? (
+                                        <div className="relative w-32 h-20 rounded-lg overflow-hidden border border-gray-200">
+                                            <img src={formData.images[0]} alt="Course" className="object-cover w-full h-full" />
+                                        </div>
+                                    ) : (
+                                        <div className="w-32 h-20 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-center text-gray-400">
+                                            <ImageIcon size={24} />
+                                        </div>
+                                    )}
+                                    <label className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-bold cursor-pointer hover:bg-gray-200 transition-colors">
+                                        Upload Image
+                                        <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                                    </label>
+                                </div>
+                            </div>
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-1">Course Title</label>
                                 <input 

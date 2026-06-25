@@ -94,8 +94,8 @@ export function Footer() {
               </div>
               <div className="flex gap-3 items-center">
                 <Mail className="text-[#FFB800] shrink-0" size={18} />
-                <a href="mailto:info@tdaskills.co.uk" className="text-[#001430] font-medium hover:text-[#FFB800] transition-colors">
-                  info@tdaskills.co.uk
+                <a href="mailto:sales@tdaskills.co.uk" className="text-[#001430] font-medium hover:text-[#FFB800] transition-colors">
+                  sales@tdaskills.co.uk
                 </a>
               </div>
               <div className="flex gap-3 items-start">

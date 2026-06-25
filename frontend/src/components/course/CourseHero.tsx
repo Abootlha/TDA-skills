@@ -33,29 +33,29 @@ export function CourseHero({ course }: { course: CourseDetail }) {
         }
     };
     return (
-        <div className="bg-white pt-12 pb-20 relative overflow-hidden">
+        <div className="bg-white pt-8 pb-12 md:pt-12 md:pb-20 relative overflow-hidden">
             {/* Background Graphic */}
             <div className="absolute top-0 right-0 w-1/2 h-full overflow-hidden pointer-events-none hidden lg:block">
                 <div className="absolute -top-40 -right-40 w-[800px] h-[800px] rounded-full bg-[#fff9e6] opacity-70"></div>
             </div>
 
             <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="flex flex-col lg:flex-row gap-16 items-start">
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
                     
                     {/* Left Content */}
                     <div className="flex-1 pt-4">
                         {/* Breadcrumbs */}
-                        <div className="flex items-center gap-2 text-sm text-gray-500 font-medium mb-8">
+                        <div className="flex items-center flex-wrap gap-2 text-xs md:text-sm text-gray-500 font-medium mb-6 md:mb-8">
                             <Link href="/courses" className="hover:text-[#ffbb16] transition-colors">Courses</Link>
-                            <ChevronRight size={14} />
+                            <ChevronRight size={14} className="shrink-0" />
                             <Link href="/courses/citb" className="hover:text-[#ffbb16] transition-colors">CITB Courses</Link>
-                            <ChevronRight size={14} />
-                            <span className="text-[#001430] font-bold line-clamp-1 max-w-[250px] sm:max-w-none">{course.title}</span>
+                            <ChevronRight size={14} className="shrink-0" />
+                            <span className="text-[#001430] font-bold line-clamp-1">{course.title}</span>
                         </div>
 
-                        <div className="flex items-center gap-4 mb-6">
+                        <div className="flex items-center flex-wrap gap-3 md:gap-4 mb-6">
                             {course.badges.map((badge, idx) => (
-                                <span key={idx} className={`px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase ${badge.color}`}>
+                                <span key={idx} className={`px-2 md:px-3 py-1 rounded-full text-[10px] md:text-xs font-bold tracking-wider uppercase ${badge.color}`}>
                                     {badge.text}
                                 </span>
                             ))}
@@ -69,49 +69,49 @@ export function CourseHero({ course }: { course: CourseDetail }) {
                             </span>
                         </div>
 
-                        <h1 className="font-sans font-bold text-[42px] lg:text-[56px] text-[#001430] leading-[1.1] mb-6 tracking-tight">
+                        <h1 className="font-sans font-bold text-[32px] md:text-[42px] lg:text-[56px] text-[#001430] leading-[1.15] md:leading-[1.1] mb-4 md:mb-6 tracking-tight">
                             {course.title}
                         </h1>
 
-                        <p className="text-lg text-gray-600 mb-12 max-w-2xl leading-relaxed">
+                        <p className="text-base md:text-lg text-gray-600 mb-8 md:mb-12 max-w-2xl leading-relaxed">
                             {course.description}
                         </p>
 
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-[#faf9fd] flex items-center justify-center shrink-0">
-                                    <Clock className="w-5 h-5 text-[#001430]" />
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+                            <div className="flex items-center gap-3 md:gap-4">
+                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#faf9fd] flex items-center justify-center shrink-0">
+                                    <Clock className="w-4 h-4 md:w-5 md:h-5 text-[#001430]" />
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Duration</span>
-                                    <span className="font-bold text-[#001430]">{course.quickStats.duration}</span>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-[#faf9fd] flex items-center justify-center shrink-0">
-                                    <MapPin className="w-5 h-5 text-[#001430]" />
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Delivery</span>
-                                    <span className="font-bold text-[#001430]">{course.quickStats.delivery}</span>
+                                <div className="flex flex-col min-w-0">
+                                    <span className="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-wider">Duration</span>
+                                    <span className="font-bold text-[#001430] text-sm md:text-base truncate">{course.quickStats.duration}</span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-[#faf9fd] flex items-center justify-center shrink-0">
-                                    <Calendar className="w-5 h-5 text-[#001430]" />
+                            <div className="flex items-center gap-3 md:gap-4">
+                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#faf9fd] flex items-center justify-center shrink-0">
+                                    <MapPin className="w-4 h-4 md:w-5 md:h-5 text-[#001430]" />
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Next Date</span>
-                                    <span className="font-bold text-[#001430]">{course.quickStats.nextDate}</span>
+                                <div className="flex flex-col min-w-0">
+                                    <span className="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-wider">Delivery</span>
+                                    <span className="font-bold text-[#001430] text-sm md:text-base truncate">{course.quickStats.delivery}</span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-[#faf9fd] flex items-center justify-center shrink-0">
-                                    <Monitor className="w-5 h-5 text-[#001430]" />
+                            <div className="flex items-center gap-3 md:gap-4">
+                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#faf9fd] flex items-center justify-center shrink-0">
+                                    <Calendar className="w-4 h-4 md:w-5 md:h-5 text-[#001430]" />
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">CITB Grant</span>
-                                    <span className="font-bold text-[#001430]">{course.quickStats.grant}</span>
+                                <div className="flex flex-col min-w-0">
+                                    <span className="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-wider">Next Date</span>
+                                    <span className="font-bold text-[#001430] text-sm md:text-base truncate">{course.quickStats.nextDate}</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3 md:gap-4">
+                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#faf9fd] flex items-center justify-center shrink-0">
+                                    <Monitor className="w-4 h-4 md:w-5 md:h-5 text-[#001430]" />
+                                </div>
+                                <div className="flex flex-col min-w-0">
+                                    <span className="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-wider">CITB Grant</span>
+                                    <span className="font-bold text-[#001430] text-sm md:text-base truncate">{course.quickStats.grant}</span>
                                 </div>
                             </div>
                         </div>

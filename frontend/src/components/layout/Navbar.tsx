@@ -112,6 +112,8 @@ const DEFAULT_NAV_LINKS = [
 
 export function Navbar({ initialCourses = [] }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
+  const [expandedMenu, setExpandedMenu] = React.useState<string | null>(null)
+  const [expandedSubMenu, setExpandedSubMenu] = React.useState<string | null>(null)
   const [isScrolled, setIsScrolled] = React.useState(false)
   const pathname = usePathname()
   const { items: cartItems } = useCartStore()
@@ -293,21 +295,110 @@ export function Navbar({ initialCourses = [] }: NavbarProps) {
           "lg:hidden absolute left-0 w-full bg-white border-b border-gray-100 shadow-lg animate-in slide-in-from-top-2",
           isScrolled ? "top-20 rounded-b-[2rem]" : "top-24"
         )}>
-          <nav className="flex flex-col p-4 gap-1">
+          <nav className="flex flex-col p-4 gap-1 overflow-y-auto max-h-[calc(100vh-100px)]">
             {navLinks.map((link: any) => {
               const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href))
+              const isExpanded = expandedMenu === link.name;
+
               return (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className={cn(
-                    "py-3 px-4 rounded-md text-base font-bold tracking-wider transition-colors flex items-center gap-2",
-                    isActive ? "bg-[#FFF9E6] text-[#FFB800]" : "text-[#002855] hover:bg-gray-50"
+                <div key={link.name} className="flex flex-col">
+                  {link.hasDropdown ? (
+                    <div className={cn(
+                        "py-3 px-4 rounded-md transition-colors flex items-center justify-between",
+                        isActive ? "bg-[#FFF9E6]" : "hover:bg-gray-50"
+                    )}>
+                      <Link 
+                        href={link.href}
+                        className={cn(
+                          "text-base font-bold tracking-wider flex-1",
+                          isActive ? "text-[#FFB800]" : "text-[#002855]"
+                        )}
+                      >
+                        {link.name}
+                      </Link>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setExpandedMenu(isExpanded ? null : link.name);
+                        }}
+                        className="p-1 pl-4"
+                        aria-label={`Toggle ${link.name}`}
+                      >
+                        <ChevronDown size={16} className={cn("opacity-80 transition-transform", isExpanded && "rotate-180", isActive ? "text-[#FFB800]" : "text-[#002855]")} />
+                      </button>
+                    </div>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className={cn(
+                        "py-3 px-4 rounded-md text-base font-bold tracking-wider transition-colors flex items-center gap-2",
+                        isActive ? "bg-[#FFF9E6] text-[#FFB800]" : "text-[#002855] hover:bg-gray-50"
+                      )}
+                    >
+                      <span>{link.name}</span>
+                    </Link>
                   )}
-                >
-                  <span>{link.name}</span>
-                  {link.hasDropdown && <ChevronDown size={16} className="ml-auto opacity-80" />}
-                </Link>
+
+                  {/* Dropdown Content */}
+                  {link.hasDropdown && isExpanded && (
+                    <div className="flex flex-col px-4 py-2 gap-2 border-l-2 border-gray-100 ml-4 mt-1">
+                      {link.dropdownItems?.map((item: any) => {
+                        const isSubExpanded = expandedSubMenu === item.name;
+
+                        return (
+                          <div key={item.name} className="flex flex-col">
+                            {item.subItems ? (
+                              <div className="flex items-center justify-between py-2">
+                                <Link
+                                  href={item.href}
+                                  className="text-sm font-semibold text-[#001430] hover:text-[#FFB800] flex-1"
+                                >
+                                  {item.name}
+                                </Link>
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setExpandedSubMenu(isSubExpanded ? null : item.name);
+                                  }}
+                                  className="p-1 pl-4"
+                                  aria-label={`Toggle ${item.name}`}
+                                >
+                                  <ChevronDown size={14} className={cn("text-[#001430] opacity-80 transition-transform", isSubExpanded && "rotate-180")} />
+                                </button>
+                              </div>
+                            ) : (
+                              <Link
+                                href={item.href}
+                                className="flex items-center justify-between py-2 text-sm font-semibold text-[#001430] hover:text-[#FFB800]"
+                              >
+                                <span>{item.name}</span>
+                              </Link>
+                            )}
+
+                            {/* Sub-dropdown Content */}
+                            {item.subItems && isSubExpanded && (
+                              <div className="flex flex-col gap-3 py-2 pl-4 mt-1 border-l border-gray-100">
+                                {item.subItems.map((subItem: any) => (
+                                  <Link
+                                    key={subItem.name}
+                                    href={subItem.href}
+                                    className="flex items-center gap-3 text-sm text-gray-500 hover:text-[#FFB800]"
+                                  >
+                                    <div className="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0" />
+                                    <span className="flex-1 truncate font-medium">{subItem.name}</span>
+                                    <div className="bg-[#F3E8FF] text-[#9333EA] rounded-full p-1 shrink-0">
+                                       <ChevronRight size={12} strokeWidth={3} />
+                                    </div>
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
               )
             })}
             <div className="h-px bg-gray-100 my-3 mx-4" />

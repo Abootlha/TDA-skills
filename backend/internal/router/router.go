@@ -26,6 +26,9 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 	r.Use(middleware.SecurityHeaders())
 	r.Use(middleware.RequestID())
 
+	// Serve static uploads
+	r.Static("/uploads", "./uploads")
+
 	// Anti-scraping middleware (if enabled)
 	if cfg.AntiScrap.Enabled {
 		asCfg := middleware.NewAntiScrapConfig(cfg)
@@ -257,11 +260,7 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 	}
 
 	// --- Upload (protected) ---
-	upload := v1.Group("/upload")
-	upload.Use(middleware.AuthMiddleware(cfg))
-	{
-		upload.POST("/presign", uploadHandler.Presign)
-	}
+	// Moved to admin routes
 
 	// === Admin Routes ===
 
@@ -285,6 +284,9 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 
 		// Dashboard
 		adminProtected.GET("/dashboard", dashboardHandler.GetStats)
+
+		// Uploads
+		adminProtected.POST("/upload/image", uploadHandler.UploadImage)
 
 		// Courses CRUD
 		adminProtected.GET("/courses", adminCourseHandler.List)

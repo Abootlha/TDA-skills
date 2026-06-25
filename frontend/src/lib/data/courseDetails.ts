@@ -9,6 +9,7 @@ export interface CourseDetail {
     category: string;
     reviewsCount: number;
     rating: number;
+    images?: string[];
     badges: { text: string; color: string }[];
     quickStats: {
         duration: string;

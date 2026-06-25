@@ -69,23 +69,23 @@ export default function CartPage() {
 
                 {/* Header Actions */}
                 <div className="mb-8">
-                    <button
-                        onClick={() => router.back()}
+                    <Link
+                        href={cartItems[0]?.type === "course" ? "/courses" : "/citb-test"}
                         className="flex items-center gap-2 border border-gray-200 bg-white rounded-full px-5 py-2.5 text-sm font-semibold hover:bg-gray-50 transition-colors text-gray-700 shadow-sm w-fit"
                     >
                         <ArrowLeft size={16} />
                         Continue Shopping
-                    </button>
+                    </Link>
                 </div>
 
                 {/* Page Title */}
-                <div className="flex items-center gap-4 mb-10">
-                    <div className="bg-[#001430] text-white p-3.5 rounded-2xl shadow-md">
-                        <ShoppingCart size={28} />
+                <div className="flex items-center gap-3 md:gap-4 mb-8 md:mb-10">
+                    <div className="bg-[#001430] text-white p-3 rounded-xl md:p-3.5 md:rounded-2xl shadow-md shrink-0">
+                        <ShoppingCart className="w-6 h-6 md:w-7 md:h-7" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold text-[#001430]">Shopping Cart</h1>
-                        <p className="text-gray-500 font-medium mt-1">
+                        <h1 className="text-2xl md:text-3xl font-bold text-[#001430] leading-tight">Shopping Cart</h1>
+                        <p className="text-sm md:text-base text-gray-500 font-medium mt-0.5 md:mt-1">
                             {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'} in your cart
                         </p>
                     </div>
@@ -106,50 +106,50 @@ export default function CartPage() {
                                     <X size={20} />
                                 </button>
 
-                                <div className="flex items-start gap-4 mb-4">
-                                    <div className="w-12 h-12 rounded-2xl bg-[#fff8e6] text-[#ffbb16] flex items-center justify-center shrink-0">
-                                        <Award size={24} />
+                                <div className="flex items-start gap-3 md:gap-4 mb-4">
+                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-[#fff8e6] text-[#ffbb16] flex items-center justify-center shrink-0">
+                                        <Award className="w-5 h-5 md:w-6 md:h-6" />
                                     </div>
                                     <div className="flex flex-wrap gap-2 mt-1">
-                                        <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-bold tracking-wide">
+                                        <span className="bg-gray-100 text-gray-700 px-2.5 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-bold tracking-wide">
                                             {(item.type || 'item').toUpperCase()}
                                         </span>
                                         {/* Mocking a level badge if it's a course */}
                                         {(item.type === 'course' || item.type === 'nvq') && (
-                                            <span className="bg-[#fff8e6] text-[#d97706] px-3 py-1 rounded-full text-xs font-bold tracking-wide">
+                                            <span className="bg-[#fff8e6] text-[#d97706] px-2.5 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-bold tracking-wide">
                                                 Premium
                                             </span>
                                         )}
                                     </div>
                                 </div>
 
-                                <h3 className="text-xl font-bold text-[#001430] mb-2 pr-12 leading-tight">
+                                <h3 className="text-lg md:text-xl font-bold text-[#001430] mb-2 pr-8 md:pr-12 leading-tight">
                                     {item.title}
                                 </h3>
 
-                                <div className="flex items-center gap-2 text-sm text-gray-500 mb-8 font-medium">
-                                    <ShieldCheck size={16} className="text-gray-400" />
+                                <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500 mb-6 md:mb-8 font-medium">
+                                    <ShieldCheck size={16} className="text-gray-400 shrink-0" />
                                     <span>TDA Skills Certification</span>
                                 </div>
 
                                 {/* Bottom Row: Quantity & Price */}
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-t border-gray-100 pt-6">
-                                    <div className="flex items-center gap-4">
-                                        <span className="text-sm font-semibold text-gray-500">Quantity:</span>
-                                        <div className="flex items-center border border-gray-200 rounded-xl bg-gray-50 p-1">
-                                            <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white hover:shadow-sm text-gray-500 transition-all">
+                                <div className="flex flex-row items-center justify-between gap-4 border-t border-gray-100 pt-4 md:pt-6">
+                                    <div className="flex items-center gap-2 md:gap-4">
+                                        <span className="text-xs md:text-sm font-semibold text-gray-500 hidden sm:block">Quantity:</span>
+                                        <div className="flex items-center border border-gray-200 rounded-xl bg-gray-50 p-1 shrink-0">
+                                            <button className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg hover:bg-white hover:shadow-sm text-gray-500 transition-all">
                                                 <Minus size={14} />
                                             </button>
-                                            <span className="w-10 text-center font-bold text-[#001430] text-sm">
+                                            <span className="w-8 md:w-10 text-center font-bold text-[#001430] text-sm">
                                                 {item.quantity || 1}
                                             </span>
-                                            <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white hover:shadow-sm text-gray-500 transition-all">
+                                            <button className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg hover:bg-white hover:shadow-sm text-gray-500 transition-all">
                                                 <Plus size={14} />
                                             </button>
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-2xl font-black text-[#001430]">
+                                        <div className="text-xl md:text-2xl font-black text-[#001430] truncate">
                                             £{item.price.toFixed(2)}
                                         </div>
                                     </div>

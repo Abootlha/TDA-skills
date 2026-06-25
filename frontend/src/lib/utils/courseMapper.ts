@@ -17,6 +17,7 @@ export function mapBackendCourseToFrontend(course: Record<string, any>): CourseD
         category: getStr(course.category),
         reviewsCount: course.reviews_count || 0,
         rating: course.rating || 0,
+        images: Array.isArray(course.images) ? course.images : [],
         badges: Array.isArray(course.badges) ? course.badges : [],
         quickStats: {
             duration: course.quick_stats?.duration || getStr(course.duration) || "",
