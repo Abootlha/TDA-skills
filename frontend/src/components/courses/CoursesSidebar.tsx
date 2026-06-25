@@ -1,13 +1,15 @@
 "use client";
 
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Filter, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useState } from "react";
 
 export function CoursesSidebar({ courses = [], categories = [], currentCategory = "" }: { courses?: any[], categories?: any[], currentCategory?: string }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleCategoryToggle = (slug: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -35,34 +37,45 @@ export function CoursesSidebar({ courses = [], categories = [], currentCategory 
         
         {/* Course Category */}
         <div className="content-stretch flex flex-col gap-[24px] items-start relative shrink-0 w-full" data-name="Container">
-          <div className="relative shrink-0 w-full" data-name="Heading 3">
-            <h3 className="font-['Hanken_Grotesk',sans-serif] font-bold text-[#002855] text-[12px] tracking-[1.2px] uppercase w-full m-0 leading-[16px]">
-              COURSE CATEGORY
-            </h3>
+          <div 
+            className="relative shrink-0 w-full flex items-center justify-between cursor-pointer group bg-gray-50 px-4 py-3 rounded-xl border border-gray-100 hover:bg-gray-100 transition-colors" 
+            onClick={() => setIsOpen(!isOpen)}
+            data-name="Heading 3"
+          >
+            <div className="flex items-center gap-2">
+              <Filter size={16} className="text-[#002855]" />
+              <h3 className="font-['Hanken_Grotesk',sans-serif] font-bold text-[#002855] text-[13px] tracking-[1px] uppercase m-0 leading-none">
+                FILTER BY CATEGORY
+              </h3>
+            </div>
+            {isOpen ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
           </div>
-          <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-name="Container">
-            {categories.length > 0 ? categories.map((cat: any) => {
-              const isChecked = currentCategory === cat.slug;
-              return (
-                <label key={cat.id || cat.slug} onClick={() => handleCategoryToggle(cat.slug)} className="content-stretch flex gap-[16px] items-center relative shrink-0 w-full cursor-pointer group" data-name="Label">
-                  <div className="relative shrink-0 size-[24px]" data-name="Input">
-                    <div className={`absolute inset-0 rounded-[4px] border border-solid ${isChecked ? 'border-transparent bg-[#001430]' : 'border-[#c4c6d0] bg-white group-hover:border-[#001430]'} transition-colors flex items-center justify-center`}>
-                      {isChecked && (
-                        <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12.3333 1L4.99996 8.33333L1.66663 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      )}
+
+          {isOpen && (
+            <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full px-2 animate-in fade-in slide-in-from-top-2 duration-200" data-name="Container">
+              {categories.length > 0 ? categories.map((cat: any) => {
+                const isChecked = currentCategory === cat.slug;
+                return (
+                  <label key={cat.id || cat.slug} onClick={() => handleCategoryToggle(cat.slug)} className="content-stretch flex gap-[16px] items-center relative shrink-0 w-full cursor-pointer group" data-name="Label">
+                    <div className="relative shrink-0 size-[24px]" data-name="Input">
+                      <div className={`absolute inset-0 rounded-[4px] border border-solid ${isChecked ? 'border-transparent bg-[#001430]' : 'border-[#c4c6d0] bg-white group-hover:border-[#001430]'} transition-colors flex items-center justify-center`}>
+                        {isChecked && (
+                          <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.3333 1L4.99996 8.33333L1.66663 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <span className={`font-['Liberation_Sans',sans-serif] ${isChecked ? 'font-bold text-[#001430]' : 'text-[#43474f]'} text-[14px] leading-[20px] whitespace-nowrap`}>
-                    {cat.name}
-                  </span>
-                </label>
+                    <span className={`font-['Liberation_Sans',sans-serif] ${isChecked ? 'font-bold text-[#001430]' : 'text-[#43474f]'} text-[14px] leading-[20px] whitespace-nowrap`}>
+                      {cat.name}
+                    </span>
+                  </label>
               );
             }) : (
                <p className="text-sm text-gray-400">Loading categories...</p>
             )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Qualification Level (Dynamic based on courses) */}

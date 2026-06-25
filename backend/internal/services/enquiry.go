@@ -31,6 +31,11 @@ type CreateEnquiryRequest struct {
 	PhoneNumber string `json:"phone_number"`
 	EnquiryType string `json:"enquiry_type"`
 	Message     string `json:"message"`
+	UTMSource   string `json:"utm_source,omitempty"`
+	UTMMedium   string `json:"utm_medium,omitempty"`
+	UTMCampaign string `json:"utm_campaign,omitempty"`
+	UTMTerm     string `json:"utm_term,omitempty"`
+	UTMContent  string `json:"utm_content,omitempty"`
 }
 
 func (s *enquiryService) CreateEnquiry(req *CreateEnquiryRequest) (*models.Enquiry, error) {
@@ -55,6 +60,11 @@ func (s *enquiryService) CreateEnquiry(req *CreateEnquiryRequest) (*models.Enqui
 		PhoneNumber: req.PhoneNumber,
 		EnquiryType: req.EnquiryType,
 		Message:     req.Message,
+		UTMSource:   req.UTMSource,
+		UTMMedium:   req.UTMMedium,
+		UTMCampaign: req.UTMCampaign,
+		UTMTerm:     req.UTMTerm,
+		UTMContent:  req.UTMContent,
 	}
 
 	if err := s.repo.Create(enquiry); err != nil {

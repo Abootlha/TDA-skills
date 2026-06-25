@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 import { api } from "@/lib/api";
+import { UTMTracker } from "@/components/analytics/UTMTracker";
 
 export default async function RootLayout({
   children,
@@ -33,6 +34,7 @@ export default async function RootLayout({
       <body
         className={`${inter.variable} antialiased min-h-screen flex flex-col bg-[var(--background)]`}
       >
+        <UTMTracker />
         <Navbar initialCourses={courses} />
         <main className="flex-grow">
           {children}

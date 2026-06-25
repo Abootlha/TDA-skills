@@ -13,6 +13,11 @@ interface Enquiry {
   message: string;
   status: string;
   created_at: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_term?: string;
+  utm_content?: string;
 }
 
 export function EnquiriesTable() {
@@ -205,9 +210,33 @@ export function EnquiriesTable() {
               <div>
                 <span className="block text-gray-500 text-xs font-bold mb-1 uppercase tracking-wider">Message</span>
                 <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-gray-700 whitespace-pre-wrap leading-relaxed">
-                  {viewModal.message}
+                  {viewModal.message || "No message provided."}
                 </div>
               </div>
+
+              {viewModal.utm_source && (
+                <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100/50 space-y-2">
+                  <span className="block text-blue-800 text-xs font-bold mb-2 uppercase tracking-wider">Tracking Info</span>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                      <span className="text-gray-500 mr-1">Source:</span>
+                      <span className="font-semibold text-[#001430]">{viewModal.utm_source}</span>
+                    </div>
+                    {viewModal.utm_medium && (
+                      <div>
+                        <span className="text-gray-500 mr-1">Medium:</span>
+                        <span className="font-semibold text-[#001430]">{viewModal.utm_medium}</span>
+                      </div>
+                    )}
+                    {viewModal.utm_campaign && (
+                      <div>
+                        <span className="text-gray-500 mr-1">Campaign:</span>
+                        <span className="font-semibold text-[#001430]">{viewModal.utm_campaign}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-gray-100">

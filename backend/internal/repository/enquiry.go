@@ -24,8 +24,8 @@ func NewEnquiryRepository(db *sqlx.DB) EnquiryRepository {
 
 func (r *enquiryRepository) Create(enquiry *models.Enquiry) error {
 	query := `
-		INSERT INTO enquiries (full_name, email, phone_number, enquiry_type, message)
-		VALUES (:full_name, :email, :phone_number, :enquiry_type, :message)
+		INSERT INTO enquiries (full_name, email, phone_number, enquiry_type, message, utm_source, utm_medium, utm_campaign, utm_term, utm_content)
+		VALUES (:full_name, :email, :phone_number, :enquiry_type, :message, :utm_source, :utm_medium, :utm_campaign, :utm_term, :utm_content)
 		RETURNING id, status, created_at, updated_at
 	`
 	rows, err := r.db.NamedQuery(query, enquiry)
@@ -50,7 +50,7 @@ func (r *enquiryRepository) List(ctx context.Context, limit, offset int) ([]mode
 	}
 
 	query := `
-		SELECT id, full_name, email, phone_number, enquiry_type, message, status, created_at, updated_at 
+		SELECT id, full_name, email, phone_number, enquiry_type, message, status, utm_source, utm_medium, utm_campaign, utm_term, utm_content, created_at, updated_at 
 		FROM enquiries 
 		ORDER BY created_at DESC 
 		LIMIT $1 OFFSET $2

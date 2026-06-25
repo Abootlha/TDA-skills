@@ -7,6 +7,7 @@ import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { api } from "../../lib/api";
 import { useCartStore } from "../../lib/store/cartStore";
+import { attachUTMData } from "@/lib/utils/utmTracker";
 import { useToast } from "@/components/ui/Toast";
 import { PayPalCheckoutButton } from "./PayPalCheckoutButton";
 
@@ -145,7 +146,7 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
         const typeMap: Record<string, string> = { test: "citb-test", course: "course", nvq: "nvq" };
         const bookingType = typeMap[items[0]?.type || ""] || "citb-test";
 
-        const { data, error } = await api.post<{ id: string }>('/bookings', {
+        const { data, error } = await api.post<{ id: string }>('/bookings', attachUTMData({
             booking_type: bookingType,
             personal_details: personalDetails,
             company_details: companyDetails,
@@ -155,7 +156,7 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
                 unit_price: item.price,
                 quantity: 1
             }))
-        });
+        }));
 
         setIsSubmitting(false);
 

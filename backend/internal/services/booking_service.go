@@ -51,6 +51,26 @@ func (s *BookingService) Create(ctx context.Context, userID *uuid.UUID, req *mod
 		booking.Source.String = req.Source
 		booking.Source.Valid = true
 	}
+	if req.UTMSource != "" {
+		booking.UTMSource.String = req.UTMSource
+		booking.UTMSource.Valid = true
+	}
+	if req.UTMMedium != "" {
+		booking.UTMMedium.String = req.UTMMedium
+		booking.UTMMedium.Valid = true
+	}
+	if req.UTMCampaign != "" {
+		booking.UTMCampaign.String = req.UTMCampaign
+		booking.UTMCampaign.Valid = true
+	}
+	if req.UTMTerm != "" {
+		booking.UTMTerm.String = req.UTMTerm
+		booking.UTMTerm.Valid = true
+	}
+	if req.UTMContent != "" {
+		booking.UTMContent.String = req.UTMContent
+		booking.UTMContent.Valid = true
+	}
 	if req.Notes != "" {
 		booking.Notes.String = req.Notes
 		booking.Notes.Valid = true

@@ -1,0 +1,15 @@
+-- Add UTM tracking columns to bookings table
+ALTER TABLE bookings
+ADD COLUMN IF NOT EXISTS utm_source VARCHAR(255),
+ADD COLUMN IF NOT EXISTS utm_medium VARCHAR(255),
+ADD COLUMN IF NOT EXISTS utm_campaign VARCHAR(255),
+ADD COLUMN IF NOT EXISTS utm_term VARCHAR(255),
+ADD COLUMN IF NOT EXISTS utm_content VARCHAR(255);
+
+-- Add UTM tracking columns to enquiries table
+ALTER TABLE enquiries
+ADD COLUMN IF NOT EXISTS utm_source VARCHAR(255),
+ADD COLUMN IF NOT EXISTS utm_medium VARCHAR(255),
+ADD COLUMN IF NOT EXISTS utm_campaign VARCHAR(255),
+ADD COLUMN IF NOT EXISTS utm_term VARCHAR(255),
+ADD COLUMN IF NOT EXISTS utm_content VARCHAR(255);

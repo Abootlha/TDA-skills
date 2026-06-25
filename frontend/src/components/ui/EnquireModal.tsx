@@ -4,6 +4,7 @@ import { X, User, Mail, Phone, MessageSquare, Send } from "lucide-react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { cn } from "@/lib/utils/cn";
+import { attachUTMData } from "@/lib/utils/utmTracker";
 
 interface EnquireModalProps {
   isOpen: boolean;
@@ -43,13 +44,13 @@ export function EnquireModal({ isOpen, onClose }: EnquireModalProps) {
     setIsSubmitting(true);
     
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/enquiries`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/enquiries`, attachUTMData({
         full_name: formData.fullName,
         email: formData.email,
         phone_number: formData.phone,
         enquiry_type: formData.type,
         message: formData.message
-      });
+      }));
       
       setIsSuccess(true);
       setTimeout(() => {

@@ -20,6 +20,11 @@ type Booking struct {
 	CardDetails       *json.RawMessage `db:"card_details" json:"card_details,omitempty"`
 	NVQDetails        *json.RawMessage `db:"nvq_details" json:"nvq_details,omitempty"`
 	Source            sql.NullString   `db:"source" json:"source,omitempty"`
+	UTMSource         sql.NullString   `db:"utm_source" json:"utm_source,omitempty"`
+	UTMMedium         sql.NullString   `db:"utm_medium" json:"utm_medium,omitempty"`
+	UTMCampaign       sql.NullString   `db:"utm_campaign" json:"utm_campaign,omitempty"`
+	UTMTerm           sql.NullString   `db:"utm_term" json:"utm_term,omitempty"`
+	UTMContent        sql.NullString   `db:"utm_content" json:"utm_content,omitempty"`
 	ReferralCode      sql.NullString   `db:"referral_code" json:"referral_code,omitempty"`
 	Notes             sql.NullString   `db:"notes" json:"notes,omitempty"`
 	AdminNotes        sql.NullString   `db:"admin_notes" json:"admin_notes,omitempty"`
@@ -57,6 +62,11 @@ type CreateBookingRequest struct {
 	NVQDetails      *json.RawMessage           `json:"nvq_details,omitempty"`
 	Notes           string                     `json:"notes,omitempty"`
 	Source          string                     `json:"source,omitempty"`
+	UTMSource       string                     `json:"utm_source,omitempty"`
+	UTMMedium       string                     `json:"utm_medium,omitempty"`
+	UTMCampaign     string                     `json:"utm_campaign,omitempty"`
+	UTMTerm         string                     `json:"utm_term,omitempty"`
+	UTMContent      string                     `json:"utm_content,omitempty"`
 	ReferralCode    string                     `json:"referral_code,omitempty"`
 	Items           []CreateBookingItemRequest `json:"items" validate:"required,min=1"`
 }
