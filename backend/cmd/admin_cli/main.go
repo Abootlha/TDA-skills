@@ -140,7 +140,11 @@ func main() {
 	encryptedToken := encryptSecret(adminSecret)
 	frontendURL := os.Getenv("FRONTEND_URL")
 	if frontendURL == "" {
-		frontendURL = "https://tdaskills.co.uk"
+		if os.Getenv("ENV") == "development" {
+			frontendURL = "http://localhost:3000"
+		} else {
+			frontendURL = "https://tdaskills.co.uk"
+		}
 	}
 	longURL := fmt.Sprintf("%s/admin/login?key=%s", frontendURL, encryptedToken)
 	
