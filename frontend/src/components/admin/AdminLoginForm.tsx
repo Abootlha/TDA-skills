@@ -11,7 +11,7 @@ interface AdminLoginFormProps {
 }
 
 export function AdminLoginForm({ magicKey, prefilledEmail }: AdminLoginFormProps) {
-  const [email, setEmail] = useState(prefilledEmail || "");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -66,10 +66,9 @@ export function AdminLoginForm({ magicKey, prefilledEmail }: AdminLoginFormProps
           <input
             type="email"
             required
-            disabled={true}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-gray-200 rounded-xl outline-none transition-all text-gray-500 cursor-not-allowed"
+            className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 focus:border-[#FFB800] focus:ring-2 focus:ring-[#FFB800]/20 rounded-xl outline-none transition-all text-[#001430] placeholder:text-gray-400"
             placeholder="admin@tdaskills.co.uk"
           />
         </div>
