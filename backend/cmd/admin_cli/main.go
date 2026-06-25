@@ -138,7 +138,11 @@ func main() {
 	}
 	
 	encryptedToken := encryptSecret(adminSecret)
-	longURL := fmt.Sprintf("http://localhost:3000/admin/login?key=%s", encryptedToken)
+	frontendURL := os.Getenv("FRONTEND_URL")
+	if frontendURL == "" {
+		frontendURL = "https://tdaskills.co.uk"
+	}
+	longURL := fmt.Sprintf("%s/admin/login?key=%s", frontendURL, encryptedToken)
 	
 	// Create TinyURL
 	tinyURLReq := fmt.Sprintf("https://tinyurl.com/api-create.php?url=%s", url.QueryEscape(longURL))
