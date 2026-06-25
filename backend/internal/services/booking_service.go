@@ -25,12 +25,50 @@ func (s *BookingService) Create(ctx context.Context, userID *uuid.UUID, req *mod
 		return nil, err
 	}
 
-	// Calculate totals
+	// Calculate totals securely
 	var totalAmount, totalDiscount float64
+	var totalBookingFee float64
+
 	for _, item := range req.Items {
-		totalAmount += item.UnitPrice * float64(item.Quantity)
-		totalDiscount += item.Discount
+		// Do NOT trust item.UnitPrice from the request payload!
+		var authoritativePrice float64
+
+		if req.BookingType == "citb-test" {
+			// CITB tests are priced at 22.50
+			authoritativePrice = 22.50
+			totalBookingFee += 12.50 * float64(item.Quantity)
+		} else {
+			// For courses, NVQs, etc, fetch the authoritative price from the DB
+			courseID, err := uuid.Parse(item.CourseID)
+			if err == nil {
+				course, err := s.courseRepo.GetByID(ctx, courseID)
+				if err == nil {
+					// Use SalePrice if it exists, otherwise use standard Price
+					if course.SalePrice != nil && *course.SalePrice > 0 {
+						authoritativePrice = *course.SalePrice
+					} else {
+						authoritativePrice = course.Price
+					}
+				}
+			}
+		}
+
+		// Prevent negative quantities
+		qty := item.Quantity
+		if qty <= 0 {
+			qty = 1
+		}
+
+		totalAmount += authoritativePrice * float64(qty)
+		totalDiscount += item.Discount // Keep discount as provided, or optionally validate it too
 	}
+
+	// Add booking fee to the base total
+	subtotal := totalAmount + totalBookingFee - totalDiscount
+	
+	// Add 20% VAT
+	vat := subtotal * 0.2
+	finalTotalAmount := subtotal + vat
 
 	booking := &models.Booking{
 		UserID:          userID,
@@ -42,7 +80,7 @@ func (s *BookingService) Create(ctx context.Context, userID *uuid.UUID, req *mod
 		TestDetails:     req.TestDetails,
 		CardDetails:     req.CardDetails,
 		NVQDetails:      req.NVQDetails,
-		TotalAmount:     totalAmount - totalDiscount,
+		TotalAmount:     finalTotalAmount,
 		DiscountAmount:  totalDiscount,
 		Currency:        "GBP",
 	}
