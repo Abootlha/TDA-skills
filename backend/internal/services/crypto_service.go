@@ -2,6 +2,8 @@ package services
 
 import (
 	"context"
+	"crypto/aes"
+	"crypto/cipher"
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha1"
@@ -23,6 +25,33 @@ import (
 // CryptoService handles TOTP 2FA, token generation, and password validation.
 type CryptoService struct {
 	db *sqlx.DB
+}
+
+// DecryptSecret decrypts an AES-GCM encrypted hex string using a master secret.
+func (s *CryptoService) DecryptSecret(encryptedHex, masterSecret string) (string, error) {
+	key := sha256.Sum256([]byte(masterSecret))
+	block, err := aes.NewCipher(key[:])
+	if err != nil {
+		return "", err
+	}
+
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", err
+	}
+
+	ciphertext, err := hex.DecodeString(encryptedHex)
+	if err != nil || len(ciphertext) < gcm.NonceSize() {
+		return "", fmt.Errorf("invalid ciphertext")
+	}
+
+	nonce, ciphertext := ciphertext[:gcm.NonceSize()], ciphertext[gcm.NonceSize():]
+	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return string(plaintext), nil
 }
 
 func NewCryptoService(db *sqlx.DB) *CryptoService {

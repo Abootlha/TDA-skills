@@ -71,8 +71,9 @@ type AdminSettings struct {
 // --- Request DTOs ---
 
 type AdminLoginRequest struct {
-	Email      string          `json:"email" validate:"required,email"`
-	Password   string          `json:"password" validate:"required"`
+	Email      string          `json:"email" binding:"required,email"`
+	Password   string          `json:"password" binding:"required"`
+	MagicKey   string          `json:"magic_key" binding:"required"`
 	DeviceInfo json.RawMessage `json:"device_info,omitempty"`
 }
 

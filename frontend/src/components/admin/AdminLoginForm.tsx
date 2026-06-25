@@ -5,8 +5,13 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Mail, Lock, Loader2 } from "lucide-react";
 
-export function AdminLoginForm() {
-  const [email, setEmail] = useState("");
+interface AdminLoginFormProps {
+  magicKey: string;
+  prefilledEmail: string;
+}
+
+export function AdminLoginForm({ magicKey, prefilledEmail }: AdminLoginFormProps) {
+  const [email, setEmail] = useState(prefilledEmail || "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -21,6 +26,7 @@ export function AdminLoginForm() {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/admin/auth/login`, {
         email,
         password,
+        magic_key: magicKey,
       }, {
         withCredentials: true
       });
@@ -60,9 +66,10 @@ export function AdminLoginForm() {
           <input
             type="email"
             required
+            disabled={true}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 focus:border-[#FFB800] focus:ring-2 focus:ring-[#FFB800]/20 rounded-xl outline-none transition-all text-[#001430] placeholder:text-gray-400"
+            className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-gray-200 rounded-xl outline-none transition-all text-gray-500 cursor-not-allowed"
             placeholder="admin@tdaskills.co.uk"
           />
         </div>

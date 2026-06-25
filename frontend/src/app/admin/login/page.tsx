@@ -39,10 +39,22 @@ export default async function AdminLoginPage({
   const secretKey = process.env.ADMIN_LOGIN_SECRET || "";
   const params = await searchParams;
 
-  // Strict validation: decrypt the hex string and see if it equals our secret
-  if (!params.key || (await decryptSecret(params.key, secretKey)) !== secretKey) {
+  // Strict validation: decrypt the hex string and see if it equals our secret|email
+  if (!params.key || typeof params.key !== 'string') {
     notFound();
   }
+  
+  const decrypted = await decryptSecret(params.key, secretKey);
+  if (!decrypted) {
+    notFound();
+  }
+
+  const parts = decrypted.split('|');
+  if (parts.length !== 2 || parts[0] !== secretKey) {
+    notFound();
+  }
+
+  const prefilledEmail = parts[1];
 
   return (
     <div className="min-h-screen bg-[#001430] flex items-center justify-center p-4">
@@ -67,7 +79,7 @@ export default async function AdminLoginPage({
           <p className="text-gray-500 mt-2">Enter your credentials to continue</p>
         </div>
 
-        <AdminLoginForm />
+        <AdminLoginForm magicKey={params.key} prefilledEmail={prefilledEmail} />
       </div>
     </div>
   );

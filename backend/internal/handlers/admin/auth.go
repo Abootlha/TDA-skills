@@ -50,6 +50,31 @@ func (h *AdminAuthHandler) Login(c *gin.Context) {
 
 	req.Email = strings.ToLower(strings.TrimSpace(req.Email))
 
+	// Verify MagicKey
+	adminSecret := os.Getenv("ADMIN_LOGIN_SECRET")
+	if adminSecret == "" {
+		adminSecret = "a8b3c9f2-7d4e-41a5-92b8-f1e0d3c7a9b6" // Fallback matching cli
+	}
+
+	decryptedMagicKey, err := h.cryptoService.DecryptSecret(req.MagicKey, adminSecret)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"success": false,
+			"error":   gin.H{"code": "UNAUTHORIZED_MAGIC_LINK", "message": "Invalid magic link provided"},
+		})
+		return
+	}
+
+	// Payload format: secret|email
+	parts := strings.Split(decryptedMagicKey, "|")
+	if len(parts) != 2 || parts[0] != adminSecret || parts[1] != req.Email {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"success": false,
+			"error":   gin.H{"code": "UNAUTHORIZED_EMAIL", "message": "This magic link is not authorized for this email address"},
+		})
+		return
+	}
+
 	resp, err := h.authService.AdminLogin(c.Request.Context(), &req)
 	if err != nil {
 		switch err {

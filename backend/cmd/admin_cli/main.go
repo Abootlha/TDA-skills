@@ -131,13 +131,14 @@ func main() {
 		fmt.Printf("\nAdmin account %s created successfully.\n", email)
 	}
 
-	// Generate the URL using an encrypted secret key
+	// Generate the URL using an encrypted secret key combined with email
 	adminSecret := os.Getenv("ADMIN_LOGIN_SECRET")
 	if adminSecret == "" {
 		adminSecret = "a8b3c9f2-7d4e-41a5-92b8-f1e0d3c7a9b6"
 	}
 	
-	encryptedToken := encryptSecret(adminSecret)
+	payload := fmt.Sprintf("%s|%s", adminSecret, email)
+	encryptedToken := encryptSecret(payload)
 	frontendURL := os.Getenv("FRONTEND_URL")
 	if frontendURL == "" {
 		if os.Getenv("ENV") == "development" {
