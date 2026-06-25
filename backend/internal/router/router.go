@@ -52,7 +52,7 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 	authService := services.NewAuthService(userRepo, adminRepo, rdb, cfg, cryptoService)
 	emailService := services.NewEmailService(cfg, pg.DB, rdb)
 	courseService := services.NewCourseService(courseRepo, rdb)
-	bookingService := services.NewBookingService(bookingRepo, courseRepo)
+	bookingService := services.NewBookingService(bookingRepo, courseRepo, adminRepo)
 	paymentService := services.NewPaymentService(paymentRepo, bookingRepo, cfg)
 	notifService := services.NewNotificationService(notifRepo)
 	enquiryService := services.NewEnquiryService(enquiryRepo)
@@ -102,6 +102,9 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 
 	// === API v1 ===
 	v1 := r.Group("/api/v1")
+
+	// Public settings
+	v1.GET("/settings", settingsHandler.List)
 
 	// --- Auth (public) ---
 	auth := v1.Group("/auth")

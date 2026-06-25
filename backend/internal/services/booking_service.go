@@ -3,6 +3,8 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"strconv"
+	"strings"
 
 	"github.com/google/uuid"
 
@@ -11,12 +13,13 @@ import (
 )
 
 type BookingService struct {
-	repo     *repository.BookingRepository
+	repo       *repository.BookingRepository
 	courseRepo *repository.CourseRepository
+	adminRepo  *repository.AdminRepository
 }
 
-func NewBookingService(repo *repository.BookingRepository, courseRepo *repository.CourseRepository) *BookingService {
-	return &BookingService{repo: repo, courseRepo: courseRepo}
+func NewBookingService(repo *repository.BookingRepository, courseRepo *repository.CourseRepository, adminRepo *repository.AdminRepository) *BookingService {
+	return &BookingService{repo: repo, courseRepo: courseRepo, adminRepo: adminRepo}
 }
 
 func (s *BookingService) Create(ctx context.Context, userID *uuid.UUID, req *models.CreateBookingRequest) (*models.Booking, error) {
@@ -34,9 +37,26 @@ func (s *BookingService) Create(ctx context.Context, userID *uuid.UUID, req *mod
 		var authoritativePrice float64
 
 		if req.BookingType == "citb-test" {
-			// CITB tests are priced at 22.50
-			authoritativePrice = 22.50
-			totalBookingFee += 12.50 * float64(item.Quantity)
+			// Fetch CITB test price dynamically from DB
+			testPrice := 22.50
+			if setting, err := s.adminRepo.GetSetting(ctx, "citb_test_price"); err == nil {
+				valStr := strings.Trim(string(setting.Value), "\"")
+				if parsed, err := strconv.ParseFloat(valStr, 64); err == nil {
+					testPrice = parsed
+				}
+			}
+
+			// Fetch booking fee dynamically from DB
+			bookingFee := 12.50
+			if setting, err := s.adminRepo.GetSetting(ctx, "citb_booking_fee"); err == nil {
+				valStr := strings.Trim(string(setting.Value), "\"")
+				if parsed, err := strconv.ParseFloat(valStr, 64); err == nil {
+					bookingFee = parsed
+				}
+			}
+
+			authoritativePrice = testPrice
+			totalBookingFee += bookingFee * float64(item.Quantity)
 		} else {
 			// For courses, NVQs, etc, fetch the authoritative price from the DB
 			courseID, err := uuid.Parse(item.CourseID)

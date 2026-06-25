@@ -13,16 +13,20 @@ interface BookingSummaryProps {
     cartItems?: TestOption[];
     onCheckout?: () => void;
     onRemoveItem?: (id: string) => void;
+    dynamicBookingFee?: number;
 }
 
-export function BookingSummarySidebar({ step, selectedTest, cartItems, onCheckout, onRemoveItem }: BookingSummaryProps) {
+export function BookingSummarySidebar({ step, selectedTest, cartItems, onCheckout, onRemoveItem, dynamicBookingFee }: BookingSummaryProps) {
     // Merge single selectedTest and cartItems for uniform rendering
     const items = cartItems || (selectedTest ? [selectedTest] : []);
     
     const isCourse = items[0]?.type === "course";
     const itemFee = items.reduce((sum, item) => sum + item.price, 0);
-    const bookingFee = isCourse ? 0 : items.length * 12.50; // No booking fee for courses
-    const total = itemFee + bookingFee;
+    const bookingFeePerItem = dynamicBookingFee !== undefined ? dynamicBookingFee : 12.50;
+    const bookingFee = isCourse ? 0 : items.length * bookingFeePerItem; // No booking fee for courses
+    const subtotal = itemFee + bookingFee;
+    const vat = subtotal * 0.2; // 20% VAT
+    const total = subtotal + vat;
 
     return (
         <div className="bg-white rounded-[16px] shadow-sm border border-gray-100 p-6 flex flex-col w-full h-fit sticky top-24">
@@ -41,7 +45,7 @@ export function BookingSummarySidebar({ step, selectedTest, cartItems, onCheckou
                                 <button 
                                     onClick={() => onRemoveItem(item.id)}
                                     className="absolute top-0 right-0 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
-                                    title="Remove test"
+                                    title="Remove item"
                                 >
                                     <Trash2 className="w-4 h-4" />
                                 </button>
@@ -83,7 +87,7 @@ export function BookingSummarySidebar({ step, selectedTest, cartItems, onCheckou
                 </div>
             ) : (
                 <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-500 mb-8 text-center">
-                    Please select a test to view your summary.
+                    Please select an item to view your summary.
                 </div>
             )}
 
@@ -93,12 +97,16 @@ export function BookingSummarySidebar({ step, selectedTest, cartItems, onCheckou
                     <span>{isCourse ? "Course Fee" : "Test Fee"}</span>
                     <span className="font-medium">£{itemFee.toFixed(2)}</span>
                 </div>
-                {!isCourse && (
+                {!isCourse && bookingFee > 0 && (
                     <div className="flex justify-between items-center text-[14px] text-gray-600">
                         <span>Booking Fee</span>
                         <span className="font-medium">£{bookingFee.toFixed(2)}</span>
                     </div>
                 )}
+                <div className="flex justify-between items-center text-[14px] text-gray-600">
+                    <span>VAT (20%)</span>
+                    <span className="font-medium">£{vat.toFixed(2)}</span>
+                </div>
                 <div className="flex justify-between items-center pt-3 border-t border-gray-100 mt-1">
                     <span className="font-bold text-[#001430] text-[16px]">Total</span>
                     <span className="font-extrabold text-[#001430] text-[20px]">£{total.toFixed(2)}</span>

@@ -13,6 +13,7 @@ interface TestSelectionStepProps {
     selectedTestId: string | null;
     onSelectTest: (test: TestOption) => void;
     onNext: () => void;
+    dynamicPrice?: number;
 }
 
 export const TEST_OPTIONS: TestOption[] = [
@@ -46,7 +47,7 @@ export const TEST_OPTIONS: TestOption[] = [
     }
 ];
 
-export function TestSelectionStep({ selectedTestId, onSelectTest, onNext }: TestSelectionStepProps) {
+export function TestSelectionStep({ selectedTestId, onSelectTest, onNext, dynamicPrice }: TestSelectionStepProps) {
     const cartItems = useCartStore((state) => state.items);
 
     return (
@@ -62,6 +63,9 @@ export function TestSelectionStep({ selectedTestId, onSelectTest, onNext }: Test
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {TEST_OPTIONS.map((test) => {
+                    const price = dynamicPrice !== undefined ? dynamicPrice : test.price;
+                    const testWithDynamicPrice = { ...test, price };
+                    
                     const isSelected = selectedTestId === test.id;
                     const isAlreadyInCart = cartItems.some(item => item.id === test.id);
                     
@@ -69,7 +73,7 @@ export function TestSelectionStep({ selectedTestId, onSelectTest, onNext }: Test
                         <div 
                             key={test.id}
                             onClick={() => {
-                                if (!isAlreadyInCart) onSelectTest(test);
+                                if (!isAlreadyInCart) onSelectTest(testWithDynamicPrice);
                             }}
                             className={`p-6 rounded-[16px] transition-all duration-200 border-2 flex flex-col gap-4 relative overflow-hidden
                                 ${isAlreadyInCart 
@@ -99,7 +103,7 @@ export function TestSelectionStep({ selectedTestId, onSelectTest, onNext }: Test
 
                             <div className="mt-4">
                                 <span className="font-extrabold text-[24px] text-[#001430]">
-                                    £{test.price.toFixed(2)}
+                                    £{testWithDynamicPrice.price.toFixed(2)}
                                 </span>
                             </div>
                         </div>

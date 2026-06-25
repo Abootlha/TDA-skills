@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { TestSelectionStep, TEST_OPTIONS } from "../../components/booking/TestSelectionStep";
 import { BookingSummarySidebar } from "../../components/booking/BookingSummarySidebar";
@@ -18,9 +18,35 @@ interface TestOption {
 
 export default function CitbTestPage() {
     const [selectedTest, setSelectedTest] = useState<TestOption | null>(null);
+    const [dynamicTestPrice, setDynamicTestPrice] = useState<number | undefined>(undefined);
+    const [dynamicBookingFee, setDynamicBookingFee] = useState<number | undefined>(undefined);
     const addItemToCart = useCartStore((state) => state.addItem);
     const addToast = useToastStore((state) => state.addToast);
     const router = useRouter();
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/settings`);
+                const settings = response.data.settings || [];
+                
+                const testPriceSetting = settings.find((s: any) => s.key === "citb_test_price");
+                if (testPriceSetting && testPriceSetting.value) {
+                    const val = parseFloat(testPriceSetting.value.replace(/"/g, ''));
+                    if (!isNaN(val)) setDynamicTestPrice(val);
+                }
+
+                const bookingFeeSetting = settings.find((s: any) => s.key === "citb_booking_fee");
+                if (bookingFeeSetting && bookingFeeSetting.value) {
+                    const val = parseFloat(bookingFeeSetting.value.replace(/"/g, ''));
+                    if (!isNaN(val)) setDynamicBookingFee(val);
+                }
+            } catch (error) {
+                console.error("Failed to fetch dynamic settings", error);
+            }
+        };
+        fetchSettings();
+    }, []);
 
     const handleNextStep = async () => {
         if (selectedTest) {
@@ -90,6 +116,7 @@ export default function CitbTestPage() {
                             selectedTestId={selectedTest?.id || null}
                             onSelectTest={(test: TestOption) => setSelectedTest(test)}
                             onNext={handleNextStep}
+                            dynamicPrice={dynamicTestPrice}
                         />
                     </div>
                     
@@ -98,6 +125,7 @@ export default function CitbTestPage() {
                             step={1}
                             selectedTest={selectedTest}
                             onCheckout={handleNextStep}
+                            dynamicBookingFee={dynamicBookingFee}
                         />
                     </div>
                 </div>

@@ -24,14 +24,39 @@ export default function CartPage() {
     const removeItem = useCartStore((state) => state.removeItem);
     const [isMounted, setIsMounted] = useState(false);
 
+    const [dynamicBookingFee, setDynamicBookingFee] = useState<number>(12.50);
+
     useEffect(() => {
         setIsMounted(true);
+        const fetchSettings = async () => {
+            try {
+                // Ignore Next Public error if in server, handle safely
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
+                const response = await fetch(`${apiUrl}/settings`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const settings = data.settings || [];
+                    const bookingFeeSetting = settings.find((s: any) => s.key === "citb_booking_fee");
+                    if (bookingFeeSetting && bookingFeeSetting.value) {
+                        const val = parseFloat(bookingFeeSetting.value.replace(/"/g, ''));
+                        if (!isNaN(val)) setDynamicBookingFee(val);
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to fetch dynamic settings", error);
+            }
+        };
+        fetchSettings();
     }, []);
 
     if (!isMounted) return null;
 
     // Calculate totals
-    const subtotal = cartItems.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
+    const itemFee = cartItems.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
+    // Booking fee applies to tests, not courses
+    const numTests = cartItems.filter(item => item.type === "test").reduce((sum, item) => sum + (item.quantity || 1), 0);
+    const bookingFee = numTests * dynamicBookingFee;
+    const subtotal = itemFee + bookingFee;
     const vat = subtotal * 0.2; // Assuming 20% VAT
     const total = subtotal + vat;
 
@@ -177,8 +202,14 @@ export default function CartPage() {
                             <div className="flex flex-col gap-4 text-sm font-medium text-gray-600 mb-6">
                                 <div className="flex justify-between items-center">
                                     <span>Items ({cartItems.length})</span>
-                                    <span className="text-[#001430] font-bold">£{subtotal.toFixed(2)}</span>
+                                    <span className="text-[#001430] font-bold">£{itemFee.toFixed(2)}</span>
                                 </div>
+                                {bookingFee > 0 && (
+                                    <div className="flex justify-between items-center">
+                                        <span>Booking Fee</span>
+                                        <span className="text-[#001430] font-bold">£{bookingFee.toFixed(2)}</span>
+                                    </div>
+                                )}
                                 <div className="flex justify-between items-center">
                                     <span>Subtotal</span>
                                     <span className="text-[#001430] font-bold">£{subtotal.toFixed(2)}</span>
