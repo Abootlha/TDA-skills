@@ -13,6 +13,7 @@ COPY . .
 
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/server/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o admin_cli ./cmd/admin_cli/main.go
 
 # Start a new stage from scratch
 FROM alpine:latest  
@@ -23,6 +24,7 @@ WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
+COPY --from=builder /app/admin_cli .
 
 # Copy migrations and seeds so they can be run inside the container
 COPY --from=builder /app/migrations ./migrations
