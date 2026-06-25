@@ -95,8 +95,13 @@ func (h *AdminAuthHandler) Login(c *gin.Context) {
 
 	// Set session cookies (1 hour expiry)
 	maxAge := 3600
-	cookieDomain := os.Getenv("COOKIE_DOMAIN") // Should be ".tdaskills.co.uk" in production
-	isSecure := os.Getenv("ENV") == "production" // Use Secure=true in production
+	cookieDomain := os.Getenv("COOKIE_DOMAIN")
+	if cookieDomain == "" && os.Getenv("ENV") == "production" {
+		cookieDomain = ".tdaskills.co.uk"
+	}
+	isSecure := os.Getenv("ENV") == "production"
+
+	c.SetSameSite(http.SameSiteLaxMode)
 
 	c.SetCookie("tda_session", "true", maxAge, "/", cookieDomain, isSecure, false)
 	c.SetCookie("admin_access_token", resp.AccessToken, maxAge, "/", cookieDomain, isSecure, true)
@@ -216,8 +221,12 @@ func (h *AdminAuthHandler) Logout(c *gin.Context) {
 	}
 
 	cookieDomain := os.Getenv("COOKIE_DOMAIN")
+	if cookieDomain == "" && os.Getenv("ENV") == "production" {
+		cookieDomain = ".tdaskills.co.uk"
+	}
 	isSecure := os.Getenv("ENV") == "production"
 
+	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("admin_access_token", "", -1, "/", cookieDomain, isSecure, true)
 	c.SetCookie("admin_refresh_token", "", -1, "/", cookieDomain, isSecure, true)
 	c.SetCookie("tda_session", "", -1, "/", cookieDomain, isSecure, false)
