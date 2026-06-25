@@ -33,4 +33,4 @@ COPY --from=builder /app/migrations ./migrations
 EXPOSE 8080
 
 # Command to run the executable
-CMD ["./main"]
+CMD ["sh", "-c", "./main -migrate=up && ./main"]
