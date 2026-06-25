@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -94,12 +95,15 @@ func (h *AdminAuthHandler) Login(c *gin.Context) {
 
 	// Set session cookies (1 hour expiry)
 	maxAge := 3600
-	c.SetCookie("tda_session", "true", maxAge, "/", "", false, false)
-	c.SetCookie("admin_access_token", resp.AccessToken, maxAge, "/", "", false, true)
+	cookieDomain := os.Getenv("COOKIE_DOMAIN") // Should be ".tdaskills.co.uk" in production
+	isSecure := os.Getenv("ENV") == "production" // Use Secure=true in production
+
+	c.SetCookie("tda_session", "true", maxAge, "/", cookieDomain, isSecure, false)
+	c.SetCookie("admin_access_token", resp.AccessToken, maxAge, "/", cookieDomain, isSecure, true)
 
 	if resp.RefreshToken != "" {
 		// Set HttpOnly cookie for refresh token
-		c.SetCookie("admin_refresh_token", resp.RefreshToken, maxAge, "/", "", false, true)
+		c.SetCookie("admin_refresh_token", resp.RefreshToken, maxAge, "/", cookieDomain, isSecure, true)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -211,9 +215,12 @@ func (h *AdminAuthHandler) Logout(c *gin.Context) {
 		h.authService.Logout(c.Request.Context(), adminIDStr, token)
 	}
 
-	c.SetCookie("admin_access_token", "", -1, "/", "", false, true)
-	c.SetCookie("admin_refresh_token", "", -1, "/", "", false, true)
-	c.SetCookie("tda_session", "", -1, "/", "", false, false)
+	cookieDomain := os.Getenv("COOKIE_DOMAIN")
+	isSecure := os.Getenv("ENV") == "production"
+
+	c.SetCookie("admin_access_token", "", -1, "/", cookieDomain, isSecure, true)
+	c.SetCookie("admin_refresh_token", "", -1, "/", cookieDomain, isSecure, true)
+	c.SetCookie("tda_session", "", -1, "/", cookieDomain, isSecure, false)
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
