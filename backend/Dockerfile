@@ -24,6 +24,9 @@ WORKDIR /root/
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
 
+# Copy migrations and seeds so they can be run inside the container
+COPY --from=builder /app/migrations ./migrations
+
 # Expose port 8080 to the outside world
 EXPOSE 8080
 
