@@ -65,7 +65,10 @@ func (r *CourseRepository) List(ctx context.Context, params models.CourseListPar
 	}
 	offset := (params.Page - 1) * params.Limit
 
-	where := []string{"is_active = TRUE"}
+	where := []string{}
+	if !params.ShowAll {
+		where = append(where, "is_active = TRUE")
+	}
 	args := []interface{}{}
 	idx := 1
 
@@ -93,7 +96,10 @@ func (r *CourseRepository) List(ctx context.Context, params models.CourseListPar
 		where = append(where, "is_featured = TRUE")
 	}
 
-	whereClause := strings.Join(where, " AND ")
+	whereClause := "1=1"
+	if len(where) > 0 {
+		whereClause = strings.Join(where, " AND ")
+	}
 
 	countArgs := make([]interface{}, len(args))
 	copy(countArgs, args)

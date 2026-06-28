@@ -78,6 +78,7 @@ func (s *CourseService) Create(ctx context.Context, req *models.CreateCourseRequ
 		Slug:              req.Slug,
 		Name:              req.Name,
 		Category:          req.Category,
+		SubCategory:       sql.NullString{String: req.SubCategory, Valid: req.SubCategory != ""},
 		Type:              req.Type,
 		Price:             req.Price,
 		SalePrice:         req.SalePrice,
@@ -130,6 +131,7 @@ func (s *CourseService) Update(ctx context.Context, id uuid.UUID, req *models.Cr
 	course.Slug = req.Slug
 	course.Name = req.Name
 	course.Category = req.Category
+	course.SubCategory = sql.NullString{String: req.SubCategory, Valid: req.SubCategory != ""}
 	course.Type = req.Type
 	course.Price = req.Price
 	course.SalePrice = req.SalePrice

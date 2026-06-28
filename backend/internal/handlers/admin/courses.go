@@ -24,6 +24,7 @@ func (h *AdminCourseHandler) List(c *gin.Context) {
 	c.ShouldBindQuery(&params)
 	if params.Page < 1 { params.Page = 1 }
 	if params.Limit < 1 { params.Limit = 20 }
+	params.ShowAll = true
 
 	resp, err := h.courseService.List(c.Request.Context(), params)
 	if err != nil {

@@ -16,7 +16,7 @@ export default function AdminCoursesPage() {
         const fetchCourses = async () => {
             try {
                 // Since apiClient already has process.env.NEXT_PUBLIC_API_URL as baseURL
-                const res = await apiClient.get(`/admin/courses`);
+                const res = await apiClient.get(`/admin/courses?type=course`);
                 const data = res.data;
                 if (data.courses) {
                     setCourses(data.courses);

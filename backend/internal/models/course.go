@@ -119,7 +119,9 @@ type CourseListParams struct {
 	Limit       int    `form:"limit,default=20"`
 	SortBy      string `form:"sort_by,default=created_at"`
 	SortOrder   string `form:"sort_order,default=desc"`
+	ShowAll     bool   `form:"show_all"`
 }
+
 
 type CourseListResponse struct {
 	Courses    []Course `json:"courses"`
