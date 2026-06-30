@@ -5,16 +5,22 @@ const MISSION_CARDS = [
     title: "Innovation",
     description: "Implementing the latest educational technologies to make learning construction skills intuitive, fast, and highly effective.",
     Icon: Lightbulb,
+    bgClass: "bg-[#FFFDF6]",
+    iconBgClass: "bg-[#FFF2D0]",
   },
   {
     title: "Integrity",
     description: "We maintain the highest standards of accreditation, ensuring every certificate earned with us carries industry-wide respect.",
     Icon: ShieldCheck,
+    bgClass: "bg-[#F5FDF8]",
+    iconBgClass: "bg-[#E1F7EA]",
   },
   {
     title: "Community",
     description: "Building a supportive ecosystem where learners can transition seamlessly into high-paying construction roles.",
     Icon: Users,
+    bgClass: "bg-[#F5F8FF]",
+    iconBgClass: "bg-[#E5EFFF]",
   }
 ];
 
@@ -35,10 +41,10 @@ export default function MissionValuesSection() {
           {MISSION_CARDS.map((card, index) => (
             <div 
               key={index}
-              className="bg-[#f4f3f7] p-12 flex flex-col gap-6"
+              className={`p-8 md:p-12 flex flex-col gap-6 rounded-[32px] border border-transparent hover:border-black/5 hover:shadow-lg transition-all duration-200 ${card.bgClass}`}
             >
               {/* Icon */}
-              <div className="w-16 h-16 rounded-full bg-[rgba(0,40,85,0.05)] flex items-center justify-center">
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center ${card.iconBgClass}`}>
                 <card.Icon className="w-8 h-8 text-[#002855]" />
               </div>
 

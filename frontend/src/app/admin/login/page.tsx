@@ -31,19 +31,33 @@ async function decryptSecret(encryptedHex: string, secret: string): Promise<stri
   }
 }
 
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+
 export default async function AdminLoginPage({
   searchParams,
 }: {
   searchParams: Promise<{ key?: string }>;
 }) {
-  const secretKey = process.env.ADMIN_LOGIN_SECRET || "";
+  let secretKey = process.env.ADMIN_LOGIN_SECRET || "";
+  
+  // Try to get it from Cloudflare bindings if available
+  try {
+    const { env } = await getCloudflareContext();
+    const cloudflareEnv = env as Record<string, any>;
+    if (cloudflareEnv && cloudflareEnv.ADMIN_LOGIN_SECRET) {
+      secretKey = cloudflareEnv.ADMIN_LOGIN_SECRET as string;
+    }
+  } catch (e) {
+    // Ignore error if not running in Cloudflare
+  }
+
   const params = await searchParams;
 
   // Strict validation: decrypt the hex string and see if it equals our secret|email
   if (!params.key || typeof params.key !== 'string') {
     notFound();
   }
-  
+
   const decrypted = await decryptSecret(params.key, secretKey);
   if (!decrypted) {
     notFound();

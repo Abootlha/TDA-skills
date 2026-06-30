@@ -121,12 +121,22 @@ export default function CheckoutPage() {
                 {/* Breadcrumbs */}
                 {step < 3 && (
                     <div className="flex items-center gap-4 mb-10 overflow-x-auto pb-4">
-                        <Link href={cartItems[0]?.type === "course" ? "/courses" : "/citb-test"} className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
+                        <Link href={
+                            cartItems[0]?.type === "course"
+                                ? "/courses"
+                                : cartItems[0]?.type === "nvq"
+                                    ? "/cscs"
+                                    : "/citb-test"
+                        } className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
                             <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm bg-[#ffbb16] text-[#001430]">
                                 1
                             </div>
                             <span className="font-bold text-sm text-[#001430]">
-                                {cartItems[0]?.type === "course" ? "Course Selection" : "Test Selection"}
+                                {cartItems[0]?.type === "course"
+                                    ? "Course Selection"
+                                    : cartItems[0]?.type === "nvq"
+                                        ? "Card Selection"
+                                        : "Test Selection"}
                             </span>
                         </Link>
 

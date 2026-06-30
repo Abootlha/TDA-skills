@@ -17,7 +17,8 @@ import {
     ChevronDown,
     ChevronRight,
     ChevronLeft,
-    Menu
+    Menu,
+    Mail
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -56,6 +57,7 @@ const MENU_GROUPS = [
             { href: "/admin/bookings", icon: CalendarDays, label: "Bookings & Exams" },
             { href: "/admin/payments", icon: CreditCard, label: "Payments & Refunds" },
             { href: "/admin/enquiries", icon: BookOpen, label: "Enquiries" },
+            { href: "/admin/contacts", icon: Mail, label: "Contact Submissions" },
         ]
     },
     {

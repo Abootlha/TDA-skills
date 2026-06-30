@@ -41,24 +41,10 @@ export default async function CITBCoursesPage() {
                             </p>
 
                             <div className="w-full flex justify-center lg:justify-start">
-                                <button className="bg-[#ffbb16] text-[#001430] font-black tracking-wide px-8 py-4 rounded-xl shadow-lg shadow-[#ffbb16]/20 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#ffbb16]/30 transition-all flex items-center gap-3 mb-12">
+                                <button className="bg-[#ffbb16] text-[#001430] font-black tracking-wide px-8 py-4 rounded-xl shadow-lg shadow-[#ffbb16]/20 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#ffbb16]/30 transition-all flex items-center gap-3">
                                     <span>Browse Courses</span>
                                     <ArrowRight size={20} />
                                 </button>
-                            </div>
-
-                            {/* CITB Logo or Badge */}
-                            <div className="flex items-center gap-4 p-4 bg-[#faf9fd] rounded-2xl border border-gray-100 shadow-sm mx-auto lg:mx-0">
-                                <div className="w-[88px] h-[48px] bg-white rounded-xl flex items-center justify-center font-black text-[#001430] text-3xl shadow-sm border border-gray-100 tracking-tighter">
-                                    <span className="text-[#ec008c]">c</span>
-                                    <span className="text-[#00aeef]">i</span>
-                                    <span className="text-[#8bc53f]">t</span>
-                                    <span className="text-[#ffbb16]">b</span>
-                                </div>
-                                <div className="text-left">
-                                    <p className="font-bold text-[#001430]">Approved Training Provider</p>
-                                    <p className="text-sm text-gray-500">Nationally Recognised Certification</p>
-                                </div>
                             </div>
                         </div>
 

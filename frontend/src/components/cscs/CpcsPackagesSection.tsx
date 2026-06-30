@@ -5,7 +5,7 @@ import { useCartStore } from "@/lib/store/cartStore";
 import { useToastStore } from "@/components/ui/Toast";
 import axios from "axios";
 
-interface CscsCardItem {
+interface CpcsCardItem {
     id: string;
     title: string;
     badge: string;
@@ -14,78 +14,46 @@ interface CscsCardItem {
     image: string;
     price: number;
     slug: string;
-    isGrayscale?: boolean;
 }
 
-const CARDS_DATA: CscsCardItem[] = [
+const CARDS_DATA: CpcsCardItem[] = [
     {
-        id: "cscs-green",
-        title: "CSCS Green Card",
-        badge: "LABOURER",
-        badgeClass: "bg-[#E1F7EA] text-[#16A34A]",
-        description: "For entry-level workers on construction sites. Requires Level 1 Health & Safety and CITB Test.",
-        image: "/cscs-green-card.png",
-        price: 199.00,
-        slug: "green"
-    },
-    {
-        id: "cscs-blue",
-        title: "CSCS Blue Card",
-        badge: "SKILLED WORKER",
+        id: "cpcs-card-app",
+        title: "CPCS Card Application",
+        badge: "CARD APPLICATION",
         badgeClass: "bg-[#E5F0FF] text-[#2563EB]",
-        description: "For those who have completed a relevant NVQ Level 2 or apprenticeship.",
+        description: "Fast track your CPCS card application with our dedicated support team.",
         image: "/cscs-blue-card.png",
         price: 249.00,
-        slug: "blue"
+        slug: "cpcs-card"
     },
     {
-        id: "cscs-gold",
-        title: "CSCS Gold Card",
-        badge: "SUPERVISOR",
+        id: "cpcs-training",
+        title: "Tutor-Led CPCS Course",
+        badge: "TUTOR-LED TRAINING",
         badgeClass: "bg-[#FFF5DC] text-[#D97706]",
-        description: "Advanced card for site supervisors. Requires NVQ Level 3 or Level 4.",
-        image: "/cscs-golden-card.png",
-        price: 299.00,
-        slug: "gold"
-    },
-    {
-        id: "cscs-black",
-        title: "CSCS Black Card",
-        badge: "MANAGER",
-        badgeClass: "bg-[#F3F4F6] text-[#374151]",
-        description: "For senior managers and highly qualified technical staff. Requires Level 5-7 NVQ.",
-        image: "/black-cscs-card.png",
-        price: 399.00,
-        slug: "black"
-    },
-    {
-        id: "cscs-red-provisional",
-        title: "CSCS Red Card",
-        badge: "PROVISIONAL",
-        badgeClass: "bg-[#FEE2E2] text-[#DC2626]",
-        description: "Temporary card for workers gaining on-the-job experience. Valid for 6 months.",
+        description: "Live interactive classroom training with experienced plant operators.",
         image: "/cscs-red-card.png",
-        price: 149.00,
-        slug: "red",
-        isGrayscale: true
+        price: 499.00,
+        slug: "cpcs-training"
     },
     {
-        id: "cscs-red-trainee",
-        title: "CSCS Trainee Card",
-        badge: "TRAINEE",
-        badgeClass: "bg-[#FEE2E2] text-[#DC2626]",
-        description: "For technical, professional, or managerial trainees enrolled on degree or HND courses.",
-        image: "/cscs-trainee-card.png",
-        price: 149.00,
-        slug: "red-tsm"
+        id: "cpcs-nvq-operator",
+        title: "NVQ L2 Plant Operator",
+        badge: "NVQ LEVEL 2",
+        badgeClass: "bg-[#E1F7EA] text-[#16A34A]",
+        description: "Achieve your Blue CPCS competent operator card through onsite assessment.",
+        image: "/cscs-golden-card.png",
+        price: 799.00,
+        slug: "plant-operator"
     }
 ];
 
-export function CscsPackagesSection() {
+export function CpcsPackagesSection() {
     const addItem = useCartStore((state) => state.addItem);
     const addToast = useToastStore((state) => state.addToast);
 
-    const handleBook = async (card: CscsCardItem) => {
+    const handleBook = async (card: CpcsCardItem) => {
         try {
             await axios.get(`${process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '')}/health`);
             addItem({
@@ -104,14 +72,14 @@ export function CscsPackagesSection() {
     };
 
     return (
-        <section className="py-20 bg-white flex justify-center w-full">
+        <section id="cpcs" className="py-20 bg-[#f8fafc] flex justify-center w-full scroll-mt-20">
             <div className="max-w-[1280px] w-full px-8 flex flex-col items-center">
                 <div className="flex flex-col items-center max-w-[768px] text-center mb-16 gap-4">
                     <h2 className="font-sans font-extrabold text-[36px] md:text-[42px] leading-[44px] text-[#001430] tracking-tight">
-                        Find the Right Card for Your Role
+                        Find the Right CPCS Card for Your Role
                     </h2>
                     <p className="font-sans font-normal text-[16px] leading-[26px] text-[#43474f] max-w-[640px]">
-                        Browse our most popular CSCS cards. Each card has specific qualification requirements, from health and safety tests to full NVQs.
+                        Browse our most popular CPCS cards. CPCS (Construction Plant Competence Scheme) qualifications prove your skills for operating plant machinery in the UK.
                     </p>
                 </div>
 
@@ -125,10 +93,8 @@ export function CscsPackagesSection() {
                             <div className="h-[200px] w-full relative overflow-hidden border-b border-[#f1f5f9]">
                                 <img
                                     src={card.image}
-                                    alt={`${card.title} CSCS Card`}
-                                    className={`w-full h-full object-cover select-none transition-transform duration-300 hover:scale-105 ${
-                                        card.isGrayscale ? "grayscale" : ""
-                                    }`}
+                                    alt={`${card.title} CPCS Card`}
+                                    className="w-full h-full object-cover select-none transition-transform duration-300 hover:scale-105"
                                 />
                             </div>
 

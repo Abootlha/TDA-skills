@@ -39,19 +39,19 @@ export default function CourseSearch() {
 
   return (
     <div className="w-full max-w-4xl mx-auto mb-16 relative" ref={searchRef}>
-      <div className="relative flex items-center w-full h-16 rounded-full bg-white border border-gray-200 shadow-sm focus-within:shadow-md focus-within:border-[#001430]/20 transition-all px-4 overflow-visible z-30">
-        <Search className="w-6 h-6 text-gray-400 ml-2" />
+      <div className="relative flex items-center w-full h-16 rounded-full bg-white border border-gray-200 shadow-sm focus-within:shadow-md focus-within:border-[#001430]/20 transition-all px-3 sm:px-4 overflow-visible z-30">
+        <Search className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 ml-1 sm:ml-2 shrink-0" />
         <input
           type="text"
           placeholder="Search courses, certifications, or skills..."
-          className="flex-1 h-full bg-transparent border-none outline-none px-4 text-gray-800 placeholder:text-gray-400 text-[16px]"
+          className="flex-1 min-w-0 h-full bg-transparent border-none outline-none px-2 sm:px-4 text-gray-800 placeholder:text-gray-400 text-[14px] sm:text-[16px] placeholder:truncate"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => {
             if (query.trim().length > 0) setIsOpen(true);
           }}
         />
-        <button className="h-10 px-8 rounded-full bg-[#001430] hover:bg-[#001f4d] text-white font-bold text-[15px] transition-colors">
+        <button className="h-10 px-4 sm:px-8 shrink-0 rounded-full bg-[#001430] hover:bg-[#001f4d] text-white font-bold text-[14px] sm:text-[15px] transition-colors">
           Search
         </button>
       </div>

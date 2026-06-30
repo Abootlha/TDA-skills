@@ -15,6 +15,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "TDA Skills | Construction Training & Qualifications",
   description: "Leading provider of construction training, NVQs, CSCS cards, and CITB tests in the UK. Get qualified, get certified, and get on site.",
+  icons: {
+    icon: "/TDA-logo.webp",
+  },
 };
 
 import { api } from "@/lib/api";

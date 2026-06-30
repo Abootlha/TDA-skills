@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function HeroSection() {
   return (
-    <section className="relative w-full bg-[#001430] text-white overflow-hidden min-h-[500px] lg:min-h-[calc(100vh-80px)] flex items-center pt-8 pb-8 lg:pb-24">
+    <section className="relative w-full bg-[#001430] text-white overflow-hidden min-h-[400px] sm:min-h-[500px] lg:min-h-[calc(100vh-80px)] flex items-center pt-2 pb-6 sm:py-8 lg:pb-24">
       {/* Background Image - Crane / Site */}
       <div
         className="absolute inset-0 z-0 opacity-40 lg:opacity-80"
@@ -20,9 +20,9 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#001430] via-[#001430]/20 to-transparent opacity-90"></div>
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid lg:grid-cols-2 items-center min-h-[450px] lg:min-h-[600px]">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid lg:grid-cols-2 items-center min-h-[360px] sm:min-h-[450px] lg:min-h-[600px]">
         {/* Left Content */}
-        <div className="flex flex-col items-start z-20 py-8 lg:py-24 max-w-[650px] w-full">
+        <div className="flex flex-col items-start z-20 pt-2 pb-6 md:py-8 lg:py-24 max-w-[650px] w-full">
 
           <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-extrabold leading-[1.2] lg:leading-[1.15] mb-4 lg:mb-6">
             Construction Training<br />

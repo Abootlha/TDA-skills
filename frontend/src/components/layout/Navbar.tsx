@@ -85,23 +85,11 @@ const DEFAULT_NAV_LINKS = [
     dropdownItems: [
       {
         name: "CSCS CARDS",
-        href: "/cscs/cards",
-        subItems: [
-          { name: "Red Provisional Card", href: "/cscs/red" },
-          { name: "Green Labourers Card", href: "/cscs/green" },
-          { name: "Blue Skilled Worker Card", href: "/cscs/blue" },
-          { name: "Gold Supervisor Card", href: "/cscs/gold" },
-          { name: "Black Manager Card", href: "/cscs/black" },
-        ]
+        href: "/cscs"
       },
       {
-        name: "CPCS",
-        href: "/cscs/cpcs",
-        subItems: [
-          { name: "CPCS Card", href: "/cscs/cpcs-card" },
-          { name: "CPCS Training", href: "/cscs/cpcs-training" },
-          { name: "Plant Operator Courses", href: "/cscs/plant-operator" },
-        ]
+        name: "CPCS CARDS",
+        href: "/cpcs"
       }
     ]
   },

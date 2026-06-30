@@ -21,9 +21,9 @@ export default function NvqExpertiseSection() {
   ];
 
   return (
-    <section className="bg-[#f4f3f7]/50 py-24">
-      <div className="max-w-7xl mx-auto px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+    <section className="bg-[#f4f3f7]/50 py-12 md:py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           
           {/* Left Column: Features */}
           <div className="flex flex-col gap-10">
@@ -49,16 +49,16 @@ export default function NvqExpertiseSection() {
               ))}
             </div>
           </div>
-
+ 
           {/* Right Column: Callback Form */}
           <div className="relative">
             <div className="absolute top-[-30px] right-[-30px] w-32 h-32 rounded-full bg-[#fdb913]/5 z-0"></div>
             
-            <div className="bg-white rounded-3xl p-12 shadow-xl border border-gray-100 relative z-10 flex flex-col gap-6">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 md:p-12 shadow-xl border border-gray-100 relative z-10 flex flex-col gap-6">
               <h3 className="text-[#002855] text-2xl font-bold font-['Hanken_Grotesk',sans-serif]">
                 Request a Course Callback
               </h3>
-              <p className="text-[#43474f] mb-2">
+              <p className="text-[#43474f] mb-2 text-sm sm:text-base">
                 Not sure which NVQ is right for you? Our specialists are here to help.
               </p>
 

@@ -75,6 +75,12 @@ export const validators = {
         message
     }),
 
+    // Digits only (0-9), no letters or operations
+    digits: (message = "Only numbers are allowed"): ValidationRule => ({
+        test: (value) => !value || /^[0-9]+$/.test(value),
+        message
+    }),
+
     // Date must be parseable
     date: (message = "Please enter a valid date"): ValidationRule => ({
         test: (value) => value ? !isNaN(Date.parse(value)) : false,

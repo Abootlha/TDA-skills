@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 
 export function CoursesHero() {
   return (
-    <div className="bg-[#002855] content-stretch flex flex-col items-start overflow-clip py-[96px] relative rounded-bl-[64px] rounded-br-[64px] shrink-0 w-full" data-name="Hero Section">
+    <div className="bg-[#002855] content-stretch flex flex-col items-start overflow-clip pt-8 pb-16 md:py-[96px] relative rounded-bl-[64px] rounded-br-[64px] shrink-0 w-full" data-name="Hero Section">
       {/* Background Image & Gradient */}
       <div className="absolute content-stretch flex flex-col inset-0 items-start justify-center" data-name="Container">
         <div className="flex-[1_0_0] min-h-px opacity-20 relative w-full" data-name="Construction site">
@@ -18,7 +18,7 @@ export function CoursesHero() {
 
       <div className="max-w-[1280px] mx-auto relative shrink-0 w-full" data-name="Container">
         <div className="flex flex-col items-center max-w-[inherit] size-full">
-          <div className="content-stretch flex flex-col gap-[32px] items-center max-w-[inherit] px-[32px] relative size-full">
+          <div className="content-stretch flex flex-col gap-[20px] md:gap-[32px] items-center max-w-[inherit] px-[32px] relative size-full">
             
             {/* Breadcrumb Nav */}
             <div className="content-stretch flex gap-[8px] items-center justify-center relative shrink-0 w-full" data-name="Nav">

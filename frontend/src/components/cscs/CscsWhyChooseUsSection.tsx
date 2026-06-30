@@ -45,17 +45,17 @@ export function CscsWhyChooseUsSection() {
                         Why Choose TDA Skills?
                     </h2>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-12">
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:gap-y-12">
                         {features.map((feat, i) => (
-                            <div key={i} className="flex gap-4 items-start">
-                                <div className="bg-[rgba(0,20,48,0.05)] w-12 h-12 rounded-[4px] flex items-center justify-center shrink-0">
+                            <div key={i} className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start">
+                                <div className="bg-[rgba(0,20,48,0.05)] w-10 h-10 sm:w-12 sm:h-12 rounded-[4px] flex items-center justify-center shrink-0">
                                     {feat.icon}
                                 </div>
                                 <div className="flex flex-col gap-1">
-                                    <h4 className="font-sans font-bold text-[16px] leading-[24px] text-[#001430]">
+                                    <h4 className="font-sans font-bold text-sm sm:text-[16px] leading-snug sm:leading-[24px] text-[#001430]">
                                         {feat.title}
                                     </h4>
-                                    <p className="font-sans font-normal text-[14px] leading-[20px] text-[#43474f] max-w-[200px]">
+                                    <p className="font-sans font-normal text-[11px] sm:text-[14px] leading-normal sm:leading-[20px] text-[#43474f] max-w-[200px]">
                                         {feat.desc}
                                     </p>
                                 </div>

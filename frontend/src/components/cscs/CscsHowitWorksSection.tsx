@@ -17,21 +17,21 @@ export function CscsHowItWorksSection() {
                     </h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
                     {steps.map((step, i) => (
-                        <div key={i} className="bg-white rounded-[24px] shadow-sm p-6 flex flex-col items-start border border-transparent hover:border-[#c4c6d0] transition-colors h-[244px] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)]">
-                            <span className="font-sans font-extrabold text-[36px] leading-[40px] text-[rgba(196,198,208,0.3)] mb-2">
+                        <div key={i} className="bg-white rounded-[24px] shadow-sm p-4 sm:p-6 flex flex-col items-start border border-transparent hover:border-[#c4c6d0] transition-colors min-h-[180px] sm:min-h-[210px] md:h-[244px] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)]">
+                            <span className="font-sans font-extrabold text-[28px] md:text-[36px] leading-tight md:leading-[40px] text-[rgba(196,198,208,0.3)] mb-2">
                                 {step.num}
                             </span>
-                            <h4 className="font-sans font-bold text-[16px] leading-[24px] text-[#001430] whitespace-pre-line mb-1">
+                            <h4 className="font-sans font-bold text-xs sm:text-sm md:text-[16px] leading-snug md:leading-[24px] text-[#001430] whitespace-pre-line mb-1">
                                 {step.title}
                             </h4>
                             {step.isFullPackage && (
-                                <span className="font-sans font-semibold text-[12px] leading-[19.5px] text-[#7c5800] mb-1">
+                                <span className="font-sans font-semibold text-[10px] md:text-[12px] leading-normal text-[#7c5800] mb-1">
                                     Full Package Only
                                 </span>
                             )}
-                            <p className="font-sans font-normal text-[12px] leading-[19.5px] text-[#43474f] whitespace-pre-line mt-1">
+                            <p className="font-sans font-normal text-[10px] sm:text-[12px] leading-normal md:leading-[19.5px] text-[#43474f] whitespace-pre-line mt-1">
                                 {step.desc}
                             </p>
                         </div>

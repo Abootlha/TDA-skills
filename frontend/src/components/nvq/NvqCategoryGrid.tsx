@@ -55,31 +55,31 @@ export default function NvqCategoryGrid() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 gap-4 md:gap-8">
         {categories.map((cat, i) => (
-          <div key={i} className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col">
-            <div className="relative h-48 w-full shrink-0">
+          <div key={i} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+            <div className="relative h-32 sm:h-48 md:h-64 w-full shrink-0">
               <ImageWithFallback 
                 src={cat.image} 
                 alt={cat.title} 
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#002855]/60 to-transparent"></div>
-              <div className="absolute bottom-4 left-4">
-                <span className="bg-white/95 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold text-[#002855] tracking-tight uppercase">
+              <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4">
+                <span className="bg-white/95 backdrop-blur-sm px-2.5 py-0.5 md:px-3 md:py-1 rounded-full text-[9px] md:text-[10px] font-bold text-[#002855] tracking-tight uppercase">
                   {cat.tag}
                 </span>
               </div>
             </div>
             
-            <div className="p-6 flex flex-col flex-1">
-              <h3 className="text-[#002855] text-xl font-bold font-['Hanken_Grotesk',sans-serif] mb-3 leading-snug">
+            <div className="p-4 md:p-8 flex flex-col flex-1 gap-2 md:gap-4">
+              <h3 className="text-[#002855] text-sm sm:text-base md:text-2xl font-bold font-['Hanken_Grotesk',sans-serif] leading-snug">
                 {cat.title}
               </h3>
-              <p className="text-[#43474f] text-sm leading-relaxed mb-6 flex-1">
+              <p className="text-[#43474f] text-[11px] sm:text-xs md:text-base leading-normal md:leading-relaxed flex-1 line-clamp-2 md:line-clamp-none">
                 {cat.desc}
               </p>
-              <button className="w-full py-2.5 rounded-full border border-[#002855]/20 text-[#002855] font-bold text-sm hover:bg-[#002855] hover:text-white transition-colors">
+              <button className="w-full py-1.5 md:py-3 rounded-full border border-[#002855]/20 text-[#002855] font-bold text-xs md:text-sm hover:bg-[#002855] hover:text-white transition-colors">
                 View Courses
               </button>
             </div>

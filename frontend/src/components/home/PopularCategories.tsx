@@ -1,192 +1,168 @@
-import { HeadphonesIcon, ArrowRight, MessageCircle } from "lucide-react";
+import { HeadphonesIcon, ArrowRight, Star, CalendarCheck } from "lucide-react";
 import Link from "next/link";
 import CourseSearch from "./CourseSearch";
 
-const WorkerIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M8 10a4 4 0 0 1 8 0" />
-    <path d="M6 10h12" />
-    <path d="M9 10v2a3 3 0 0 0 6 0v-2" />
-    <path d="M5 22v-4a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v4" />
-    <path d="M12 15l-3 7" />
-    <path d="M12 15l3 7" />
-  </svg>
-);
-
-const IdCardIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <rect x="2" y="6" width="20" height="12" rx="2" />
-    <circle cx="8" cy="11" r="2" />
-    <path d="M5 16c0-1.5 1.5-2.5 3-2.5s3 1 3 2.5" />
-    <path d="M14 10h5" />
-    <path d="M14 14h5" />
-  </svg>
-);
-
-const ShieldCheckIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-    <path d="M12 18c-3.5-2-4.5-5-4.5-7V6.5l4.5-1.5 4.5 1.5V11c0 2-1 5-4.5 7z" strokeWidth="2" />
-    <path d="M10 11l1.5 1.5 3-3" strokeWidth="2" />
-  </svg>
-);
-
-const ExcavatorIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M13 16v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6" />
-    <path d="M13 12h5" />
-    <rect x="11" y="16" width="9" height="4" rx="2" />
-    <circle cx="13" cy="18" r="1" fill="currentColor" />
-    <circle cx="18" cy="18" r="1" fill="currentColor" />
-    <path d="M15 10L9 4 4 9" />
-    <path d="M4 9v4c0 1 1 2 2 2s2-1 2-2V9H4z" />
-  </svg>
-);
-
-const LadderIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M7 22L13 2" />
-    <path d="M11 22L17 2" />
-    <path d="M8.5 17h4.5" />
-    <path d="M9.5 12h4.5" />
-    <path d="M10.5 7h4.5" />
-  </svg>
-);
-
-const MoreDotsIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <circle cx="5" cy="12" r="2.5" />
-    <circle cx="12" cy="12" r="2.5" />
-    <circle cx="19" cy="12" r="2.5" />
-  </svg>
-);
-
-import Image from "next/image";
-
 export default function PopularCategories() {
-  const categories = [
+  const cards = [
     {
-      icon: <Image src="/img1.png" alt="NVQ Construction" width={80} height={80} className="object-contain scale-150" unoptimized />,
-      title: "NVQ Construction",
-      description: "Level 2 & 3 NVQ qualifications in various construction trades.",
-      linkText: "Explore Courses",
-      linkHref: "/courses?category=nvq",
-      iconBgClass: "bg-[#001430]",
+      icon: <CalendarCheck className="w-16 h-16 text-[#001430]" strokeWidth={1.5} />,
+      title: "CITB Courses",
+      description: "Book your CITB Health, Safety & Environment test and get CITB certified with ease.",
+      linkText: "View Courses",
+      linkHref: "/citb-test",
+      iconBgClass: "bg-[#E5F0FF]",
     },
     {
-      icon: <Image src="/img2.png" alt="CSCS Card Courses" width={80} height={80} className="object-contain scale-150" />,
-      title: "CSCS Card Courses",
-      description: "Get qualified and apply for your CSCS card with confidence.",
-      linkText: "Explore Courses",
-      linkHref: "/courses?category=cscs",
-      iconBgClass: "bg-[#FFB800]",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-16 h-16 text-[#001430]">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <path d="M9 11l2 2 4-4" stroke="#22A04C" strokeWidth="2.5" />
+        </svg>
+      ),
+      title: "Level 1 Health & Safety",
+      description: "Start your career in construction with our Level 1 Health & Safety in a Construction Environment.",
+      linkText: "View Courses",
+      linkHref: "/courses?category=health-safety",
+      iconBgClass: "bg-[#E1F7EA]",
     },
     {
-      icon: <Image src="/img3.png" alt="CITB Health & Safety" width={80} height={80} className="object-contain scale-150 ab " unoptimized />,
-      title: "CITB Health & Safety",
-      description: "Essential CITB training for construction workers and supervisors.",
-      linkText: "Explore Courses",
-      linkHref: "/courses?category=citb",
-      iconBgClass: "bg-[#001430]",
+      icon: <img src="/img1.png" alt="Construction NVQs" className="w-full h-full object-contain scale-[2]" />,
+      title: "Construction NVQs",
+      description: "Achieve nationally recognised NVQ qualifications and advance your construction career.",
+      linkText: "View Courses",
+      linkHref: "/nvqs",
+      iconBgClass: "bg-[#FFF5DC]",
     },
     {
-      icon: <Image src="/img4.png" alt="CPCS Plant Training" width={80} height={80} className="object-contain scale-[2.5]" unoptimized />,
-      title: "CPCS Plant Training",
-      description: "CPCS/NPORS plant courses for operators in the construction industry.",
-      linkText: "Explore Courses",
-      linkHref: "/courses?category=cpcs",
-      iconBgClass: "bg-[#FFB800]",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-16 h-16 text-[#001430]">
+          <rect x="3" y="4" width="18" height="16" rx="2" />
+          <circle cx="9" cy="10" r="2.5" />
+          <path d="M5 16c0-2 2-3 4-3s4 1 4 3" />
+          <path d="M15 9h3M15 13h3" />
+        </svg>
+      ),
+      title: "CSCS Cards",
+      description: "Get your CSCS card and prove your skills. We offer all card types and levels.",
+      linkText: "View Courses",
+      linkHref: "/cscs",
+      iconBgClass: "bg-[#EBE5FC]",
     },
-    {
-      icon: <Image src="/img5.png" alt="Working at Height" width={80} height={80} className="object-contain scale-[2.5] mix-blend-screen" unoptimized />,
-      title: "Working at Height",
-      description: "Courses to help you work safely at height on site.",
-      linkText: "Explore Courses",
-      linkHref: "/courses?category=height",
-      iconBgClass: "bg-[#001430]",
-    },
-    {
-      icon: <MoreDotsIcon className="w-9 h-9 text-white" />,
-      title: "More Courses",
-      description: "A wide range of additional training courses available.",
-      linkText: "Explore Courses",
-      linkHref: "/courses",
-      iconBgClass: "bg-[#FFB800]",
-    }
   ];
 
   return (
-    <section className="bg-[#F8F9FA] py-16 lg:py-24 relative z-10">
-      <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Title & Subtitle for Search Section */}
-        <div className="text-center mb-10">
-          <h2 className="text-4xl lg:text-5xl font-black text-[#001430] mb-4 tracking-tight">
-            Find Your Perfect Course
-          </h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Discover industry-leading training programmes designed to advance your career in construction and health & safety.
-          </p>
+    <section className="bg-white pt-6 lg:pt-8 relative z-10">
+      <div className="max-w-[1536px] mx-auto">
+        {/* 1. Course Search Section (Original) */}
+        <div className="px-4 sm:px-6 lg:px-8 mb-20">
+          <div className="text-center mb-10">
+            <h2 className="text-4xl lg:text-5xl font-black text-[#001430] mb-4 tracking-tight">
+              Find Your Perfect Course
+            </h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Discover industry-leading training programmes designed to advance your career in construction and health & safety.
+            </p>
+          </div>
+          <CourseSearch />
         </div>
 
-        {/* The dynamic search component */}
-        <CourseSearch />
-
-        <div className="text-center mb-12 mt-8">
-          <h3 className="text-2xl lg:text-3xl font-bold text-[#001430]">
-            Popular Courses Categories
-          </h3>
-          <div className="w-16 h-1 bg-[#FFB800] mx-auto mt-4 rounded-full"></div>
-        </div>
-
-        {/* 6 Card Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 xl:gap-6 mb-16">
-          {categories.map((cat, idx) => (
-            <div key={idx} className="bg-white rounded-2xl p-6 lg:p-8 flex flex-col items-center text-center shadow-[0_4px_20px_-10px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:shadow-xl transition-all border border-gray-100">
-              <div className={`w-[80px] h-[80px] rounded-full flex items-center justify-center mb-6 shrink-0 overflow-hidden ${cat.iconBgClass}`}>
-                {cat.icon}
-              </div>
-              <h4 className="text-[18px] font-bold text-[#001430] leading-tight mb-3">
-                {cat.title}
-              </h4>
-              <p className="text-gray-500 text-[13px] leading-relaxed mb-6 flex-grow">
-                {cat.description}
-              </p>
-              <Link href={cat.linkHref} className="mt-auto flex items-center justify-center gap-1.5 text-[14px] font-bold text-[#001430] hover:text-[#FFB800] transition-colors">
-                {cat.linkText}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          ))}
-        </div>
-
-        {/* Banner Section */}
-        <div className="bg-[#001430] rounded-[24px] p-6 lg:p-10 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-xl">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
-            <div className="w-16 h-16 shrink-0 rounded-full border border-dashed border-[#FFB800] flex items-center justify-center p-1">
-              <div className="w-full h-full rounded-full bg-transparent flex items-center justify-center">
-                <HeadphonesIcon className="w-8 h-8 text-[#FFB800]" />
-              </div>
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-2">
-                Need Help Choosing the Right Course?
-              </h3>
-              <p className="text-gray-300 text-[15px] max-w-xl">
-                Our friendly team is here to guide you at every step of your training journey.
-              </p>
+        {/* 2. Popular Courses Redesign Section */}
+        <div className="px-4 sm:px-6 lg:px-8 pb-16">
+          {/* Top Badge */}
+          <div className="flex justify-center mb-4">
+            <div className="inline-flex items-center gap-2 bg-[#FFF9E6] border border-[#FFE59E] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-[#D99A00]">
+              <Star className="w-4 h-4 fill-[#FFB800] text-[#FFB800]" />
+              OUR MOST IN-DEMAND COURSES
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-6 shrink-0 w-full sm:w-auto">
-            <Link href="/contact" className="w-full sm:w-auto bg-[#FFB800] text-[#001430] font-bold px-8 py-3.5 rounded-lg flex items-center justify-center gap-2 hover:bg-[#e5a600] transition-colors">
-              Contact Our Team
-              <ArrowRight className="w-4 h-4" />
+          {/* Heading */}
+          <h2 className="text-4xl sm:text-5xl font-black text-[#001430] text-center mb-3 tracking-tight">
+            Popular Courses
+          </h2>
+          <div className="w-16 h-1 bg-[#FFB800] mx-auto mb-6 rounded-full"></div>
+
+          {/* Subtitle */}
+          <p className="text-[#001430]/75 text-center text-lg max-w-2xl mx-auto mb-12 px-4 leading-relaxed">
+            Explore our most popular courses and qualifications trusted by thousands of learners across the UK.
+          </p>
+
+          {/* 4 Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8 mb-16">
+            {cards.map((card, idx) => (
+              <Link
+                key={idx}
+                href={card.linkHref}
+                className="group bg-white shadow-[0_4px_25px_-5px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_35px_-5px_rgba(0,0,0,0.1)] hover:-translate-y-1.5 hover:border-gray-200 border border-gray-100 transition-all duration-300 flex flex-row items-center justify-between p-4 rounded-2xl sm:flex-col sm:items-center sm:text-center sm:p-8 xl:p-10 sm:rounded-3xl"
+              >
+                <div className="flex flex-row items-center gap-4 sm:flex-col sm:items-center sm:gap-0">
+                  {/* Icon Container */}
+                  <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center shrink-0 sm:mb-6 ${card.iconBgClass}`}>
+                    {card.icon}
+                  </div>
+
+                  {/* Title & Underline */}
+                  <div className="flex flex-col items-start sm:items-center">
+                    <h3 className="text-lg sm:text-2xl font-bold text-[#001430] leading-tight text-left sm:text-center">
+                      {card.title}
+                    </h3>
+                    {/* Thin Yellow Underline */}
+                    <div className="hidden sm:block w-8 h-[2px] bg-[#FFB800] my-3 rounded-full"></div>
+                  </div>
+                </div>
+
+                {/* Description - Hidden on Mobile */}
+                <p className="hidden sm:block text-gray-600 text-[14px] sm:text-[15px] leading-relaxed mb-6 sm:mb-8 flex-grow">
+                  {card.description}
+                </p>
+
+                {/* View Courses Link / Arrow Button */}
+                <div className="flex items-center gap-3 text-[#001430] font-extrabold text-[15px] group-hover:text-[#FFB800] transition-colors mt-0 sm:mt-auto">
+                  <span className="hidden sm:inline">{card.linkText}</span>
+                  <div className="w-10 h-10 sm:w-8 sm:h-8 rounded-full bg-[#FFB800] text-[#001430] flex items-center justify-center transition-transform group-hover:translate-x-1 group-hover:bg-[#001430] group-hover:text-white">
+                    <ArrowRight className="w-5 h-5 sm:w-4 sm:h-4" />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* View All Courses Button */}
+          <div className="flex justify-center">
+            <Link
+              href="/courses"
+              className="inline-flex items-center gap-3 bg-[#001430] hover:bg-[#002252] text-white font-extrabold px-8 py-4 rounded-xl shadow-lg transition-all hover:-translate-y-0.5 text-base group"
+            >
+              View All Courses
+              <ArrowRight className="w-5 h-5 text-[#FFB800] transition-transform group-hover:translate-x-1" />
             </Link>
-            <a href="#" className="flex items-center justify-center gap-2 text-[#22C55E] font-bold hover:text-green-400 transition-colors">
-              <MessageCircle className="w-5 h-5" />
-              Chat on WhatsApp
-            </a>
+          </div>
+        </div>
+        {/* 4. Bottom Original CTA Banner */}
+        <div className="px-4 sm:px-6 lg:px-8 py-16 bg-[#F8F9FA] border-t border-gray-100">
+          <div className="bg-[#001430] rounded-[24px] p-6 lg:p-10 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-xl">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
+              <div className="w-16 h-16 shrink-0 rounded-full border border-dashed border-[#FFB800] flex items-center justify-center p-1">
+                <div className="w-full h-full rounded-full bg-transparent flex items-center justify-center">
+                  <HeadphonesIcon className="w-8 h-8 text-[#FFB800]" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-white mb-2">
+                  Need Help Choosing the Right Course?
+                </h3>
+                <p className="text-gray-300 text-[15px] max-w-xl">
+                  Our friendly team is here to guide you at every step of your training journey.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-6 shrink-0 w-full sm:w-auto">
+              <Link href="/contact" className="w-full sm:w-auto bg-[#FFB800] text-[#001430] font-bold px-8 py-3.5 rounded-lg flex items-center justify-center gap-2 hover:bg-[#e5a600] transition-colors">
+                Contact Our Team
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
         </div>
 

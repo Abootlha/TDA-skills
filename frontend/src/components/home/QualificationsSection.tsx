@@ -53,18 +53,18 @@ export default function QualificationsSection() {
         </div>
 
         {/* Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-8">
           {qualifications.map((qual, idx) => (
-            <div key={idx} className="bg-white rounded-xl p-10 text-center flex flex-col items-center shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_25px_rgba(0,0,0,0.08)] transition-shadow">
-              <div className={`w-16 h-16 rounded-xl flex items-center justify-center mb-6 ${qual.iconBg}`}>
+            <div key={idx} className="bg-white rounded-xl p-4 sm:p-10 text-center flex flex-col items-center shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_25px_rgba(0,0,0,0.08)] transition-shadow">
+              <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-lg sm:rounded-xl flex items-center justify-center mb-4 sm:mb-6 shrink-0 ${qual.iconBg}`}>
                 {qual.icon}
               </div>
-              <h3 className="text-xl font-bold text-[#0c213d] mb-4">{qual.title}</h3>
-              <p className="text-gray-600 mb-8 flex-grow">
+              <h3 className="text-[14px] sm:text-xl font-bold text-[#0c213d] mb-2 sm:mb-4">{qual.title}</h3>
+              <p className="text-gray-600 text-[11px] sm:text-base mb-4 sm:mb-8 flex-grow line-clamp-3 sm:line-clamp-none">
                 {qual.description}
               </p>
-              <a href="#" className="flex items-center gap-1 text-[#0c213d] font-bold text-sm tracking-wider hover:text-yellow-500 transition-colors mt-auto">
-                EXPLORE <ChevronRight className="w-4 h-4" />
+              <a href="#" className="flex items-center gap-0.5 sm:gap-1 text-[#0c213d] font-bold text-[11px] sm:text-sm tracking-wider hover:text-yellow-500 transition-colors mt-auto">
+                EXPLORE <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </a>
             </div>
           ))}

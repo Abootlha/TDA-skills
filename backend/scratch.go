@@ -1,4 +1,4 @@
-package main
+package main_scratch
 
 import (
 	"crypto/aes"
@@ -7,9 +7,10 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"os"
 )
 
-func encryptSecret(payload, masterSecret string) string {
+func EncryptSecret(payload, masterSecret string) string {
 	key := sha256.Sum256([]byte(masterSecret))
 	block, _ := aes.NewCipher(key[:])
 	gcm, _ := cipher.NewGCM(block)
@@ -19,9 +20,12 @@ func encryptSecret(payload, masterSecret string) string {
 	return hex.EncodeToString(ciphertext)
 }
 
-func main() {
-	adminSecret := "a8b3c9f2-7d4e-41a5-92b8-f1e0d3c7a9b6"
+func RunScratch() {
+	adminSecret := os.Getenv("ADMIN_LOGIN_SECRET")
+	if adminSecret == "" {
+		adminSecret = "a8b3c9f2-7d4e-41a5-92b8-f1e0d3c7a9b6"
+	}
 	email := "test@test.com"
 	payload := fmt.Sprintf("%s|%s", adminSecret, email)
-	fmt.Println(encryptSecret(payload, adminSecret))
+	fmt.Println(EncryptSecret(payload, adminSecret))
 }

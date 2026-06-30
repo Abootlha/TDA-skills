@@ -21,9 +21,11 @@ export function BookingSummarySidebar({ step, selectedTest, cartItems, onCheckou
     const items = cartItems || (selectedTest ? [selectedTest] : []);
     
     const isCourse = items[0]?.type === "course";
+    const isNvq = items[0]?.type === "nvq";
+    const isTest = items[0]?.type === "test" || (!isCourse && !isNvq);
     const itemFee = items.reduce((sum, item) => sum + item.price, 0);
     const bookingFeePerItem = dynamicBookingFee !== undefined ? dynamicBookingFee : 12.50;
-    const bookingFee = isCourse ? 0 : items.length * bookingFeePerItem; // No booking fee for courses
+    const bookingFee = isTest ? items.length * bookingFeePerItem : 0; // Booking fee only applies to CITB tests
     const subtotal = itemFee + bookingFee;
     const vat = subtotal * 0.2; // 20% VAT
     const total = subtotal + vat;
@@ -56,9 +58,17 @@ export function BookingSummarySidebar({ step, selectedTest, cartItems, onCheckou
                                     <ClipboardList className="w-5 h-5 text-[#ffbb16]" />
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{item.type === "course" ? "Course Type" : "Test Type"}</span>
+                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                        {item.type === "course" 
+                                            ? "Course Type" 
+                                            : item.type === "nvq" 
+                                                ? "Card / NVQ Type" 
+                                                : "Test Type"}
+                                    </span>
                                     <span className="font-bold text-[#001430] text-[14px]">
-                                        {item.type === "course" ? item.title : `CITB ${item.title}`}
+                                        {item.type === "test" || (!item.type) 
+                                            ? `CITB ${item.title}` 
+                                            : item.title}
                                     </span>
                                 </div>
                             </div>
@@ -78,8 +88,20 @@ export function BookingSummarySidebar({ step, selectedTest, cartItems, onCheckou
                                     <MapPin className="w-5 h-5 text-[#ffbb16]" />
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{item.type === "course" ? "Delivery / Venue" : "Testing Location"}</span>
-                                    <span className="font-bold text-[#001430] text-[14px]">{item.type === "course" ? "Selected Course Venue" : "Nearest Pearson Centre"}</span>
+                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                        {item.type === "course" 
+                                            ? "Delivery / Venue" 
+                                            : item.type === "nvq" 
+                                                ? "Delivery Method" 
+                                                : "Testing Location"}
+                                    </span>
+                                    <span className="font-bold text-[#001430] text-[14px]">
+                                        {item.type === "course" 
+                                            ? "Selected Course Venue" 
+                                            : item.type === "nvq" 
+                                                ? "Secure Mail Delivery" 
+                                                : "Nearest Pearson Centre"}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -94,10 +116,16 @@ export function BookingSummarySidebar({ step, selectedTest, cartItems, onCheckou
             {/* Price Breakdown */}
             <div className="flex flex-col gap-3 border-t border-gray-100 pt-6 mb-6">
                 <div className="flex justify-between items-center text-[14px] text-gray-600">
-                    <span>{isCourse ? "Course Fee" : "Test Fee"}</span>
+                    <span>
+                        {isCourse 
+                            ? "Course Fee" 
+                            : isNvq 
+                                ? "Card / NVQ Fee" 
+                                : "Test Fee"}
+                    </span>
                     <span className="font-medium">£{itemFee.toFixed(2)}</span>
                 </div>
-                {!isCourse && bookingFee > 0 && (
+                {bookingFee > 0 && (
                     <div className="flex justify-between items-center text-[14px] text-gray-600">
                         <span>Booking Fee</span>
                         <span className="font-medium">£{bookingFee.toFixed(2)}</span>

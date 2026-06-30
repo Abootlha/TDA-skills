@@ -4,10 +4,17 @@
   "compatibility_date": "2024-12-30",
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
-    "ADMIN_LOGIN_SECRET": "a8b3c9f2-7d4e-41a5-92b8-f1e0d3c7a9b6"
+    "ADMIN_LOGIN_SECRET": "a8b3c9f2-7d4e-41a5-92b8-f1e0d3c7a9b6",
+    "NEXT_PUBLIC_API_URL": "https://api.tdaskills.co.uk/api/v1"
   },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
-  }
+  },
+  "routes": [
+    {
+      "pattern": "tdaskills.co.uk",
+      "custom_domain": true
+    }
+  ]
 }

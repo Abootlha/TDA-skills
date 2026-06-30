@@ -246,3 +246,105 @@ func DefaultRateLimits() map[string]RateLimitConfig {
 		},
 	}
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Contact / Enquiry strict rate limiter
+// ─────────────────────────────────────────────────────────────────────────────
+
+const (
+	contactBanDuration = 5 * time.Minute
+	contactMaxRequests = 60
+	contactWindow      = 1 * time.Minute
+)
+
+// contactLuaScript is a Redis Lua script to enforce rate limits and ban the IP.
+var contactLuaScript = redis.NewScript(`
+local ban_key      = KEYS[1]   -- contact:ban:ip:<IP>
+local counter_key  = KEYS[2]   -- contact:rate:ip:<IP>
+local limit        = tonumber(ARGV[1])
+local window_secs  = tonumber(ARGV[2])
+local ban_secs     = tonumber(ARGV[3])
+
+-- 1. Already banned?
+local ban_ttl = redis.call('TTL', ban_key)
+if ban_ttl > 0 then
+    return {-1, ban_ttl}
+end
+
+-- 2. Increment sliding-window counter
+local count = redis.call('INCR', counter_key)
+
+-- 3. Set expiry on first request
+if count == 1 then
+    redis.call('EXPIRE', counter_key, window_secs)
+end
+
+local remaining_ttl = redis.call('TTL', counter_key)
+
+-- 4. Limit exceeded → ban immediately
+if count > limit then
+    redis.call('SET', ban_key, 1, 'EX', ban_secs)
+    return {-2, ban_secs}
+end
+
+-- 5. Allowed
+return {count, remaining_ttl}
+`)
+
+// ContactRateLimiter restricts contact form and enquiry endpoints to 60 req/min.
+// Offending IPs are temporarily banned for 5 minutes.
+func ContactRateLimiter(rdb *redis.Client) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx := context.Background()
+		clientIP := c.ClientIP()
+
+		ipBanKey := fmt.Sprintf("contact:ban:ip:%s", clientIP)
+		counterKey := fmt.Sprintf("contact:rate:ip:%s", clientIP)
+
+		result, err := contactLuaScript.Run(
+			ctx, rdb,
+			[]string{ipBanKey, counterKey},
+			contactMaxRequests,
+			int(contactWindow.Seconds()),
+			int(contactBanDuration.Seconds()),
+		).Int64Slice()
+
+		if err != nil {
+			// Redis unavailable — fail open
+			c.Next()
+			return
+		}
+
+		status := result[0]
+		ttlSecs := result[1]
+
+		switch {
+		case status == -1:
+			// IP was already banned before this request
+			c.Header("Retry-After", fmt.Sprintf("%d", ttlSecs))
+			c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
+				"error":       "Too many requests. Submissions from this IP address have been temporarily restricted to ensure service quality. Please try again shortly.",
+				"retry_after": ttlSecs,
+			})
+
+		case status == -2:
+			// This request triggered the ban
+			c.Header("Retry-After", fmt.Sprintf("%d", ttlSecs))
+			c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
+				"error":       "Rate limit exceeded. Submissions from this IP address have been temporarily suspended to prevent abuse. Please try again in a few minutes.",
+				"retry_after": ttlSecs,
+			})
+
+		default:
+			// Allowed
+			remaining := int64(contactMaxRequests) - status
+			if remaining < 0 {
+				remaining = 0
+			}
+			c.Header("X-RateLimit-Limit", fmt.Sprintf("%d", contactMaxRequests))
+			c.Header("X-RateLimit-Remaining", fmt.Sprintf("%d", remaining))
+			c.Header("X-RateLimit-Reset", fmt.Sprintf("%d", time.Now().Unix()+ttlSecs))
+			c.Next()
+		}
+	}
+}
