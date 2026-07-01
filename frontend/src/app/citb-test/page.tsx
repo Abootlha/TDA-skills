@@ -31,14 +31,16 @@ export default function CitbTestPage() {
                 const settings = response.data.settings || [];
                 
                 const testPriceSetting = settings.find((s: any) => s.key === "citb_test_price");
-                if (testPriceSetting && testPriceSetting.value) {
-                    const val = parseFloat(testPriceSetting.value.replace(/"/g, ''));
+                if (testPriceSetting && testPriceSetting.value !== undefined && testPriceSetting.value !== null) {
+                    const valStr = String(testPriceSetting.value);
+                    const val = parseFloat(valStr.replace(/"/g, ''));
                     if (!isNaN(val)) setDynamicTestPrice(val);
                 }
 
                 const bookingFeeSetting = settings.find((s: any) => s.key === "citb_booking_fee");
-                if (bookingFeeSetting && bookingFeeSetting.value) {
-                    const val = parseFloat(bookingFeeSetting.value.replace(/"/g, ''));
+                if (bookingFeeSetting && bookingFeeSetting.value !== undefined && bookingFeeSetting.value !== null) {
+                    const valStr = String(bookingFeeSetting.value);
+                    const val = parseFloat(valStr.replace(/"/g, ''));
                     if (!isNaN(val)) setDynamicBookingFee(val);
                 }
             } catch (error) {

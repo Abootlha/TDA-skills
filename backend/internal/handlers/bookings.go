@@ -83,16 +83,29 @@ func (h *BookingHandler) Create(c *gin.Context) {
 		return
 	}
 
+	role, _ := c.Get("role")
 	userID := middleware.GetUserID(c)
 	var uidPtr *uuid.UUID
-	if userID != "" {
-		uid, err := uuid.Parse(userID)
-		if err == nil {
-			uidPtr = &uid
+	var adminIdPtr *uuid.UUID
+
+	if role == "admin" || role == "super_admin" {
+		if userID != "" {
+			aid, err := uuid.Parse(userID)
+			if err == nil {
+				adminIdPtr = &aid
+			}
+		}
+		uidPtr = nil
+	} else {
+		if userID != "" {
+			uid, err := uuid.Parse(userID)
+			if err == nil {
+				uidPtr = &uid
+			}
 		}
 	}
 
-	booking, err := h.bookingService.Create(c.Request.Context(), uidPtr, &req)
+	booking, err := h.bookingService.Create(c.Request.Context(), uidPtr, adminIdPtr, &req)
 	if err != nil {
 		log.Printf("[ERROR] BookingHandler.Create: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create booking. Please try again."})

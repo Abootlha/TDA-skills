@@ -28,8 +28,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetch courses dynamically for the navbar
-  const { data } = await api.get<any>('/courses');
+  // Fetch courses dynamically for the navbar (cached for 1 hour on server)
+  const { data } = await api.get<any>('/courses', undefined, { next: { revalidate: 3600 } });
   const courses = data?.courses || [];
 
   return (

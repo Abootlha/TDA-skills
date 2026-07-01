@@ -28,6 +28,11 @@ func Run(db *sqlx.DB) error {
 		log.Printf("Warning: settings seed failed: %v", err)
 	}
 
+	// Seed default cards
+	if err := seedCards(ctx, db); err != nil {
+		log.Printf("Warning: cards seed failed: %v", err)
+	}
+
 	log.Println("✅ Database seeded successfully")
 	return nil
 }
@@ -135,5 +140,50 @@ func seedSettings(ctx context.Context, db *sqlx.DB) error {
 	}
 
 	log.Printf("  → Created %d default settings", len(settings))
+	return nil
+}
+
+func seedCards(ctx context.Context, db *sqlx.DB) error {
+	var count int
+	db.GetContext(ctx, &count, "SELECT COUNT(*) FROM cards")
+	if count > 0 {
+		log.Println("Cards already seeded, skipping...")
+		return nil
+	}
+
+	cards := []struct {
+		Title       string
+		Badge       string
+		BadgeClass  string
+		Description string
+		Image       string
+		Price       float64
+		Slug        string
+		Type        string
+	}{
+		// CSCS Cards
+		{"CSCS Green Card", "LABOURER", "bg-[#E1F7EA] text-[#16A34A]", "For entry-level workers on construction sites. Requires Level 1 Health & Safety and CITB Test.", "/cscs-green-card.png", 199.00, "green", "cscs"},
+		{"CSCS Blue Card", "SKILLED WORKER", "bg-[#E5F0FF] text-[#2563EB]", "For those who have completed a relevant NVQ Level 2 or apprenticeship.", "/cscs-blue-card.png", 249.00, "blue", "cscs"},
+		{"CSCS Gold Card", "SUPERVISOR", "bg-[#FFF5DC] text-[#D97706]", "Advanced card for site supervisors. Requires NVQ Level 3 or Level 4.", "/cscs-golden-card.png", 299.00, "gold", "cscs"},
+		{"CSCS Black Card", "MANAGER", "bg-[#F3F4F6] text-[#374151]", "For senior managers and highly qualified technical staff. Requires Level 5-7 NVQ.", "/black-cscs-card.png", 399.00, "black", "cscs"},
+		{"CSCS Red Card", "PROVISIONAL", "bg-[#FEE2E2] text-[#DC2626]", "Temporary card for workers gaining on-the-job experience. Valid for 6 months.", "/cscs-red-card.png", 149.00, "red", "cscs"},
+		{"CSCS Trainee Card", "TRAINEE", "bg-[#FEE2E2] text-[#DC2626]", "For technical, professional, or managerial trainees enrolled on degree or HND courses.", "/cscs-trainee-card.png", 149.00, "red-tsm", "cscs"},
+		// CPCS Cards
+		{"CPCS Card Application", "CARD APPLICATION", "bg-[#E5F0FF] text-[#2563EB]", "Fast track your CPCS card application with our dedicated support team.", "/cscs-blue-card.png", 249.00, "cpcs-card", "cpcs"},
+		{"Tutor-Led CPCS Course", "TUTOR-LED TRAINING", "bg-[#FFF5DC] text-[#D97706]", "Live interactive classroom training with experienced plant operators.", "/cscs-red-card.png", 499.00, "cpcs-training", "cpcs"},
+		{"NVQ L2 Plant Operator", "NVQ LEVEL 2", "bg-[#E1F7EA] text-[#16A34A]", "Achieve your Blue CPCS competent operator card through onsite assessment.", "/cscs-golden-card.png", 799.00, "plant-operator", "cpcs"},
+	}
+
+	for _, card := range cards {
+		_, err := db.ExecContext(ctx, `
+			INSERT INTO cards (title, badge, badge_class, description, image, price, slug, type)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		`, card.Title, card.Badge, card.BadgeClass, card.Description, card.Image, card.Price, card.Slug, card.Type)
+		if err != nil {
+			return err
+		}
+	}
+
+	log.Printf("  → Created %d dynamic cards", len(cards))
 	return nil
 }

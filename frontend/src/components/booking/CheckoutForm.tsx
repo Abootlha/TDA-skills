@@ -364,7 +364,7 @@ export function CheckoutForm({ onSuccess, onBack }: CheckoutFormProps) {
                             <PayPalCheckoutButton
                                 bookingID={createdBookingId}
                                 amount={totalAmount}
-                                onSuccess={(orderID) => onSuccess(orderID)}
+                                onSuccess={() => onSuccess(createdBookingId)}
                                 onError={(err) => console.error("Payment failed", err)}
                             />
                         </div>

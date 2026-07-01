@@ -10,14 +10,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/tdaskills/backend/pkg/cloudflare"
 )
 
 type UploadHandler struct {
-	// In production, this uses the R2 client from pkg/cloudflare
+	r2Client *cloudflare.R2Client
 }
 
-func NewUploadHandler() *UploadHandler {
-	return &UploadHandler{}
+func NewUploadHandler(r2Client *cloudflare.R2Client) *UploadHandler {
+	return &UploadHandler{r2Client: r2Client}
 }
 
 // POST /api/v1/upload/image (Multipart form)
@@ -29,6 +30,36 @@ func (h *UploadHandler) UploadImage(c *gin.Context) {
 	}
 	defer file.Close()
 
+	// Generate a unique filename
+	ext := filepath.Ext(header.Filename)
+	filename := fmt.Sprintf("%s_%d%s", uuid.New().String()[:8], time.Now().Unix(), ext)
+
+	// If R2 is configured, upload directly to R2
+	if h.r2Client != nil && h.r2Client.IsConfigured() {
+		contentType := header.Header.Get("Content-Type")
+		if contentType == "" {
+			contentType = "image/jpeg"
+		}
+		
+		key := "cards/" + filename
+		imageURL, err := h.r2Client.UploadObject(c.Request.Context(), key, file, contentType)
+		if err == nil {
+			c.JSON(http.StatusOK, gin.H{
+				"message":   "Image uploaded successfully to R2",
+				"image_url": imageURL,
+			})
+			return
+		}
+		
+		// If R2 upload fails, log it and fall back to local disk storage
+		fmt.Printf("R2 upload failed: %v. Falling back to local storage.\n", err)
+		
+		// Reset stream seek offset if possible
+		if seeker, ok := file.(io.ReadSeeker); ok {
+			seeker.Seek(0, io.SeekStart)
+		}
+	}
+
 	// Ensure uploads directory exists
 	uploadDir := "uploads/images"
 	if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
@@ -36,9 +67,6 @@ func (h *UploadHandler) UploadImage(c *gin.Context) {
 		return
 	}
 
-	// Generate a unique filename
-	ext := filepath.Ext(header.Filename)
-	filename := fmt.Sprintf("%s_%d%s", uuid.New().String()[:8], time.Now().Unix(), ext)
 	filePath := filepath.Join(uploadDir, filename)
 
 	// Save file
@@ -86,12 +114,12 @@ func (h *UploadHandler) Presign(c *gin.Context) {
 
 	// Validate content type
 	allowed := map[string]bool{
-		"image/jpeg":                                  true,
-		"image/png":                                   true,
-		"image/webp":                                  true,
-		"application/pdf":                             true,
-		"application/msword":                          true,
-		"application/vnd.openxmlformats-officedocument.wordprocessingml.document": true,
+		"image/jpeg":    true,
+		"image/jpg":     true,
+		"image/png":     true,
+		"image/webp":    true,
+		"image/svg+xml": true,
+		"image/gif":     true,
 	}
 
 	if !allowed[req.ContentType] {

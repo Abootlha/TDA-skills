@@ -34,6 +34,16 @@ func (r *PaymentRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.
 	if err != nil {
 		return nil, err
 	}
+	if p.BookingID != nil {
+		var bookings []models.Booking
+		if err := r.db.SelectContext(ctx, &bookings, "SELECT * FROM bookings WHERE id=$1", *p.BookingID); err == nil && len(bookings) > 0 {
+			p.Booking = &bookings[0]
+			var items []models.BookingItem
+			if err := r.db.SelectContext(ctx, &items, "SELECT * FROM booking_items WHERE booking_id=$1", bookings[0].ID); err == nil {
+				p.Booking.Items = items
+			}
+		}
+	}
 	return p, nil
 }
 
@@ -43,6 +53,16 @@ func (r *PaymentRepository) GetByPaymentIntentID(ctx context.Context, piID strin
 	if err != nil {
 		return nil, err
 	}
+	if p.BookingID != nil {
+		var bookings []models.Booking
+		if err := r.db.SelectContext(ctx, &bookings, "SELECT * FROM bookings WHERE id=$1", *p.BookingID); err == nil && len(bookings) > 0 {
+			p.Booking = &bookings[0]
+			var items []models.BookingItem
+			if err := r.db.SelectContext(ctx, &items, "SELECT * FROM booking_items WHERE booking_id=$1", bookings[0].ID); err == nil {
+				p.Booking.Items = items
+			}
+		}
+	}
 	return p, nil
 }
 
@@ -51,6 +71,16 @@ func (r *PaymentRepository) GetByPayPalOrderID(ctx context.Context, orderID stri
 	err := r.db.GetContext(ctx, p, "SELECT * FROM payments WHERE paypal_order_id=$1", orderID)
 	if err != nil {
 		return nil, err
+	}
+	if p.BookingID != nil {
+		var bookings []models.Booking
+		if err := r.db.SelectContext(ctx, &bookings, "SELECT * FROM bookings WHERE id=$1", *p.BookingID); err == nil && len(bookings) > 0 {
+			p.Booking = &bookings[0]
+			var items []models.BookingItem
+			if err := r.db.SelectContext(ctx, &items, "SELECT * FROM booking_items WHERE booking_id=$1", bookings[0].ID); err == nil {
+				p.Booking.Items = items
+			}
+		}
 	}
 	return p, nil
 }
@@ -124,7 +154,23 @@ func (r *PaymentRepository) List(ctx context.Context, params models.PaymentListP
 
 	var payments []models.Payment
 	err := r.db.SelectContext(ctx, &payments, query, args...)
-	return payments, total, err
+	if err != nil {
+		return nil, 0, err
+	}
+
+	for i := range payments {
+		if payments[i].BookingID != nil {
+			var bookings []models.Booking
+			if err := r.db.SelectContext(ctx, &bookings, "SELECT * FROM bookings WHERE id=$1", *payments[i].BookingID); err == nil && len(bookings) > 0 {
+				payments[i].Booking = &bookings[0]
+				var items []models.BookingItem
+				if err := r.db.SelectContext(ctx, &items, "SELECT * FROM booking_items WHERE booking_id=$1", bookings[0].ID); err == nil {
+					payments[i].Booking.Items = items
+				}
+			}
+		}
+	}
+	return payments, total, nil
 }
 
 func (r *PaymentRepository) GetNextPaymentNumber(ctx context.Context) (string, error) {

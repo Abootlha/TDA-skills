@@ -16,12 +16,14 @@ interface CoursePageProps {
   }>;
 }
 
+export const revalidate = 60;
+
 export default async function CoursePage({ params }: CoursePageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
   
   // Fetch course from backend
-  const { data, error } = await api.get<any>(`/courses/${slug}`);
+  const { data, error } = await api.get<any>(`/courses/${slug}`, undefined, { next: { revalidate: 60 } });
   
   if (error || !data) {
     console.error("Course fetch error:", error);

@@ -1,4 +1,7 @@
+import { useState, useEffect } from "react";
 import { CheckCircle2, Download, ArrowRight, AlertTriangle, MessageSquare } from "lucide-react";
+import { api } from "../../lib/api";
+import { generateInvoicePDF } from "../../lib/utils/invoice";
 
 interface TestOption {
     id: string;
@@ -8,11 +11,29 @@ interface TestOption {
 
 interface BookingConfirmationProps {
     status: "success" | "failed";
+    bookingId: string | null;
     selectedTest: TestOption | null;
     onRetry?: () => void;
 }
 
-export function BookingConfirmation({ status, selectedTest, onRetry }: BookingConfirmationProps) {
+export function BookingConfirmation({ status, bookingId, selectedTest, onRetry }: BookingConfirmationProps) {
+    const [bookingData, setBookingData] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (status === "success" && bookingId) {
+            setLoading(true);
+            api.get<any>(`/bookings/${bookingId}`)
+                .then(({ data, error }) => {
+                    setLoading(false);
+                    if (data && !error) {
+                        setBookingData(data);
+                    }
+                })
+                .catch(() => setLoading(false));
+        }
+    }, [bookingId, status]);
+
     if (status === "failed") {
         return (
             <div className="flex flex-col items-center py-10 w-full max-w-3xl mx-auto">
@@ -73,6 +94,8 @@ export function BookingConfirmation({ status, selectedTest, onRetry }: BookingCo
         );
     }
 
+    const firstItemText = bookingData?.items?.[0]?.description || (selectedTest ? `CITB ${selectedTest.title}` : "TDA Skills Course");
+
     return (
         <div className="flex flex-col items-center py-10 w-full max-w-3xl mx-auto">
             {/* Header */}
@@ -85,7 +108,7 @@ export function BookingConfirmation({ status, selectedTest, onRetry }: BookingCo
             </h1>
             
             <p className="text-gray-600 mb-10 text-center max-w-lg">
-                Thank you. Your spot for the <span className="font-bold">CITB {selectedTest?.title || "Test"}</span> is secured and your training journey has begun.
+                Thank you. Your spot for the <span className="font-bold">{firstItemText}</span> is secured and your training journey has begun.
             </p>
 
             {/* Booking Details Card */}
@@ -97,7 +120,7 @@ export function BookingConfirmation({ status, selectedTest, onRetry }: BookingCo
                 <div className="flex flex-col gap-6">
                     <div>
                         <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Booking ID</span>
-                        <p className="text-[#001430] font-medium mt-1">#TDA-88291</p>
+                        <p className="text-[#001430] font-medium mt-1">#{bookingData?.booking_number || "TDA-PROCESSING"}</p>
                     </div>
 
                     <div className="w-full h-px bg-gray-200"></div>
@@ -107,7 +130,7 @@ export function BookingConfirmation({ status, selectedTest, onRetry }: BookingCo
                             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
                                 Course Name
                             </span>
-                            <span className="font-bold text-[#001430]">CITB {selectedTest?.title}</span>
+                            <span className="font-bold text-[#001430]">{firstItemText}</span>
                         </div>
                         <div className="flex flex-col gap-1">
                             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
@@ -155,7 +178,16 @@ export function BookingConfirmation({ status, selectedTest, onRetry }: BookingCo
                     Go to Learner Dashboard
                     <ArrowRight className="w-5 h-5" />
                 </button>
-                <button className="bg-white border-2 border-gray-200 text-[#001430] px-8 py-4 rounded-[8px] font-bold flex items-center justify-center gap-2 hover:border-gray-300 transition-colors">
+                <button 
+                    onClick={() => {
+                        if (bookingData) {
+                            generateInvoicePDF(bookingData);
+                        } else {
+                            alert("Invoice is loading. Please wait a moment.");
+                        }
+                    }}
+                    className="bg-white border-2 border-gray-200 text-[#001430] px-8 py-4 rounded-[8px] font-bold flex items-center justify-center gap-2 hover:border-gray-300 transition-colors"
+                >
                     <Download className="w-5 h-5" />
                     Download Receipt (PDF)
                 </button>

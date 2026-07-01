@@ -3,11 +3,11 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, MonitorPlay, Calendar, ChevronRight } from "lucide-react";
 import { api } from "@/lib/api";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export default async function CITBCoursesPage() {
     // Fetch dynamic CITB courses from backend
-    const { data, error } = await api.get<any>('/courses?category=citb');
+    const { data, error } = await api.get<any>('/courses?category=citb', undefined, { next: { revalidate: 60 } });
     
     // Fallback to empty array if no courses found
     const citbCourses = data?.courses || [];

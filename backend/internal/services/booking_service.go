@@ -22,7 +22,7 @@ func NewBookingService(repo *repository.BookingRepository, courseRepo *repositor
 	return &BookingService{repo: repo, courseRepo: courseRepo, adminRepo: adminRepo}
 }
 
-func (s *BookingService) Create(ctx context.Context, userID *uuid.UUID, req *models.CreateBookingRequest) (*models.Booking, error) {
+func (s *BookingService) Create(ctx context.Context, userID *uuid.UUID, adminID *uuid.UUID, req *models.CreateBookingRequest) (*models.Booking, error) {
 	bookingNumber, err := s.repo.GetNextBookingNumber(ctx)
 	if err != nil {
 		return nil, err
@@ -103,6 +103,7 @@ func (s *BookingService) Create(ctx context.Context, userID *uuid.UUID, req *mod
 		TotalAmount:     finalTotalAmount,
 		DiscountAmount:  totalDiscount,
 		Currency:        "GBP",
+		CreatedBy:       adminID,
 	}
 
 	if req.Source != "" {
@@ -214,6 +215,10 @@ func (s *BookingService) UpdateStatus(ctx context.Context, id uuid.UUID, req *mo
 
 func (s *BookingService) Cancel(ctx context.Context, id uuid.UUID, reason string) error {
 	return s.repo.UpdateStatus(ctx, id, "cancelled")
+}
+
+func (s *BookingService) Delete(ctx context.Context, id uuid.UUID) error {
+	return s.repo.Delete(ctx, id)
 }
 
 // CreateTestBooking creates a CITB test booking from the public flow.

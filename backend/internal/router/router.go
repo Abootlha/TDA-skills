@@ -11,6 +11,7 @@ import (
 	"github.com/tdaskills/backend/internal/repository"
 	"github.com/tdaskills/backend/internal/services"
 	ws "github.com/tdaskills/backend/internal/websocket"
+	"github.com/tdaskills/backend/pkg/cloudflare"
 )
 
 // SetupRouter creates and configures the Gin router with all routes.
@@ -38,6 +39,12 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 	// Rate limit configs
 	rateLimits := middleware.DefaultRateLimits()
 
+	// --- Cloudflare R2 Client ---
+	r2Client, err := cloudflare.NewR2Client(cfg.Cloudflare)
+	if err != nil {
+		println("Warning: Failed to initialize Cloudflare R2 Client:", err.Error())
+	}
+
 	// --- Repositories ---
 	userRepo := repository.NewUserRepository(pg.DB)
 	adminRepo := repository.NewAdminRepository(pg.DB)
@@ -47,6 +54,7 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 	notifRepo := repository.NewNotificationRepository(pg.DB)
 	enquiryRepo := repository.NewEnquiryRepository(pg.DB)
 	contactRepo := repository.NewContactRepository(pg.DB)
+	cardRepo := repository.NewCardRepository(pg.DB)
 
 	// --- Services ---
 	cryptoService := services.NewCryptoService(pg.DB)
@@ -58,18 +66,19 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 	notifService := services.NewNotificationService(notifRepo)
 	enquiryService := services.NewEnquiryService(enquiryRepo)
 	contactService := services.NewContactService(contactRepo)
+	cardService := services.NewCardService(cardRepo)
 
 	// --- Handlers ---
 	authHandler := handlers.NewAuthHandler(authService, cryptoService, emailService)
 	profileHandler := handlers.NewProfileHandler(userRepo, authService, cryptoService, emailService)
 	courseHandler := handlers.NewCourseHandler(courseService)
 	nvqHandler := handlers.NewNVQHandler(courseService)
-	cardHandler := handlers.NewCardHandler(courseService)
+	cardHandler := handlers.NewCardHandler(cardService)
 	bookingHandler := handlers.NewBookingHandler(bookingService)
 	citbHandler := handlers.NewCITBHandler(bookingService)
 	paymentHandler := handlers.NewPaymentHandler(paymentService, cfg)
 	notifHandler := handlers.NewNotificationHandler(notifService)
-	uploadHandler := handlers.NewUploadHandler()
+	uploadHandler := handlers.NewUploadHandler(r2Client)
 	wsHandler := handlers.NewWebSocketHandler(hub, cfg)
 	checkoutHandler := handlers.NewCheckoutHandler(rdb)
 	enquiryHandler := handlers.NewEnquiryHandler(enquiryService)
@@ -86,6 +95,7 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 	auditHandler := adminHandlers.NewAuditHandler(pg.DB)
 	adminEnquiryHandler := adminHandlers.NewAdminEnquiryHandler(enquiryService)
 	adminContactHandler := adminHandlers.NewAdminContactHandler(contactService)
+	adminCardHandler := adminHandlers.NewAdminCardHandler(cardService)
 
 	// --- Health check ---
 	r.GET("/health", func(c *gin.Context) {
@@ -193,11 +203,11 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 		contactsGroup.POST("", contactHandler.Create)
 	}
 
-	// --- CSCS Cards (public) ---
+	// --- Cards (public) ---
 	cards := v1.Group("/cards")
 	{
 		cards.GET("", cardHandler.List)
-		cards.GET("/:type", cardHandler.GetByType)
+		cards.GET("/:slug", cardHandler.GetBySlug)
 		cards.POST("/apply", cardHandler.Apply)
 	}
 
@@ -309,6 +319,13 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 		adminProtected.PUT("/courses/:id", adminCourseHandler.Update)
 		adminProtected.DELETE("/courses/:id", adminCourseHandler.Delete)
 
+		// Cards CRUD
+		adminProtected.GET("/cards", adminCardHandler.List)
+		adminProtected.GET("/cards/:id", adminCardHandler.Get)
+		adminProtected.POST("/cards", adminCardHandler.Create)
+		adminProtected.PUT("/cards/:id", adminCardHandler.Update)
+		adminProtected.DELETE("/cards/:id", adminCardHandler.Delete)
+
 		// Users
 		adminProtected.GET("/users", adminUserHandler.List)
 		adminProtected.GET("/users/:id", adminUserHandler.GetByID)
@@ -317,6 +334,7 @@ func SetupRouter(cfg *config.Config, pg *database.PostgresDB, rdb *database.Redi
 		// Bookings
 		adminProtected.GET("/bookings", adminBookingHandler.List)
 		adminProtected.PUT("/bookings/:id", adminBookingHandler.UpdateStatus)
+		adminProtected.DELETE("/bookings/:id", adminBookingHandler.Delete)
 
 		// Payments
 		adminProtected.GET("/payments", adminPaymentHandler.List)

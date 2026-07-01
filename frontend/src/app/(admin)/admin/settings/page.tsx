@@ -55,7 +55,7 @@ export default function SettingsPage() {
     const citbTestPrice = settings.find(s => s.key === "citb_test_price");
     const citbBookingFee = settings.find(s => s.key === "citb_booking_fee");
 
-    const getRawValue = (val: string) => val ? val.replace(/"/g, '') : '';
+    const getRawValue = (val: any) => val !== undefined && val !== null ? String(val).replace(/"/g, '') : '';
 
     if (loading) {
         return <div className="p-8">Loading settings...</div>;

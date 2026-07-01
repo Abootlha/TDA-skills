@@ -7,10 +7,11 @@ import { api } from "@/lib/api";
 export default async function CoursesPage({
   searchParams,
 }: {
-  searchParams: { page?: string, category?: string }
+  searchParams: Promise<{ page?: string, category?: string }>
 }) {
-  const page = searchParams.page || "1";
-  const category = searchParams.category || "";
+  const resolvedSearchParams = await searchParams;
+  const page = resolvedSearchParams.page || "1";
+  const category = resolvedSearchParams.category || "";
   
   // Fetch courses and categories in parallel
   const [coursesRes, categoriesRes] = await Promise.all([

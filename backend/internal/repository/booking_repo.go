@@ -48,7 +48,16 @@ func (r *BookingRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.
 		return nil, err
 	}
 	err = r.db.SelectContext(ctx, &b.Items, "SELECT * FROM booking_items WHERE booking_id=$1", id)
-	return b, err
+	if err != nil {
+		return b, err
+	}
+
+	var payments []models.Payment
+	err = r.db.SelectContext(ctx, &payments, "SELECT * FROM payments WHERE booking_id=$1", id)
+	if err == nil && len(payments) > 0 {
+		b.Payment = &payments[0]
+	}
+	return b, nil
 }
 
 func (r *BookingRepository) GetByBookingNumber(ctx context.Context, number string) (*models.Booking, error) {
@@ -58,7 +67,16 @@ func (r *BookingRepository) GetByBookingNumber(ctx context.Context, number strin
 		return nil, err
 	}
 	err = r.db.SelectContext(ctx, &b.Items, "SELECT * FROM booking_items WHERE booking_id=$1", b.ID)
-	return b, err
+	if err != nil {
+		return b, err
+	}
+
+	var payments []models.Payment
+	err = r.db.SelectContext(ctx, &payments, "SELECT * FROM payments WHERE booking_id=$1", b.ID)
+	if err == nil && len(payments) > 0 {
+		b.Payment = &payments[0]
+	}
+	return b, nil
 }
 
 func (r *BookingRepository) ListByUser(ctx context.Context, userID uuid.UUID, page, limit int) ([]models.Booking, int64, error) {
@@ -71,7 +89,21 @@ func (r *BookingRepository) ListByUser(ctx context.Context, userID uuid.UUID, pa
 	err := r.db.SelectContext(ctx, &bookings,
 		"SELECT * FROM bookings WHERE user_id=$1 ORDER BY created_at DESC LIMIT $2 OFFSET $3",
 		userID, limit, offset)
-	return bookings, total, err
+	if err != nil {
+		return nil, 0, err
+	}
+
+	for i := range bookings {
+		var items []models.BookingItem
+		if err := r.db.SelectContext(ctx, &items, "SELECT * FROM booking_items WHERE booking_id=$1", bookings[i].ID); err == nil {
+			bookings[i].Items = items
+		}
+		var payments []models.Payment
+		if err := r.db.SelectContext(ctx, &payments, "SELECT * FROM payments WHERE booking_id=$1", bookings[i].ID); err == nil && len(payments) > 0 {
+			bookings[i].Payment = &payments[0]
+		}
+	}
+	return bookings, total, nil
 }
 
 func (r *BookingRepository) List(ctx context.Context, params models.BookingListParams) ([]models.Booking, int64, error) {
@@ -120,7 +152,21 @@ func (r *BookingRepository) List(ctx context.Context, params models.BookingListP
 
 	var bookings []models.Booking
 	err := r.db.SelectContext(ctx, &bookings, query, args...)
-	return bookings, total, err
+	if err != nil {
+		return nil, 0, err
+	}
+
+	for i := range bookings {
+		var items []models.BookingItem
+		if err := r.db.SelectContext(ctx, &items, "SELECT * FROM booking_items WHERE booking_id=$1", bookings[i].ID); err == nil {
+			bookings[i].Items = items
+		}
+		var payments []models.Payment
+		if err := r.db.SelectContext(ctx, &payments, "SELECT * FROM payments WHERE booking_id=$1", bookings[i].ID); err == nil && len(payments) > 0 {
+			bookings[i].Payment = &payments[0]
+		}
+	}
+	return bookings, total, nil
 }
 
 func (r *BookingRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status string) error {
@@ -139,8 +185,33 @@ func (r *BookingRepository) UpdateStatus(ctx context.Context, id uuid.UUID, stat
 }
 
 func (r *BookingRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	_, err := r.db.ExecContext(ctx, "DELETE FROM bookings WHERE id=$1", id)
-	return err
+	tx, err := r.db.BeginTxx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Update reviews to set booking_id to NULL
+	if _, err := tx.ExecContext(ctx, "UPDATE course_reviews SET booking_id=NULL WHERE booking_id=$1", id); err != nil {
+		return err
+	}
+
+	// Delete payment records first
+	if _, err := tx.ExecContext(ctx, "DELETE FROM payments WHERE booking_id=$1", id); err != nil {
+		return err
+	}
+
+	// Delete booking items
+	if _, err := tx.ExecContext(ctx, "DELETE FROM booking_items WHERE booking_id=$1", id); err != nil {
+		return err
+	}
+
+	// Delete booking itself
+	if _, err := tx.ExecContext(ctx, "DELETE FROM bookings WHERE id=$1", id); err != nil {
+		return err
+	}
+
+	return tx.Commit()
 }
 
 func (r *BookingRepository) GetNextBookingNumber(ctx context.Context) (string, error) {

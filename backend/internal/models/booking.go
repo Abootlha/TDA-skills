@@ -40,6 +40,7 @@ type Booking struct {
 	CreatedAt         time.Time        `db:"created_at" json:"created_at"`
 	UpdatedAt         time.Time        `db:"updated_at" json:"updated_at"`
 	Items             []BookingItem    `db:"-" json:"items,omitempty"`
+	Payment           *Payment         `db:"-" json:"payment,omitempty"`
 }
 
 type BookingItem struct {

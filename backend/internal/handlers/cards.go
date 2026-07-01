@@ -8,31 +8,33 @@ import (
 	"github.com/tdaskills/backend/internal/services"
 )
 
+// CardHandler manages public card requests
 type CardHandler struct {
-	courseService *services.CourseService
+	cardService services.CardService
 }
 
-func NewCardHandler(courseService *services.CourseService) *CardHandler {
-	return &CardHandler{courseService: courseService}
+// NewCardHandler instantiates a public CardHandler
+func NewCardHandler(cardService services.CardService) *CardHandler {
+	return &CardHandler{cardService: cardService}
 }
 
 // GET /api/v1/cards
 func (h *CardHandler) List(c *gin.Context) {
-	cards, err := h.courseService.ListCSCSCards(c.Request.Context())
+	cardType := c.Query("type")
+	cards, err := h.cardService.ListCards(c.Request.Context(), cardType)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch CSCS cards"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch cards", "details": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"cards": cards})
 }
 
-// GET /api/v1/cards/:type
-func (h *CardHandler) GetByType(c *gin.Context) {
-	cardType := c.Param("type")
-	// Re-use slug-based lookup for card types
-	card, err := h.courseService.GetBySlug(c.Request.Context(), cardType)
+// GET /api/v1/cards/:slug
+func (h *CardHandler) GetBySlug(c *gin.Context) {
+	slug := c.Param("slug")
+	card, err := h.cardService.GetCardBySlug(c.Request.Context(), slug)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Card type not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Card not found"})
 		return
 	}
 	c.JSON(http.StatusOK, card)
@@ -45,6 +47,5 @@ func (h *CardHandler) Apply(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
 	}
-	// In a full implementation, this creates a CSCS card application/booking
 	c.JSON(http.StatusCreated, gin.H{"message": "Application submitted", "data": body})
 }

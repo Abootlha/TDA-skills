@@ -49,8 +49,8 @@ async function request<T>(
 }
 
 export const api = {
-    get: <T>(path: string, headers?: Record<string, string>) =>
-        request<T>(path, { method: 'GET', headers }),
+    get: <T>(path: string, headers?: Record<string, string>, options?: Omit<RequestInit, 'method' | 'headers'>) =>
+        request<T>(path, { method: 'GET', headers, ...options }),
 
     post: <T>(path: string, body: unknown, headers?: Record<string, string>) =>
         request<T>(path, {

@@ -3,6 +3,8 @@ package cloudflare
 import (
 	"context"
 	"fmt"
+	"io"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -95,4 +97,28 @@ func (r *R2Client) DeleteObject(ctx context.Context, key string) error {
 // GetPublicURL returns the public URL for a stored object.
 func (r *R2Client) GetPublicURL(key string) string {
 	return r.publicURL + "/" + key
+}
+
+// IsConfigured returns true if the client has active configurations and is not placeholders.
+func (r *R2Client) IsConfigured() bool {
+	return r.client != nil && r.bucket != "" && r.bucket != "tdaskills" && r.publicURL != "" && !strings.Contains(r.publicURL, "tdaskills.r2.dev")
+}
+
+// UploadObject uploads a file direct to Cloudflare R2 bucket.
+func (r *R2Client) UploadObject(ctx context.Context, key string, body io.Reader, contentType string) (string, error) {
+	if r.client == nil {
+		return "", fmt.Errorf("R2 client is not configured")
+	}
+
+	_, err := r.client.PutObject(ctx, &s3.PutObjectInput{
+		Bucket:      aws.String(r.bucket),
+		Key:         aws.String(key),
+		Body:        body,
+		ContentType: aws.String(contentType),
+	})
+	if err != nil {
+		return "", fmt.Errorf("failed to upload object to R2: %w", err)
+	}
+
+	return r.GetPublicURL(key), nil
 }

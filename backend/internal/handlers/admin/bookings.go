@@ -54,3 +54,19 @@ func (h *AdminBookingHandler) UpdateStatus(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Booking updated"})
 }
+
+// DELETE /api/v1/admin/bookings/:id
+func (h *AdminBookingHandler) Delete(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid booking ID"})
+		return
+	}
+
+	if err := h.bookingService.Delete(c.Request.Context(), id); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete booking"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Booking deleted"})
+}

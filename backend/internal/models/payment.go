@@ -33,9 +33,10 @@ type Payment struct {
 	RefundReason          sql.NullString  `db:"refund_reason" json:"refund_reason,omitempty"`
 	FailureCode           sql.NullString  `db:"failure_code" json:"failure_code,omitempty"`
 	FailureMessage        sql.NullString  `db:"failure_message" json:"failure_message,omitempty"`
-	Metadata              json.RawMessage `db:"metadata" json:"metadata,omitempty"`
+	Metadata              *json.RawMessage `db:"metadata" json:"metadata,omitempty"`
 	CreatedAt             time.Time       `db:"created_at" json:"created_at"`
 	UpdatedAt             time.Time       `db:"updated_at" json:"updated_at"`
+	Booking               *Booking        `db:"-" json:"booking,omitempty"`
 }
 
 type CreatePaymentIntentRequest struct {

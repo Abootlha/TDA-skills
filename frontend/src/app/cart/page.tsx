@@ -37,8 +37,9 @@ export default function CartPage() {
                     const data = await response.json();
                     const settings = data.settings || [];
                     const bookingFeeSetting = settings.find((s: any) => s.key === "citb_booking_fee");
-                    if (bookingFeeSetting && bookingFeeSetting.value) {
-                        const val = parseFloat(bookingFeeSetting.value.replace(/"/g, ''));
+                    if (bookingFeeSetting && bookingFeeSetting.value !== undefined && bookingFeeSetting.value !== null) {
+                        const valStr = String(bookingFeeSetting.value);
+                        const val = parseFloat(valStr.replace(/"/g, ''));
                         if (!isNaN(val)) setDynamicBookingFee(val);
                     }
                 }

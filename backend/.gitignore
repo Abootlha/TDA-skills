@@ -44,5 +44,5 @@ tmp/
 build/
 bin/
 coverage/
-logs/
-*.loguploads/
+*.log
+uploads/

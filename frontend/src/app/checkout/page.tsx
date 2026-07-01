@@ -20,6 +20,7 @@ export default function CheckoutPage() {
     // We map step 1 -> "Cart/Empty", step 2 -> "Checkout details", step 3 -> "Success"
     const [step, setStep] = useState<number>(2);
     const [bookingStatus, setBookingStatus] = useState<"success" | "failed">("success");
+    const [confirmedBookingId, setConfirmedBookingId] = useState<string | null>(null);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false); // Mock auth state
     const [isMounted, setIsMounted] = useState(false);
@@ -175,13 +176,17 @@ export default function CheckoutPage() {
                     <div className="flex-1">
                         {step === 2 && (
                             <CheckoutForm
-                                onSuccess={() => setStep(3)}
+                                onSuccess={(bookingId) => {
+                                    setConfirmedBookingId(bookingId);
+                                    setStep(3);
+                                }}
                                 onBack={handlePrevStep}
                             />
                         )}
                         {step === 3 && (
                             <BookingConfirmation
                                 status={bookingStatus}
+                                bookingId={confirmedBookingId}
                                 selectedTest={cartItems[0]} // For now, confirmation expects 1 test, we'll keep it simple
                                 onRetry={() => setStep(2)}
                             />
