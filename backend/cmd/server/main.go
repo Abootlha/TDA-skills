@@ -43,9 +43,15 @@ func main() {
 	}
 	defer pg.Close()
 
+	// Automatically run migrations 'up' on server startup to ensure schema is always up to date
+	log.Println("🔄 Running database migrations on startup...")
+	runMigrations(pg, "up")
+
 	// Handle migrations
 	if *migrateFlag != "" {
-		runMigrations(pg, *migrateFlag)
+		if *migrateFlag == "down" {
+			runMigrations(pg, "down")
+		}
 		return
 	}
 
