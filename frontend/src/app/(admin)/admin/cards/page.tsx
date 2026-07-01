@@ -113,6 +113,7 @@ export default function AdminCardsPage() {
         const file = e.target.files[0];
         const data = new FormData();
         data.append("image", file);
+        data.append("folder", formData.type); // Send 'cscs' or 'cpcs' to the backend
 
         try {
             const res = await apiClient.post("/admin/upload/image", data, {

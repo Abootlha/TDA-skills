@@ -17,43 +17,12 @@ interface CpcsCardItem {
     slug: string;
 }
 
-const STATIC_FALLBACK_CARDS: CpcsCardItem[] = [
-    {
-        id: "cpcs-card-app",
-        title: "CPCS Card Application",
-        badge: "CARD APPLICATION",
-        badgeClass: "bg-[#E5F0FF] text-[#2563EB]",
-        description: "Fast track your CPCS card application with our dedicated support team.",
-        image: "/cscs-blue-card.png",
-        price: 249.00,
-        slug: "cpcs-card"
-    },
-    {
-        id: "cpcs-training",
-        title: "Tutor-Led CPCS Course",
-        badge: "TUTOR-LED TRAINING",
-        badgeClass: "bg-[#FFF5DC] text-[#D97706]",
-        description: "Live interactive classroom training with experienced plant operators.",
-        image: "/cscs-red-card.png",
-        price: 499.00,
-        slug: "cpcs-training"
-    },
-    {
-        id: "cpcs-nvq-operator",
-        title: "NVQ L2 Plant Operator",
-        badge: "NVQ LEVEL 2",
-        badgeClass: "bg-[#E1F7EA] text-[#16A34A]",
-        description: "Achieve your Blue CPCS competent operator card through onsite assessment.",
-        image: "/cscs-golden-card.png",
-        price: 799.00,
-        slug: "plant-operator"
-    }
-];
+
 
 export function CpcsPackagesSection() {
     const addItem = useCartStore((state) => state.addItem);
     const addToast = useToastStore((state) => state.addToast);
-    const [cards, setCards] = useState<CpcsCardItem[]>(STATIC_FALLBACK_CARDS);
+    const [cards, setCards] = useState<CpcsCardItem[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -76,7 +45,7 @@ export function CpcsPackagesSection() {
                 }
             } catch (error) {
                 console.error("Error fetching CPCS cards from API:", error);
-                // Keep STATIC_FALLBACK_CARDS on error
+                console.error("Error fetching CPCS cards from API:", error);
             } finally {
                 setLoading(false);
             }
@@ -123,6 +92,11 @@ export function CpcsPackagesSection() {
                     <div className="flex flex-col items-center justify-center py-12">
                         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#FF7A00]"></div>
                         <p className="text-gray-500 text-sm mt-4">Loading available CPCS cards...</p>
+                    </div>
+                ) : cards.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                        <p className="text-gray-500 font-medium">No CPCS cards are currently available.</p>
+                        <p className="text-gray-400 text-sm mt-2">Please check back later or contact support.</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">

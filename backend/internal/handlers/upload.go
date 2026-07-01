@@ -41,7 +41,12 @@ func (h *UploadHandler) UploadImage(c *gin.Context) {
 			contentType = "image/jpeg"
 		}
 		
-		key := "cards/" + filename
+		folder := c.Request.FormValue("folder")
+		if folder == "" {
+			folder = "misc"
+		}
+		
+		key := fmt.Sprintf("%s/%s", folder, filename)
 		imageURL, err := h.r2Client.UploadObject(c.Request.Context(), key, file, contentType)
 		if err == nil {
 			c.JSON(http.StatusOK, gin.H{
@@ -61,7 +66,11 @@ func (h *UploadHandler) UploadImage(c *gin.Context) {
 	}
 
 	// Ensure uploads directory exists
-	uploadDir := "uploads/images"
+	folder := c.Request.FormValue("folder")
+	if folder == "" {
+		folder = "misc"
+	}
+	uploadDir := filepath.Join("uploads", "images", folder)
 	if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create upload directory"})
 		return
@@ -91,7 +100,7 @@ func (h *UploadHandler) UploadImage(c *gin.Context) {
 		baseURL = "http://" + host
 	}
 
-	imageURL := fmt.Sprintf("%s/uploads/images/%s", baseURL, filename)
+	imageURL := fmt.Sprintf("%s/uploads/images/%s/%s", baseURL, folder, filename)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message":   "Image uploaded successfully",

@@ -2,6 +2,7 @@ package admin
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -24,6 +25,7 @@ func (h *AdminEnquiryHandler) List(c *gin.Context) {
 
 	enquiries, total, err := h.enquiryService.ListEnquiries(c.Request.Context(), page, limit)
 	if err != nil {
+		log.Printf("ERROR listing enquiries: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"error":   gin.H{"message": "Failed to fetch enquiries"},

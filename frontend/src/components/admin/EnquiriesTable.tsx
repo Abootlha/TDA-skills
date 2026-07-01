@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "@/lib/apiClient";
 import { Search, Filter, MoreVertical, Eye, Trash2, CheckCircle, Clock } from "lucide-react";
 
 interface Enquiry {
@@ -33,9 +33,7 @@ export function EnquiriesTable() {
   const fetchEnquiries = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/admin/enquiries`, {
-        withCredentials: true,
-      });
+      const res = await apiClient.get(`/admin/enquiries`);
       if (res.data.success) {
         setEnquiries(res.data.data.enquiries || []);
       }
@@ -49,9 +47,7 @@ export function EnquiriesTable() {
 
   const updateStatus = async (id: string, newStatus: string) => {
     try {
-      await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/admin/enquiries/${id}/status`, { status: newStatus }, {
-        withCredentials: true,
-      });
+      await apiClient.put(`/admin/enquiries/${id}/status`, { status: newStatus });
       setEnquiries(enquiries.map(e => e.id === id ? { ...e, status: newStatus } : e));
     } catch (err) {
       alert("Failed to update status.");
@@ -61,9 +57,7 @@ export function EnquiriesTable() {
   const deleteEnquiry = async (id: string) => {
     if (!confirm("Are you sure you want to delete this enquiry?")) return;
     try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/admin/enquiries/${id}`, {
-        withCredentials: true,
-      });
+      await apiClient.delete(`/admin/enquiries/${id}`);
       setEnquiries(enquiries.filter(e => e.id !== id));
     } catch (err) {
       alert("Failed to delete enquiry.");

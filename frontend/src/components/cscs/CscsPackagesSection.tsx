@@ -17,73 +17,12 @@ interface CscsCardItem {
     slug: string;
 }
 
-const STATIC_FALLBACK_CARDS: CscsCardItem[] = [
-    {
-        id: "cscs-green",
-        title: "CSCS Green Card",
-        badge: "LABOURER",
-        badgeClass: "bg-[#E1F7EA] text-[#16A34A]",
-        description: "For entry-level workers on construction sites. Requires Level 1 Health & Safety and CITB Test.",
-        image: "/cscs-green-card.png",
-        price: 199.00,
-        slug: "green"
-    },
-    {
-        id: "cscs-blue",
-        title: "CSCS Blue Card",
-        badge: "SKILLED WORKER",
-        badgeClass: "bg-[#E5F0FF] text-[#2563EB]",
-        description: "For those who have completed a relevant NVQ Level 2 or apprenticeship.",
-        image: "/cscs-blue-card.png",
-        price: 249.00,
-        slug: "blue"
-    },
-    {
-        id: "cscs-gold",
-        title: "CSCS Gold Card",
-        badge: "SUPERVISOR",
-        badgeClass: "bg-[#FFF5DC] text-[#D97706]",
-        description: "Advanced card for site supervisors. Requires NVQ Level 3 or Level 4.",
-        image: "/cscs-golden-card.png",
-        price: 299.00,
-        slug: "gold"
-    },
-    {
-        id: "cscs-black",
-        title: "CSCS Black Card",
-        badge: "MANAGER",
-        badgeClass: "bg-[#F3F4F6] text-[#374151]",
-        description: "For senior managers and highly qualified technical staff. Requires Level 5-7 NVQ.",
-        image: "/black-cscs-card.png",
-        price: 399.00,
-        slug: "black"
-    },
-    {
-        id: "cscs-red-provisional",
-        title: "CSCS Red Card",
-        badge: "PROVISIONAL",
-        badgeClass: "bg-[#FEE2E2] text-[#DC2626]",
-        description: "Temporary card for workers gaining on-the-job experience. Valid for 6 months.",
-        image: "/cscs-red-card.png",
-        price: 149.00,
-        slug: "red"
-    },
-    {
-        id: "cscs-red-trainee",
-        title: "CSCS Trainee Card",
-        badge: "TRAINEE",
-        badgeClass: "bg-[#FEE2E2] text-[#DC2626]",
-        description: "For technical, professional, or managerial trainees enrolled on degree or HND courses.",
-        image: "/cscs-trainee-card.png",
-        price: 149.00,
-        slug: "red-tsm"
-    }
-];
+
 
 export function CscsPackagesSection() {
     const addItem = useCartStore((state) => state.addItem);
     const addToast = useToastStore((state) => state.addToast);
-    const [cards, setCards] = useState<CscsCardItem[]>(STATIC_FALLBACK_CARDS);
+    const [cards, setCards] = useState<CscsCardItem[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -106,7 +45,7 @@ export function CscsPackagesSection() {
                 }
             } catch (error) {
                 console.error("Error fetching CSCS cards from API:", error);
-                // Keep STATIC_FALLBACK_CARDS on error
+                console.error("Error fetching CSCS cards from API:", error);
             } finally {
                 setLoading(false);
             }
@@ -153,6 +92,11 @@ export function CscsPackagesSection() {
                     <div className="flex flex-col items-center justify-center py-12">
                         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#FF7A00]"></div>
                         <p className="text-gray-500 text-sm mt-4">Loading available CSCS cards...</p>
+                    </div>
+                ) : cards.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                        <p className="text-gray-500 font-medium">No CSCS cards are currently available.</p>
+                        <p className="text-gray-400 text-sm mt-2">Please check back later or contact support.</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">

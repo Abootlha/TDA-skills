@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "@/lib/apiClient";
 import { Search, Filter, Eye, Trash2, CheckCircle } from "lucide-react";
 
 interface Contact {
@@ -33,9 +33,7 @@ export function ContactsTable() {
   const fetchContacts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/admin/contacts`, {
-        withCredentials: true,
-      });
+      const res = await apiClient.get(`/admin/contacts`);
       if (res.data.success) {
         setContacts(res.data.data.contacts || []);
       }
@@ -49,9 +47,7 @@ export function ContactsTable() {
 
   const updateStatus = async (id: string, newStatus: string) => {
     try {
-      await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/admin/contacts/${id}/status`, { status: newStatus }, {
-        withCredentials: true,
-      });
+      await apiClient.put(`/admin/contacts/${id}/status`, { status: newStatus });
       setContacts(contacts.map(c => c.id === id ? { ...c, status: newStatus } : c));
     } catch (err) {
       alert("Failed to update status.");
@@ -61,9 +57,7 @@ export function ContactsTable() {
   const deleteContact = async (id: string) => {
     if (!confirm("Are you sure you want to delete this contact submission?")) return;
     try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/admin/contacts/${id}`, {
-        withCredentials: true,
-      });
+      await apiClient.delete(`/admin/contacts/${id}`);
       setContacts(contacts.filter(c => c.id !== id));
     } catch (err) {
       alert("Failed to delete contact submission.");

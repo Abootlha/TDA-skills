@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "@/lib/apiClient";
 import { Save } from "lucide-react";
 import { useToastStore } from "../../../../components/ui/Toast";
 
@@ -23,7 +23,7 @@ export default function SettingsPage() {
 
     const fetchSettings = async () => {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/admin/settings`, { withCredentials: true });
+            const response = await apiClient.get(`/admin/settings`);
             setSettings(response.data.settings || []);
         } catch (error) {
             console.error("Failed to fetch settings", error);
@@ -38,9 +38,8 @@ export default function SettingsPage() {
         try {
             // Need to wrap value in quotes as it expects a JSON string
             const formattedValue = `"${newValue}"`;
-            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/admin/settings/${settingKey}`, 
-                { value: formattedValue, is_public: true },
-                { withCredentials: true }
+            await apiClient.put(`/admin/settings/${settingKey}`, 
+                { value: formattedValue, is_public: true }
             );
             addToast({ type: "success", title: "Success", message: "Setting updated successfully." });
             fetchSettings();

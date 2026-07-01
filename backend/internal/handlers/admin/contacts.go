@@ -2,6 +2,7 @@ package admin
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -24,6 +25,7 @@ func (h *AdminContactHandler) List(c *gin.Context) {
 
 	contacts, total, err := h.contactService.ListContacts(c.Request.Context(), page, limit)
 	if err != nil {
+		log.Printf("ERROR listing contacts: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"error":   gin.H{"message": "Failed to fetch contact enquiries"},
